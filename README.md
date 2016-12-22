@@ -15,7 +15,7 @@ Let people know how they can dive into the project, include important links to t
 
 MIT License
 
-Copyright (c) [2017] [frenchfriedtechnologies]
+Copyright (c) 2017 frenchfriedtechnologies
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
