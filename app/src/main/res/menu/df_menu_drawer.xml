@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_heading_horse_and_rider"
+        android:title="@string/menu_heading_horse_and_rider">
+        <menu>
+            <item
+                android:id="@+id/action_menu_item_profile"
+                android:icon="@drawable/vector_edit"
+                android:title="@string/menu_item_profile_edit" />
+
+            <item
+                android:id="@+id/action_menu_glossary"
+                android:icon="@drawable/vector_glossary"
+                android:title="@string/action_glossary"/>
+            <item
+                android:id="@+id/action_menu_item_settings"
+                android:icon="@drawable/vector_settings"
+                android:title="@string/action_settings" />
+        </menu>
+    </item>
+    <item
+        android:id="@+id/menu_heading_app"
+        android:title="@string/menu_heading_app">
+        <menu>
+            <item
+                android:id="@+id/action_menu_item_support"
+                android:icon="@drawable/vector_help"
+                android:title="@string/menu_item_support" />
+            <item
+                android:id="@+id/action_menu_item_rate"
+                android:icon="@drawable/vector_star"
+                android:title="@string/menu_item_rate" />
+        </menu>
+    </item>
+    <item
+        android:id="@+id/menu_heading_account"
+        android:title="@string/menu_heading_account"
+        android:visible="false">
+        <menu>
+            <item
+                android:id="@+id/action_menu_item_switch_account"
+                android:icon="@drawable/vector_switch"
+                android:title="@string/menu_item_switch_account" />
+            <item
+                android:id="@+id/action_menu_item_sign_out"
+                android:icon="@drawable/ic_close"
+                android:title="@string/menu_item_logout" />
+        </menu>
+    </item>
+</menu>

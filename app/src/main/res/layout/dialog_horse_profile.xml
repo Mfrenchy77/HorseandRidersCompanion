@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:id="@+id/create_horse_profile_root"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:fitsSystemWindows="true"
+            tools:context=".view.main.MainActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:paddingTop="@dimen/spacing_normal">
+
+            <TextView
+                android:id="@+id/dialog_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/spacing_normal"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="@android:color/primary_text_dark"
+                tools:text="Horse Profile"/>
+
+
+            <ImageButton
+                android:id="@+id/delete_item_button"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_margin="@dimen/spacing_normal"
+                android:background="@drawable/circle_background"
+                android:backgroundTint="@color/colorAccent"
+                android:src="@drawable/vector_delete"
+                android:visibility="gone"
+                tools:visibility="visible"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/colorAccent"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/spacing_normal">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/horse_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/name"
+                android:inputType="textCapWords"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/spacing_normal">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/horse_breed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/breed"
+                android:inputType="textCapWords"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/spacing_normal">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/horse_dob"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:hint="@string/date_of_birth"
+                android:inputType="textCapWords"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/spacing_normal">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/horse_age"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:hint="@string/age"
+                android:inputType="textCapWords"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/spacing_normal">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/horse_color"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/color"
+                android:inputType="textCapWords"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/spacing_normal">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/horse_height"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/height"
+                android:inputType="textCapWords"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/spacing_normal">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/horse_owner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/current_owner"
+                android:inputType="textCapWords"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/spacing_normal">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/horse_date_of_purchase"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:hint="@string/date_of_purchase"
+                android:inputType="textCapWords"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/spacing_normal">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/horse_purchase_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/purchase_price"
+                android:inputType="textCapWords"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:baselineAligned="false"
+            android:focusable="false"
+            android:gravity="center"
+            android:paddingBottom="@dimen/spacing_normal"
+            android:paddingTop="@dimen/spacing_normal">
+
+            <LinearLayout
+                android:id="@+id/cancel_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+
+                <ImageView
+                    android:layout_width="74dp"
+                    android:layout_height="74dp"
+                    android:alpha=".7"
+                    android:background="@drawable/circle_background"
+                    android:backgroundTint="@android:color/holo_red_light"
+                    android:elevation="8dp"
+                    android:padding="@dimen/spacing_triple"
+                    android:src="@drawable/ic_close"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_micro"
+                    android:text="@string/cancel"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/accept_button_horse"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="74dp"
+                    android:layout_height="74dp"
+                    android:background="@drawable/circle_background"
+                    android:backgroundTint="@color/colorAccent"
+                    android:elevation="8dp"
+                    android:padding="@dimen/spacing_triple"
+                    android:src="@drawable/ic_done"/>
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_micro"
+                    android:text="@string/accept"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

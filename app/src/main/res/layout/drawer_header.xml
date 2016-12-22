@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="192dp"
+             android:paddingTop="24dp">
+
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/colorPrimary"
+        android:orientation="vertical"
+        android:paddingBottom="4dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="4dp">
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="7dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/horse_logo"/>
+
+        <LinearLayout
+            android:id="@+id/account_name_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/profile_username"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="3"
+                android:text="TextView"
+                android:textAppearance="@android:style/TextAppearance.Material.Large"
+                android:textColor="@android:color/primary_text_dark"
+                tools:text="Cool McNamester"/>
+
+            <ImageView
+
+                android:id="@+id/expand_menu_chevron"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:src="@drawable/vector_expand_more"
+                android:tint="@android:color/primary_text_dark"
+
+                />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</FrameLayout>

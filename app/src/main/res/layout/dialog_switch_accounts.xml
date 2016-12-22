@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ViewFlipper
+    android:id="@+id/dialog_switch_account_flipper"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_marginTop="16dp"
+    android:layout_weight="1">
+
+    <TextView
+        android:id="@+id/dialog_switch_account_no_entries"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/no_alternate_accounts"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorAccent"
+            />
+
+        <ListView
+            android:id="@+id/dialog_switch_account_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+    </LinearLayout>
+</ViewFlipper>

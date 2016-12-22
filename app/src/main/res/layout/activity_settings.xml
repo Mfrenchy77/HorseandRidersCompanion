@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/spacing_micro"
+        android:text="App Settings"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorAccent"/>
+
+    <android.support.v7.widget.AppCompatCheckedTextView
+        android:id="@+id/night_mode_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/spacing_normal"
+        android:checkMark="?android:listChoiceIndicatorMultiple"
+        android:text="@string/night_mode"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+
+    <android.support.v7.widget.AppCompatCheckedTextView
+        android:id="@+id/auto_theme_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/spacing_normal"
+        android:checkMark="?android:listChoiceIndicatorMultiple"
+        android:text="@string/auto_change_theme"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/spacing_micro"
+        android:text="Rider's Settings"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorAccent"/>
+
+    <android.support.v7.widget.AppCompatCheckedTextView
+        android:id="@+id/instructor_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/spacing_normal"
+        android:checkMark="?android:listChoiceIndicatorMultiple"
+        android:text="@string/instructor"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
+
+</LinearLayout>
