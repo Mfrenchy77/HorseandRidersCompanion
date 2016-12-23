@@ -20,11 +20,9 @@ import timber.log.Timber;
  */
 
 public class ResourceAdapter extends BaseQuickAdapter<Resource> {
-    private List<Resource> resources = new ArrayList<>();
 
     public ResourceAdapter(List<Resource> data) {
         super(R.layout.item_resource, data);
-        resources = data;
     }
 
     @Override
@@ -32,7 +30,6 @@ public class ResourceAdapter extends BaseQuickAdapter<Resource> {
         int position = holder.getAdapterPosition();
 
         //----setup resource values and click events
-        holder.getView(R.id.resource_layout).setVisibility(resources.isEmpty() ? View.GONE : View.VISIBLE);
         holder.setText(R.id.resource_title, resource.getTitle());
         holder.setText(R.id.resource_rating_count, (int) resource.getRating());
         holder.setText(R.id.resource_description, resource.getDescription());
@@ -49,17 +46,6 @@ public class ResourceAdapter extends BaseQuickAdapter<Resource> {
             @Override
             public void onClick(View view) {
                 Timber.d("Resource Item Clicked");
-            }
-        });
-        Timber.d("Resources Empty? " + resources.isEmpty());
-        //----setup empty list
-        TextView emptyResource = holder.getView(R.id.empty_resource);
-        emptyResource.setVisibility(resources.isEmpty() ? View.VISIBLE : View.GONE);
-        emptyResource.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Timber.d("Empty Resource clicked");
-                //open add resource dialog
             }
         });
     }

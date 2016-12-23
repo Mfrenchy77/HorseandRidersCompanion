@@ -196,14 +196,27 @@ public class DialogCreateAdjustLevel extends DialogFragment {
      */
     private void initializeAdjust(View view) {
         //----Resources Layout
+        List<Resource> resources = Parcels.unwrap(getArguments().getParcelable(RESOURCES));
         LinearLayout resourcesLayout = (LinearLayout) view.findViewById(R.id.resources_layout);
         BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(resourcesLayout);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         bottomSheetBehavior.setPeekHeight(ViewUtil.dpToPx(50));
-        ResourceAdapter resourceAdapter = new ResourceAdapter(Parcels.unwrap(getArguments().getParcelable(RESOURCES)));
+        ResourceAdapter resourceAdapter = new ResourceAdapter(resources);
         RecyclerView resourcesRecycler = (RecyclerView) view.findViewById(R.id.level_resources_recycler);
         resourcesRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         resourcesRecycler.setAdapter(resourceAdapter);
+        Timber.d("Resources Empty? " + resources.isEmpty());
+        //----setup empty list
+        TextView emptyResource = (TextView) view.findViewById(R.id.empty_resource);
+        emptyResource.setVisibility(resources.isEmpty() ? View.VISIBLE : View.GONE);
+        emptyResource.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Timber.d("Empty Resource clicked");
+                //open add resource dialog
+            }
+        });
+
 
         //----Level layout
         TextView lName = (TextView) view.findViewById(R.id.adjust_level_name);
