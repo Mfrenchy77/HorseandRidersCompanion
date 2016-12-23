@@ -2,6 +2,7 @@ package com.frenchfriedtechnology.horseandriderscompanion.view.base;
 
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Category;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Level;
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Skill;
 
 import java.util.List;

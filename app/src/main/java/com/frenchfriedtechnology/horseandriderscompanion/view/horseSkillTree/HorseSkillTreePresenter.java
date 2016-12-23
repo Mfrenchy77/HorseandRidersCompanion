@@ -4,13 +4,16 @@ import android.content.Context;
 
 import com.frenchfriedtechnology.horseandriderscompanion.AccountManager;
 import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.HorseProfileApi;
+import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.ResourcesApi;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.HorseProfile;
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.SkillLevel;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.RealmService;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BasePresenter;
 
 
 import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -94,5 +97,20 @@ public class HorseSkillTreePresenter extends BasePresenter<HorseSkillTreeMvpView
         horseProfile.setLastEditDate(System.currentTimeMillis());
 
         HorseProfileApi.createOrUpdateHorseProfile(horseProfile);
+    }
+
+    //----Resources
+    public void getResourcesForLevel(String id) {
+        new ResourcesApi().getResourcesForLevel(id, new ResourcesApi.ResourcesCallback() {
+            @Override
+            public void onSuccess(List<Resource> resources) {
+                getMvpView().getResources(resources);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+        });
     }
 }

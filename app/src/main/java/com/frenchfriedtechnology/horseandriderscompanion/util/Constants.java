@@ -22,6 +22,8 @@ public class Constants {
     public final static String SKILLS = "Skills";
     public final static String LEVELS = "Levels";
 
+    public static final String RESOURCES = "Resources";
+
     /**
      * Possible level states
      */

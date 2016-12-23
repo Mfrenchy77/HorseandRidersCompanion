@@ -101,6 +101,9 @@ dependencies {
     //----RecyclerView Adapter
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.1.3'
 
+    //----RatingBar
+    compile 'com.iarcuschin:simpleratingbar:0.1.5'
+
     //----Retrofit
     compile "com.squareup.retrofit2:retrofit:$RETROFIT_VERSION"
     compile "com.squareup.retrofit2:adapter-rxjava:$RETROFIT_VERSION"

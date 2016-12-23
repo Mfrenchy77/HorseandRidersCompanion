@@ -82,7 +82,6 @@ public class CategoryFragment extends Fragment {
         skillAdapter.sortSkills();
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.skill_recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(skillAdapter);
 
         //setup empty skill

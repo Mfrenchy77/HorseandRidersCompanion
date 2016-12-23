@@ -10,6 +10,7 @@ import com.frenchfriedtechnology.horseandriderscompanion.AccountManager;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Category;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Level;
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.RiderProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Skill;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.SkillLevel;
@@ -37,6 +38,9 @@ import com.frenchfriedtechnology.horseandriderscompanion.view.dialogs.DialogCrea
 import com.squareup.otto.Subscribe;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import timber.log.Timber;
@@ -60,7 +64,7 @@ public class RiderSkillTreeActivity extends BaseSkillTreeActivity implements Rid
 
     private static final String VIEW_PAGER_ITEM = "VIEW_PAGE_ITEM";
     private static final String EMAIL = "Email";
-
+    private List<Resource> levelResources = new ArrayList<>();
     private RiderProfile riderProfile = new RiderProfile();
 
 
@@ -106,6 +110,11 @@ public class RiderSkillTreeActivity extends BaseSkillTreeActivity implements Rid
     @Override
     public void updateAdapter() {
         skillTreePagerAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void getResources(List<Resource> resources) {
+        levelResources = resources;
     }
 
     private void initPagerAdapter() {
@@ -206,20 +215,21 @@ public class RiderSkillTreeActivity extends BaseSkillTreeActivity implements Rid
 
     @Subscribe
     public void levelSelectedEvent(LevelSelectEvent event) {
+        presenter.getResourcesForLevel(event.getLevel().getId());
         switch (event.getTag()) {
             //Dialog Update Level
             case EDIT_LEVEL:
-                DialogCreateAdjustLevel.newInstance(EDIT_LEVEL, event.getLevel(), event.getSkillId()).show(getFragmentManager(), null);
+                DialogCreateAdjustLevel.newInstance(EDIT_LEVEL, event.getLevel(), event.getSkillId(), null).show(getFragmentManager(), null);
                 break;
             case NEW_LEVEL:
-                DialogCreateAdjustLevel.newInstance(NEW_LEVEL, null, event.getSkillId()).show(getFragmentManager(), null);
+                DialogCreateAdjustLevel.newInstance(NEW_LEVEL, null, event.getSkillId(), null).show(getFragmentManager(), null);
                 break;
-            //Adjust Rider/Horse SkillLevel
+            //Adjust Rider/Horse SkillLevel and show Resources for level
             case RIDER_ADJUST:
-                DialogCreateAdjustLevel.newInstance(RIDER_ADJUST, event.getLevel(), event.getSkillId()).show(getFragmentManager(), null);
+                DialogCreateAdjustLevel.newInstance(RIDER_ADJUST, event.getLevel(), event.getSkillId(), levelResources).show(getFragmentManager(), null);
                 break;
             case HORSE_ADJUST:
-                DialogCreateAdjustLevel.newInstance(HORSE_ADJUST, event.getLevel(), event.getSkillId()).show(getFragmentManager(), null);
+                DialogCreateAdjustLevel.newInstance(HORSE_ADJUST, event.getLevel(), event.getSkillId(), levelResources).show(getFragmentManager(), null);
                 break;
         }
     }

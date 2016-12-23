@@ -3,7 +3,9 @@ package com.frenchfriedtechnology.horseandriderscompanion.view.riderSkillTree;
 import android.content.Context;
 
 import com.frenchfriedtechnology.horseandriderscompanion.HorseAndRidersCompanion;
+import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.ResourcesApi;
 import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.RiderProfileApi;
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.RiderProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.SkillLevel;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
@@ -13,6 +15,7 @@ import com.frenchfriedtechnology.horseandriderscompanion.view.base.BasePresenter
 
 
 import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -124,7 +127,20 @@ public class RiderSkillTreePresenter extends BasePresenter<RiderSkillTreeMvpView
 
             }
         });
+    }
 
+    //----Resources
+    public void getResourcesForLevel(String id) {
+        new ResourcesApi().getResourcesForLevel(id, new ResourcesApi.ResourcesCallback() {
+            @Override
+            public void onSuccess(List<Resource> resources) {
+                getMvpView().getResources(resources);
+            }
 
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+        });
     }
 }

@@ -1,9 +1,7 @@
 package com.frenchfriedtechnology.horseandriderscompanion.view.adapters;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.util.SparseArray;
@@ -20,9 +18,7 @@ import com.frenchfriedtechnology.horseandriderscompanion.view.riderSkillTree.Pro
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import timber.log.Timber;
 
@@ -30,17 +26,17 @@ import static com.frenchfriedtechnology.horseandriderscompanion.view.riderSkillT
 import static com.frenchfriedtechnology.horseandriderscompanion.view.riderSkillTree.ProfileFragment.RIDER_PROFILE;
 
 /**
- * Created by matteo on 16/12/16 for HorseandRidersCompanion.
+ * View pager adapter that shows a profile and Horse/Rider Skill Tree
  */
 
 public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
-    List<Category> categories = new ArrayList<>();
 
+    private List<Category> categories = new ArrayList<>();
     private List<Skill> allSkills = new ArrayList<>();
     private List<Level> allLevels = new ArrayList<>();
-    HorseProfile horseProfile = new HorseProfile();
-    RiderProfile riderProfile = new RiderProfile();
-    boolean rider;
+    private HorseProfile horseProfile = new HorseProfile();
+    private RiderProfile riderProfile = new RiderProfile();
+    private boolean rider;
 
 
     private final FragmentManager mFragmentManager;
@@ -62,7 +58,7 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
         this.rider = rider;
         this.riderProfile = riderProfile;
         mFragmentManager = fm;
-        mFragments=new SparseArray<>();
+        mFragments = new SparseArray<>();
     }
 
 
@@ -72,13 +68,11 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
     }
 
     public void setAllSkills(List<Skill> allSkills) {
-        Timber.d("setAllSkills()  called");
         this.allSkills = allSkills;
         notifyDataSetChanged();
     }
 
-    public List<Skill> getAllSkills() {
-        Timber.d("getAllSkills() size: " + allSkills.size());
+    private List<Skill> getAllSkills() {
         return allSkills;
     }
 
@@ -89,13 +83,10 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
     }
 
     private List<Skill> getSkillsForCategory(Category category) {
-        Timber.d("Levels size: " + allLevels.size());
         List<Skill> categorySkills = new ArrayList<>();
         List<Skill> skills = getAllSkills();
-        Timber.d("Skills size: " + skills.size());
         for (int i = 0; i < skills.size(); i++) {
             if (skills.get(i).getCategoryId().equals(category.getId())) {
-                Timber.d("added skill to category: " + category.getName());
                 categorySkills.add(skills.get(i));
             }
         }
@@ -106,7 +97,7 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
         Collections.sort(categories);
     }
 
-    public int getItemPosition(Object object){
+    public int getItemPosition(Object object) {
         return POSITION_NONE;
     }
 
@@ -117,8 +108,8 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
         if (mCurTransaction == null) {
             mCurTransaction = mFragmentManager.beginTransaction();
         }
-        mCurTransaction.add(container.getId(),fragment,"fragment:"+position);
-        mFragments.put(position,fragment);
+        mCurTransaction.add(container.getId(), fragment, "fragment:" + position);
+        mFragments.put(position, fragment);
 
         return fragment;
     }
@@ -139,14 +130,11 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Timber.d("position= " + position);
         if (position == 0) {
-            Timber.d("Rider? " + rider);
             return ProfileFragment.newInstance(rider ?
                     RIDER_PROFILE : HORSE_PROFILE, horseProfile, riderProfile);
         } else {
             Category category = categories.get(position - 1);
-            Timber.d("Category: " + category.getName());
             return CategoryFragment.newInstance(category,
                     getSkillsForCategory(category),
                     allLevels,
@@ -162,6 +150,7 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
             mFragmentManager.executePendingTransactions();
         }
     }
+
     @Override
     public int getCount() {
         return categories.size() + 1;

@@ -4,10 +4,14 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.support.annotation.StringRes;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.TextInputEditText;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,17 +26,20 @@ import com.frenchfriedtechnology.horseandriderscompanion.AccountManager;
 import com.frenchfriedtechnology.horseandriderscompanion.BusProvider;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Level;
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LevelCreateEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LevelDeleteEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LevelAdjustedEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.util.Constants;
 import com.frenchfriedtechnology.horseandriderscompanion.util.ViewUtil;
+import com.frenchfriedtechnology.horseandriderscompanion.view.adapters.ResourceAdapter;
 
 import org.parceler.Parcels;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 
 import timber.log.Timber;
 
@@ -52,6 +59,7 @@ public class DialogCreateAdjustLevel extends DialogFragment {
     private static final String LEVEL = "LEVEL";
     private static final String SKILL_ID = "Skill_Id";
     public static final String NEW_LEVEL = "NEW_LEVEL";
+    private static final String RESOURCES = "RESOURCES";
     public static final String EDIT_LEVEL = "EDIT_LEVEL";
     public static final String RIDER_ADJUST = "RIDER_ADJUST";
     public static final String HORSE_ADJUST = "HORSE_ADJUST";
@@ -61,12 +69,13 @@ public class DialogCreateAdjustLevel extends DialogFragment {
     private TextInputEditText completeLevelDescription;
 
 
-    public static DialogCreateAdjustLevel newInstance(@StringRes String tag, @Nullable Level level, String skillId) {
-
+    public static DialogCreateAdjustLevel newInstance(@StringRes String tag, @Nullable Level level, String skillId, List<Resource> resources) {
+        Parcelable resourceList = Parcels.wrap(resources);
         Bundle args = new Bundle();
         args.putParcelable(LEVEL, Parcels.wrap(level));
         args.putString(TAG, tag);
         args.putString(SKILL_ID, skillId);
+        args.putParcelable(RESOURCES, resourceList);
 
         DialogCreateAdjustLevel fragment = new DialogCreateAdjustLevel();
         fragment.setArguments(args);
@@ -186,6 +195,17 @@ public class DialogCreateAdjustLevel extends DialogFragment {
      * Also, Provides resources(url's to videos articles on training/learning content)
      */
     private void initializeAdjust(View view) {
+        //----Resources Layout
+        LinearLayout resourcesLayout = (LinearLayout) view.findViewById(R.id.resources_layout);
+        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(resourcesLayout);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        bottomSheetBehavior.setPeekHeight(ViewUtil.dpToPx(50));
+        ResourceAdapter resourceAdapter = new ResourceAdapter(Parcels.unwrap(getArguments().getParcelable(RESOURCES)));
+        RecyclerView resourcesRecycler = (RecyclerView) view.findViewById(R.id.level_resources_recycler);
+        resourcesRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+        resourcesRecycler.setAdapter(resourceAdapter);
+
+        //----Level layout
         TextView lName = (TextView) view.findViewById(R.id.adjust_level_name);
         TextView completeDescription = (TextView) view.findViewById(R.id.adjust_level_description_complete);
         TextView learningDescription = (TextView) view.findViewById(R.id.adjust_level_description_learning);
@@ -195,8 +215,8 @@ public class DialogCreateAdjustLevel extends DialogFragment {
         TextView complete = (TextView) view.findViewById(R.id.adjust_complete);
 
         lName.setText(level.getLevelName());
-        learningDescription.setText(String.format("To be considered Learning:\n\n%s", level.getLearningDescription()));
-        completeDescription.setText(String.format("To be considered Complete:\n\n%s", level.getCompleteDescription()));
+        learningDescription.setText(level.getLearningDescription());
+        completeDescription.setText(level.getCompleteDescription());
 
         // FIXME: 12/12/16 This needs to be more that just if instructor or not,
         // needs to know if their own level is high enough to verify and check if horse or rider is a student

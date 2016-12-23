@@ -130,6 +130,7 @@
     </plurals>
     <string name="title_activity_skill_tree">SkillTree</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="empty_resource">No Resources: Click to add +</string>
 
 
 </resources>
