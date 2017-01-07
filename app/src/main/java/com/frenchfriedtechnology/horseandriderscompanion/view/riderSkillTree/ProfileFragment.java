@@ -13,11 +13,14 @@ import android.widget.TextView;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.HorseProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.RiderProfile;
+import com.frenchfriedtechnology.horseandriderscompanion.util.TimeUtils;
 
 import org.parceler.Parcels;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import timber.log.Timber;
 
 /**
  * Created by matteo on 16/12/16 for HorseandRidersCompanion.
@@ -67,7 +70,8 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
+        View rootView = inflater.inflate(tag.equals(RIDER_PROFILE) ?
+                R.layout.fragment_rider_profile : R.layout.fragment_horse_profile, container, false);
         if (tag.equals(RIDER_PROFILE)) {
             inflateRiderView(rootView);
         } else {
@@ -78,13 +82,24 @@ public class ProfileFragment extends Fragment {
     }
 
     private void inflateRiderView(View rootView) {
-
+        Timber.d("ProfileName: " + riderProfile.getName());
         TextView profileName = (TextView) rootView.findViewById(R.id.profile_rider_name);
         profileName.setText(riderProfile.getName());
+        TextView editDate = (TextView) rootView.findViewById(R.id.profile_rider_last_edit);
+        editDate.setText(String.format("Edited: %s %s", TimeUtils.lastEditDate(riderProfile.getLastEditDate()), " ago"));
+        TextView email = (TextView) rootView.findViewById(R.id.profile_rider_email);
+        email.setText(String.format("Email: %s", riderProfile.getEmail()));
+        TextView subscription = (TextView) rootView.findViewById(R.id.profile_rider_subscription);
+        subscription.setText(String.format("Subscribed: %s", riderProfile.isSubscribed()));
+        TextView editor = (TextView) rootView.findViewById(R.id.profile_rider_editor);
+        if (riderProfile.isEditor()) {
+            editor.setText("You have been adorned with the \"Editor\" ability, this allows you to make significant changes to the way Horse & Rider's Companion Looks.\n\nUse it Wisely!");
+        }
     }
 
     private void inflateHorseView(View rootView) {
-        TextView profileName = (TextView) rootView.findViewById(R.id.profile_rider_name);
+        Timber.d("ProfileName: " + horseProfile.getName());
+        TextView profileName = (TextView) rootView.findViewById(R.id.profile_horse_name);
         profileName.setText(horseProfile.getName());
     }
 

@@ -9,9 +9,11 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -23,6 +25,7 @@ import com.frenchfriedtechnology.horseandriderscompanion.R;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.HorseProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.events.HorseProfileCreateEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.HorseProfileDeleteEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.util.TimeUtils;
 import com.frenchfriedtechnology.horseandriderscompanion.util.ViewUtil;
 
 import org.parceler.Parcels;
@@ -65,13 +68,13 @@ public class DialogHorseProfile extends DialogFragment {
     }
 
     private String tag;
-    private HorseProfile horseProfile = new HorseProfile();
+    private HorseProfile editHorseProfile = new HorseProfile();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         tag = getArguments().getString(TAG);
-        horseProfile = Parcels.unwrap(getArguments().getParcelable(HORSE_PROFILE));
+        editHorseProfile = Parcels.unwrap(getArguments().getParcelable(HORSE_PROFILE));
     }
 
     @Override
@@ -83,22 +86,64 @@ public class DialogHorseProfile extends DialogFragment {
         fl.addView(view);
 
         horseProfileName = (TextInputEditText) view.findViewById(R.id.horse_name);
-        horseProfileBreed = (TextInputEditText) view.findViewById(R.id.horse_breed);
-        horseProfileDob = (TextInputEditText) view.findViewById(R.id.horse_dob);
-        horseProfileAge = (TextInputEditText) view.findViewById(R.id.horse_age);
-        horseProfileColor = (TextInputEditText) view.findViewById(R.id.horse_color);
-        horseProfileHeight = (TextInputEditText) view.findViewById(R.id.horse_height);
-        horseProfileCurrentOwner = (TextInputEditText) view.findViewById(R.id.horse_owner);
-        horseProfileDateOfPurchase = (TextInputEditText) view.findViewById(R.id.horse_date_of_purchase);
-        horseProfilePurchasePrice = (TextInputEditText) view.findViewById(R.id.horse_purchase_price);
 
+        horseProfileBreed = (TextInputEditText) view.findViewById(R.id.horse_breed);
+        horseProfileBreed.setOnEditorActionListener((v, actionId, event) -> {
+            horseProfileAge.requestFocus();
+            onDobClicked();
+            return true;
+        });
+
+        horseProfileDob = (TextInputEditText) view.findViewById(R.id.horse_dob);
+        horseProfileDob.setOnClickListener(v -> onDobClicked());
+        horseProfileDob.setOnLongClickListener(v -> {
+            horseProfileDob.setText(null);
+            return true;
+        });
+
+        horseProfileAge = (TextInputEditText) view.findViewById(R.id.horse_age);
+
+        horseProfileColor = (TextInputEditText) view.findViewById(R.id.horse_color);
+        horseProfileColor.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+                horseProfileCurrentOwner.requestFocus();
+                onHeightClicked(horseProfileHeight);
+                return true;
+
+            }
+        });
+        horseProfileHeight = (TextInputEditText) view.findViewById(R.id.horse_height);
+        horseProfileHeight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onHeightClicked(horseProfileHeight);
+            }
+        });
+
+        horseProfileCurrentOwner = (TextInputEditText) view.findViewById(R.id.horse_owner);
+        horseProfileCurrentOwner.setOnEditorActionListener((v, actionId, event) -> {
+            horseProfilePurchasePrice.requestFocus();
+            onDateOfPurchaseClicked();
+            return true;
+        });
+
+        horseProfileDateOfPurchase = (TextInputEditText) view.findViewById(R.id.horse_date_of_purchase);
+        horseProfileDateOfPurchase.setOnClickListener(v -> onDateOfPurchaseClicked());
+
+        horseProfilePurchasePrice = (TextInputEditText) view.findViewById(R.id.horse_purchase_price);
+        horseProfilePurchasePrice.setOnEditorActionListener((v, actionId, event) -> {
+            createNewProfileClicked();
+            return true;
+        });
         TextView dialogTitle = (TextView) view.findViewById(R.id.dialog_title);
 
         ImageButton deleteButton = (ImageButton) view.findViewById(R.id.delete_item_button);
         deleteButton.setVisibility(tag.equals(EDIT_HORSE) ? View.VISIBLE : View.GONE);
         deleteButton.setOnClickListener(view1 -> {
-            if (horseProfile.getName() != null) {
-                BusProvider.getBusProviderInstance().post(new HorseProfileDeleteEvent(horseProfile.getId()));
+            if (editHorseProfile.getName() != null) {
+                BusProvider.getBusProviderInstance().post(new HorseProfileDeleteEvent(editHorseProfile.getId()));
                 dismiss();
             } else {
                 Timber.d("DeleteHorseProfile() Error:  name is null");
@@ -108,41 +153,22 @@ public class DialogHorseProfile extends DialogFragment {
 
         //Edit HorseProfile()
         if (tag.equals(EDIT_HORSE)) {
-            horseProfileName.setText(horseProfile.getName());
-            horseProfileBreed.setText(horseProfile.getBreed());
-////set millis to date            horseProfileDob.setText(horseProfile.getDateOfBirth());
-//            horseProfileDateOfPurchase.setText(horseProfile.getDateOfPurchase());
-//            horseProfilePurchasePrice.setText(horseProfile.getPurchasePrice());
-            horseProfileAge.setText(horseProfile.getAge());
-            horseProfileColor.setText(horseProfile.getColor());
-            horseProfileHeight.setText(horseProfile.getHeight());
-            horseProfileCurrentOwner.setText(horseProfile.getCurrentOwner());
+
+            horseProfileName.setText(editHorseProfile.getName());
+            horseProfileBreed.setText(editHorseProfile.getBreed());
+            horseProfileDob.setText(
+                    new TimeUtils().millisToDate(editHorseProfile.getDateOfBirth()));
+            horseProfileDateOfPurchase.setText(
+                    new TimeUtils().millisToDate(editHorseProfile.getDateOfPurchase()));
+            horseProfilePurchasePrice.setText(String.valueOf(editHorseProfile.getPurchasePrice()));
+            horseProfileAge.setText(editHorseProfile.getAge());
+            horseProfileColor.setText(editHorseProfile.getColor());
+            horseProfileHeight.setText(editHorseProfile.getHeight());
+            horseProfileCurrentOwner.setText(editHorseProfile.getCurrentOwner());
         }
 
         LinearLayout createButton = (LinearLayout) view.findViewById(R.id.accept_button_horse);
-        createButton.setOnClickListener(v -> {
-            String name = horseProfileName.getText().toString().trim();
-            String owner = horseProfileCurrentOwner.getText().toString().trim();
-
-            // TODO: 12/12/16 Flesh out this entire interface more, open date picker for stuff ect
-            if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(owner)) {
-                HorseProfile horseProfile = new HorseProfile();
-                horseProfile.setId(tag.equals(EDIT_HORSE) ? horseProfile.getId() : ViewUtil.createId());
-                horseProfile.setName(horseProfileName.getText().toString());
-                horseProfile.setBreed(horseProfileBreed.getText().toString());
-//            horseProfile.setDateOfBirth(horseProfileDob.getText());
-//            horseProfile.setDateOfPurchase(horseProfileDateOfPurchase.getText());
-//            horseProfile.setPurchasePrice(horseProfilePurchasePrice.getText());
-                horseProfile.setAge(horseProfileAge.getText().toString());
-                horseProfile.setColor(horseProfileColor.getText().toString());
-                horseProfile.setHeight(horseProfileHeight.getText().toString());
-                horseProfile.setCurrentOwner(horseProfileCurrentOwner.getText().toString());
-                BusProvider.getBusProviderInstance().post(new HorseProfileCreateEvent(horseProfile));
-                dismiss();
-            } else {
-                Toast.makeText(getActivity(), "Fields must not be left blank", Toast.LENGTH_SHORT).show();
-            }
-        });
+        createButton.setOnClickListener(v -> createNewProfileClicked());
 
         LinearLayout cancelButton = (LinearLayout) view.findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(v -> dismiss());
@@ -154,6 +180,52 @@ public class DialogHorseProfile extends DialogFragment {
 
         dialog.show();
 
+        ViewUtil.hideKeyboard(getActivity());
         return dialog;
     }
+
+    private void onDobClicked() {
+        new TimeUtils().datePicker(getActivity(), horseProfileDob);
+    }
+
+    private void onDateOfPurchaseClicked() {
+        new TimeUtils().datePicker(getActivity(), horseProfileDateOfPurchase);
+    }
+
+    private void onHeightClicked(EditText editText) {
+        new ViewUtil().horseHeightChooser(getActivity(), editText);
+    }
+
+    private void createNewProfileClicked() {
+        String name = horseProfileName.getText().toString().trim();
+        String owner = horseProfileCurrentOwner.getText().toString().trim();
+
+        // TODO: 12/12/16 Flesh out this entire interface more, open date picker for stuff ect
+        if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(owner)) {
+            if (!new ViewUtil().containsLetter(horseProfilePurchasePrice.getText().toString())) {
+                HorseProfile horseProfile = new HorseProfile();
+                horseProfile.setId(tag.equals(EDIT_HORSE) ? editHorseProfile.getId() : ViewUtil.createId());
+                horseProfile.setName(horseProfileName.getText().toString());
+                horseProfile.setBreed(horseProfileBreed.getText().toString());
+                horseProfile.setDateOfBirth(new TimeUtils().dateToMillis(horseProfileDob.getText().toString()));
+                horseProfile.setDateOfPurchase(new TimeUtils().dateToMillis(horseProfileDateOfPurchase.getText().toString()));
+                if (horseProfilePurchasePrice != null) {
+                    long purchasePrice = Long.parseLong(horseProfilePurchasePrice.getText().toString());
+                    horseProfile.setPurchasePrice(purchasePrice);
+                }
+                horseProfile.setAge(horseProfileAge.getText().toString());
+                horseProfile.setColor(horseProfileColor.getText().toString());
+                horseProfile.setHeight(horseProfileHeight.getText().toString());
+                horseProfile.setCurrentOwner(horseProfileCurrentOwner.getText().toString());
+                BusProvider.getBusProviderInstance().post(new HorseProfileCreateEvent(horseProfile));
+                dismiss();
+
+            } else {
+                Toast.makeText(getActivity(), "Field can only contain numbers", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(getActivity(), "Fields must not be left blank", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

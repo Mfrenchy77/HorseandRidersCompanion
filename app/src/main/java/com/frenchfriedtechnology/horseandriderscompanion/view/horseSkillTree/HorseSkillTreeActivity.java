@@ -101,6 +101,7 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
     @Override
     public void getHorseProfile(HorseProfile profile) {
         this.horseProfile = profile;
+        skillTreePagerAdapter.setHorseProfile(profile);
         skillTreePagerAdapter.notifyDataSetChanged();
         toolbar.setTitle(horseProfile.getName());
         setTitle(horseProfile.getName());

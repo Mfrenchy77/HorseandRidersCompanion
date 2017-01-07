@@ -14,5 +14,5 @@ interface MainMvpView extends MvpView {
 
     void getUserProfile(RiderProfile riderProfile);
 
-    void getHorseProfile(List<HorseProfile> horseProfiles);
+    void getHorseProfiles(List<HorseProfile> horseProfiles);
 }

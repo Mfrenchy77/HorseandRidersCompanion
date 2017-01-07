@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:Tools="http://schemas.android.com/apk/res-auto"
+              xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
@@ -15,45 +16,55 @@
         android:padding="@dimen/spacing_double"
         android:src="@drawable/horse_logo"/>
 
-    <TextView
-        android:id="@+id/profile_rider_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="@dimen/spacing_normal"
-        android:gravity="center"
-        android:text="Johnny McNutface"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
-
-    <ViewFlipper
-        android:id="@+id/owned_horses_view_flipper"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/spacing_normal">
 
         <TextView
-            android:id="@+id/empty_horse_list"
-            android:layout_width="match_parent"
+            android:id="@+id/profile_rider_name"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/spacing_double"
             android:gravity="center"
-            android:padding="@dimen/spacing_normal"
-            android:text="No saved horses: click to add "/>
+            android:text="Johnny McNutface"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+
+        <TextView
+            android:id="@+id/profile_rider_last_edit"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_gravity="end|bottom"
+            android:textColor="@color/secondary_text"
+            android:textSize="12sp"
+            tools:text="edited: 4 days ago"
+            />
+    </FrameLayout>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/horses"/>
+    <TextView
+        android:id="@+id/profile_rider_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/spacing_normal"
+        tools:text="Email: johnnyMcNutz@aol.com"
+        />
 
-            <ListView
-                android:id="@+id/horses_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/spacing_normal"/>
-        </LinearLayout>
+    <TextView
+        android:id="@+id/profile_rider_subscription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/spacing_normal"
+        tools:text="you are subscribed \nExpires: 4 months"
+        />
 
-    </ViewFlipper>
+    <TextView
+        android:id="@+id/profile_rider_editor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/spacing_normal"
+        tools:text="you are an editor and have the power to edit and adjust large portions of the data, blah balh"
+        />
+
 </LinearLayout>

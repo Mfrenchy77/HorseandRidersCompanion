@@ -102,6 +102,7 @@ public class RiderSkillTreeActivity extends BaseSkillTreeActivity implements Rid
     @Override
     public void getRiderProfile(RiderProfile profile) {
         riderProfile = profile;
+        skillTreePagerAdapter.setRiderProfile(profile);
         skillTreePagerAdapter.notifyDataSetChanged();
         toolbar.setTitle(riderProfile.getName());
         setTitle(riderProfile.getName());

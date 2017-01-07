@@ -26,7 +26,6 @@ public class RiderProfile {
         //required
     }
 
-
     String picUrl; //maybe get rid of this
 
     String name;

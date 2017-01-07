@@ -15,11 +15,9 @@
 
 
         <ImageView
-
             android:id="@+id/level_up"
             android:layout_width="35dp"
             android:layout_height="35dp"
-
             android:layout_gravity="center"
             android:layout_marginBottom="@dimen/spacing_nano"
             android:layout_marginTop="@dimen/spacing_nano"

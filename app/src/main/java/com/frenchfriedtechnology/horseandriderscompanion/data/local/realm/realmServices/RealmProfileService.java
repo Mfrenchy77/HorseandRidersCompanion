@@ -35,13 +35,17 @@ public class RealmProfileService {
         final Realm realm = realmProvider.get();
         RealmRiderProfile realmRiderProfile;
         realmRiderProfile = realm.where(RealmRiderProfile.class).equalTo("email", email).findFirst();
-        return new RiderProfileMapper().realmToEntity(realm.copyFromRealm(realmRiderProfile));
+        if (realmRiderProfile != null) {
+            return new RiderProfileMapper().realmToEntity(realm.copyFromRealm(realmRiderProfile));
+        } else {
+            return null;
+        }
     }
 
     public Observable<RiderProfile> getUsersRiderProfileObservable(String email) {
         Timber.d("getUserRiderProfileObservable() called");
         final Realm realm = realmProvider.get();
-       RealmRiderProfile realmRiderProfile= realm.where(RealmRiderProfile.class).equalTo("email", email).findFirst();
+        RealmRiderProfile realmRiderProfile = realm.where(RealmRiderProfile.class).equalTo("email", email).findFirst();
 
         return Observable.just(new RiderProfileMapper().realmToEntity(realmRiderProfile));
     }

@@ -61,6 +61,21 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
         mFragments = new SparseArray<>();
     }
 
+    public HorseProfile getHorseProfile() {
+        return horseProfile;
+    }
+
+    public void setHorseProfile(HorseProfile horseProfile) {
+        this.horseProfile = horseProfile;
+    }
+
+    public RiderProfile getRiderProfile() {
+        return riderProfile;
+    }
+
+    public void setRiderProfile(RiderProfile riderProfile) {
+        this.riderProfile = riderProfile;
+    }
 
     public void setAllLevels(List<Level> allLevels) {
         this.allLevels = allLevels;
@@ -140,7 +155,7 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         if (position == 0) {
             return ProfileFragment.newInstance(rider ?
-                    RIDER_PROFILE : HORSE_PROFILE, horseProfile, riderProfile);
+                    RIDER_PROFILE : HORSE_PROFILE, getHorseProfile(), getRiderProfile());
         } else {
             Category category = categories.get(position - 1);
             return CategoryFragment.newInstance(category,

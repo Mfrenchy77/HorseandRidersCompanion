@@ -35,9 +35,10 @@ public class TimeUtils {
 
 
     private static String getTimeDifferenceAsString(long now, long editDate) {
-
-        long difference = editDate - now;
-
+        Timber.d("Now: " + now);
+        Timber.d("EditDate: " + editDate);
+        long difference = now - editDate;
+        Timber.d("difference: " + difference);
         int seconds = (int) TimeUnit.MILLISECONDS.toSeconds(difference);
         Resources res = HorseAndRidersCompanion.getContext().getResources();
 
@@ -85,6 +86,9 @@ public class TimeUtils {
 
     /**
      * return a String from a long for a representation of a date
+     *
+     * @param dateMillis long representation of date
+     * @return String from dateMillis
      */
     public String millisToDate(long dateMillis) {
         Date date = new Date(dateMillis);
@@ -107,10 +111,19 @@ public class TimeUtils {
         return date != null ? date.getTime() : 0;
     }
 
-    public void chooseDate(Context context, EditText targetView) {
+    /**
+     * returns a string to the view after choosing from date picker dialog
+     *
+     * @param context    activity context
+     * @param targetView view to set the date string on
+     */
+    public void datePicker(Context context, EditText targetView) {
 
-        Calendar currentDate = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.US);
+        Calendar currentDate = Calendar.getInstance();
+        if (!targetView.getText().toString().equals("")) {
+            currentDate.setTime(new Date(dateToMillis(targetView.getText().toString())));
+        }
         DatePickerDialog.OnDateSetListener onDateSetListener =
                 (view, year, monthOfYear, dayOfMonth) -> {
                     Calendar newDate = Calendar.getInstance();

@@ -48,6 +48,7 @@ import javax.inject.Inject;
 
 import timber.log.Timber;
 
+import static com.frenchfriedtechnology.horseandriderscompanion.view.dialogs.DialogHorseProfile.EDIT_HORSE;
 import static com.frenchfriedtechnology.horseandriderscompanion.view.dialogs.DialogHorseProfile.NEW_HORSE;
 
 
@@ -96,10 +97,6 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
 
         mPresenter.attachView(this);
         mPresenter.getRiderProfile(getIntent().getStringExtra(EMAIL));
-/*
-        if (getIntent().getBooleanExtra(EXTRA_TRIGGER_SYNC_FLAG, true)) {
-            startService(SyncService.getStartIntent(this));
-        }*/
 
         horseList = (ListView) findViewById(R.id.horses_list);
         horseList.setOnItemClickListener((adapterView, view, i, l) -> onHorseSelected(i));
@@ -193,7 +190,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
     // TODO: 30/12/16 move the adapter initilize out of here and uses getProfile for setup
     @SuppressWarnings("Convert2streamapi")
     @Override
-    public void getHorseProfile(List<HorseProfile> horseProfiles) {
+    public void getHorseProfiles(List<HorseProfile> horseProfiles) {
         this.horseProfiles = horseProfiles;
         List<String> horseNames = new ArrayList<>();
         for (HorseProfile horseProfile : horseProfiles) {
@@ -238,6 +235,11 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
     }
 
     public boolean onHorseLongClicked(int position) {
+        for (int i = 0; i < horseProfiles.size(); i++) {
+            if (horseProfiles.get(i).getName().equals(adapter.getItem(position))){
+                DialogHorseProfile.newInstance(EDIT_HORSE, horseProfiles.get(i)).show(getFragmentManager(), null);
+            }
+        }
         horseList.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
         showToast("Long Clicked: " + adapter.getItem(position));
         return true;

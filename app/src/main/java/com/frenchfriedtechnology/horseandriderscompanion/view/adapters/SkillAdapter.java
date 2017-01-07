@@ -102,6 +102,7 @@ public class SkillAdapter extends BaseQuickAdapter<Skill> {
 
         //----set skill values and click events
         holder.setText(R.id.skill_title, skill.getSkillName());
+        holder.setText(R.id.skill_description, skill.getDescription());
         holder.itemView.setOnLongClickListener(view -> {
             view.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
             if (new UserPrefs().isEditor() && new UserPrefs().isEditMode()) {
@@ -117,13 +118,14 @@ public class SkillAdapter extends BaseQuickAdapter<Skill> {
             levelResource.addAll(getResourcesForLevel(level.getId()));
         }
         RecyclerView levelsRecycler = holder.getView(R.id.level_recycler);
-        LevelAdapter levelAdapter = new LevelAdapter(levels, levelResource,isRider());
+        LevelAdapter levelAdapter = new LevelAdapter(levels, levelResource, isRider());
         levelAdapter.setHasStableIds(true);
         levelAdapter.sortLevels();
         levelsRecycler.setLayoutManager(new LinearLayoutManager(context));
         levelsRecycler.setAdapter(levelAdapter);
 
         //----setup edit layout
+        holder.getView(R.id.add_level_button).setVisibility(new UserPrefs().isEditMode() && new UserPrefs().isEditor() ? View.VISIBLE : View.GONE);
         holder.getView(R.id.skill_edit_layout).setVisibility(new UserPrefs().isEditor() && new UserPrefs().isEditMode() ? View.VISIBLE : View.GONE);
         holder.getView(R.id.skill_up).setOnClickListener(view -> {
             if (position > 0) {

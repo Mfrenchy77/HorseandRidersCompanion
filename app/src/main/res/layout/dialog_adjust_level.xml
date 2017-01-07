@@ -38,11 +38,13 @@
 
             <TextView
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/spacing_micro"
                 android:layout_marginStart="@dimen/spacing_micro"
-                android:layout_height="wrap_content"
                 android:text="To be considered Complete:"
-                android:textStyle="bold"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textStyle="normal|italic"
+                android:textAllCaps="true"/>
 
             <TextView
                 android:id="@+id/adjust_level_description_complete"
@@ -59,7 +61,9 @@
                 android:layout_marginEnd="@dimen/spacing_micro"
                 android:layout_marginStart="@dimen/spacing_micro"
                 android:text="To be considered Learning:"
-                android:textStyle="bold"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textStyle="normal|italic"
+                android:textAllCaps="true"/>
 
             <TextView
                 android:id="@+id/adjust_level_description_learning"
@@ -138,6 +142,7 @@
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/spacing_normal"
+            android:layout_marginRight="@dimen/spacing_normal"
             android:background="@color/colorPrimary"/>
 
     </LinearLayout>
@@ -175,10 +180,10 @@
         <TextView
             android:id="@+id/empty_resource"
             android:layout_width="match_parent"
-            android:textColor="@color/white"
             android:layout_height="wrap_content"
             android:padding="@dimen/spacing_double"
             android:text="@string/empty_resource"
+            android:textColor="@color/white"
             android:visibility="gone"
             tools:visibility="visible"/>
 

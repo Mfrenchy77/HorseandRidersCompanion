@@ -217,7 +217,6 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         }
         horseList.add(listItem);
 
-        // TODO: 28/12/16 change this to the data manager
         riderProfile.setOwnedHorses(horseList);
         realmProfileService.createOrUpdateRiderProfileToRealm(riderProfile, new RealmProfileService.RealmProfileCallback() {
             @Override
@@ -246,12 +245,26 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
                 if (!horseProfiles.contains(firebaseHorseProfile)) {
                     horseProfiles.add(firebaseHorseProfile);
                 }
-                getMvpView().getHorseProfile(horseProfiles);
+                getMvpView().getHorseProfiles(horseProfiles);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 Timber.e("Get Horse Profiles Error: " + throwable);
+            }
+        });
+    }
+
+    void getHorseProfile(String id) {
+        HorseProfileApi.getHorseProfile(id, new HorseProfileApi.HorseProfileCallback() {
+            @Override
+            public void onSuccess(HorseProfile firebaseHorseProfile) {
+                Timber.d("Horsey got: " + firebaseHorseProfile.getName());
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                Timber.e("Error retrieving HorseProfile: " + throwable);
             }
         });
     }
