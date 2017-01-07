@@ -10,6 +10,8 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import io.realm.Realm;
+import rx.Observable;
+import rx.Subscriber;
 import timber.log.Timber;
 
 /**
@@ -18,35 +20,32 @@ import timber.log.Timber;
 @Singleton
 public class RealmProfileService {
 
-    private final Provider<Realm> mRealmProvider;
+    private final Provider<Realm> realmProvider;
 
-    public RealmProfileService(Provider<Realm> mRealmProvider) {
-        this.mRealmProvider = mRealmProvider;
+    @Inject
+    public RealmProfileService(Provider<Realm> realmProvider) {
+        this.realmProvider = realmProvider;
     }
-@Inject
+
     /**
      * Get the User's Rider Profile
      */
     public RiderProfile getUsersRiderProfile(String email) {
         Timber.d("getUserRiderProfile() called");
-        Realm realm = mRealmProvider.get();
+        final Realm realm = realmProvider.get();
         RealmRiderProfile realmRiderProfile;
         realmRiderProfile = realm.where(RealmRiderProfile.class).equalTo("email", email).findFirst();
-
-       /* Log.d("RealmProfileService", "\r\nRealm Rider Profile: " + riderProfile.getName()
-                + "\r\nEmail: " + riderProfile.getEmail()
-                + "\r\nId: " + riderProfile.getId()
-                + "\r\nLast Edit by: " + riderProfile.getLastEditBy()
-                + "\r\nLast Edit date: " + riderProfile.getLastEditDate()
-                + "\r\nEditor: " + riderProfile.isEditor()
-                + "\r\nSubscribed: " + riderProfile.isSubscribed()
-                + "\r\nSubscription date: " + riderProfile.getSubscriptionDate()
-                + "\r\nSubscription end date:" + riderProfile.getSubscriptionEndDate()
-                + "\r\nSkill Level size: " + riderProfile.getSkillLevels().size());*/
-        RiderProfile profile = new RiderProfileMapper().realmToEntity(realmRiderProfile);
-        realm.close();
-        return profile;
+        return new RiderProfileMapper().realmToEntity(realm.copyFromRealm(realmRiderProfile));
     }
+
+    public Observable<RiderProfile> getUsersRiderProfileObservable(String email) {
+        Timber.d("getUserRiderProfileObservable() called");
+        final Realm realm = realmProvider.get();
+       RealmRiderProfile realmRiderProfile= realm.where(RealmRiderProfile.class).equalTo("email", email).findFirst();
+
+        return Observable.just(new RiderProfileMapper().realmToEntity(realmRiderProfile));
+    }
+
 
     /**
      * Create or update user's Rider Profile
@@ -55,7 +54,7 @@ public class RealmProfileService {
         Timber.d("createOrUpdateRiderProfileToRealm() called");
         Realm realm = null;
         try {
-            realm = mRealmProvider.get();
+            realm = realmProvider.get();
             realm.executeTransactionAsync(realm1 -> {
                 RealmRiderProfile realmRiderProfile = new RiderProfileMapper().entityToRealm(riderProfile);
                 realm1.copyToRealmOrUpdate(realmRiderProfile);
@@ -77,30 +76,92 @@ public class RealmProfileService {
         }
     }
 
-    /**
-     * Delete user's Rider Profile
-     */
-    public void deleteRiderProfileFromRealm(String email, final RealmProfileCallback onTransactionCallback) {
-        Realm realm = mRealmProvider.get();
-        realm.executeTransactionAsync(realm1 -> {
-            RealmRiderProfile profile = realm1.where(RealmRiderProfile.class).equalTo("email", email).findFirst();
-            profile.deleteFromRealm();
-        }, () -> {
-            if (onTransactionCallback != null) {
-                onTransactionCallback.onRealmSuccess();
-                if (realm != null) {
-                    realm.close();
-                }
-            }
-        }, error -> {
-            if (onTransactionCallback != null) {
-                onTransactionCallback.onRealmError(error);
-                if (realm != null) {
-                    realm.close();
+    public Observable<RiderProfile> createOrUpdateRiderProfileObservable(RiderProfile riderProfile) {
+        Timber.d("createOrUpdateRiderProfile() called");
+        return Observable.create(new Observable.OnSubscribe<RiderProfile>() {
+            @Override
+            public void call(Subscriber<? super RiderProfile> subscriber) {
+                if (subscriber.isUnsubscribed()) return;
+                Realm realm = null;
+                try {
+                    realm = realmProvider.get();
+                    realm.executeTransactionAsync(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            realm.copyToRealmOrUpdate(new RiderProfileMapper().entityToRealm(riderProfile));
+                        }
+                    }, new Realm.Transaction.OnSuccess() {
+                        @Override
+                        public void onSuccess() {
+                            subscriber.onNext(riderProfile);
+                        }
+                    });
+                } catch (Exception e) {
+                    Timber.e(e, "There was an error while adding in Realm.");
+                    subscriber.onError(e);
+                } finally {
+                    if (realm != null) {
+                        realm.close();
+                    }
                 }
             }
         });
     }
+
+    /**
+     * Delete user's Rider Profile
+     */
+    public void deleteRiderProfileFromRealm(String email, final RealmProfileCallback onTransactionCallback) {
+        Timber.d("deleteRiderProfileFromRealm() called");
+        Realm realm = null;
+        try {
+            realm = realmProvider.get();
+            realm.executeTransactionAsync(realm1 -> {
+                RealmRiderProfile profile = realm1.where(RealmRiderProfile.class).equalTo("email", email).findFirst();
+                profile.deleteFromRealm();
+            }, () -> {
+                if (onTransactionCallback != null) {
+                    onTransactionCallback.onRealmSuccess();
+                }
+            }, error -> {
+                if (onTransactionCallback != null) {
+                    onTransactionCallback.onRealmError(error);
+                }
+            });
+        } catch (Exception e) {
+            Timber.e(e, "There was an error while deleting in Realm.");
+        } finally {
+            if (realm != null) {
+                realm.close();
+            }
+        }
+    }
+
+    public Observable deleteRiderProfileFromRealmObservable(String email) {
+        Timber.d("deleteRiderProfile() called");
+        return Observable.create(new Observable.OnSubscribe<RiderProfile>() {
+            @Override
+            public void call(Subscriber<? super RiderProfile> subscriber) {
+                if (subscriber.isUnsubscribed()) return;
+                Realm realm = null;
+                try {
+                    realm = realmProvider.get();
+                    realm.executeTransactionAsync(realm1 -> {
+                        RealmRiderProfile profile = realm1.where(RealmRiderProfile.class).equalTo("email", email).findFirst();
+                        profile.deleteFromRealm();
+                    }, () -> subscriber.onNext(null), subscriber::onError);
+                } catch (Exception e) {
+                    Timber.e(e, "There was an error while deleting in Realm.");
+                } finally {
+                    if (realm != null) {
+                        realm.close();
+                    }
+                }
+            }
+        });
+    }
+
+// TODO: 27/12/16 Think about using Observables here, when you are smarter
 
     /**
      * Callbacks to notify presenters

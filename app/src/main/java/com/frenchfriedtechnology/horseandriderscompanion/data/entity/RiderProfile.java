@@ -1,6 +1,7 @@
 package com.frenchfriedtechnology.horseandriderscompanion.data.entity;
 
 
+import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.ListItem;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import org.parceler.Parcel;
@@ -8,6 +9,9 @@ import org.parceler.Parcel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import io.realm.RealmModel;
+import io.realm.annotations.RealmClass;
 
 
 /**
@@ -22,11 +26,15 @@ public class RiderProfile {
         //required
     }
 
-    String id;
 
     String picUrl; //maybe get rid of this
 
     String name;
+
+    String id;
+    long lastEditDate = 0;
+
+    String lastEditBy = null;
 
     String email;
 
@@ -34,53 +42,49 @@ public class RiderProfile {
 
     boolean isSubscribed;
 
-    long lastEditDate = 0;
-
-    String lastEditBy = null;
-
     long subscriptionDate;
 
     long subscriptionEndDate;
 
     HashMap<String, SkillLevel> skillLevels = new HashMap<>(0);
 
-    List<String> ownedHorses = new ArrayList<>(0);
+    List<BaseListItem> ownedHorses = new ArrayList<>(0);
 
-    List<String> studentHorses = new ArrayList<>(0);
+    List<BaseListItem> studentHorses = new ArrayList<>(0);
 
-    List<String> students = new ArrayList<>(0);
+    List<BaseListItem> students = new ArrayList<>(0);
 
-    List<String> instructors = new ArrayList<>(0);
+    List<BaseListItem> instructors = new ArrayList<>(0);
 
-    public List<String> getInstructors() {
+    public List<BaseListItem> getInstructors() {
         return instructors;
     }
 
-    public void setInstructors(List<String> instructors) {
+    public void setInstructors(List<BaseListItem> instructors) {
         this.instructors = instructors;
     }
 
-    public List<String> getOwnedHorses() {
+    public List<BaseListItem> getOwnedHorses() {
         return ownedHorses;
     }
 
-    public void setOwnedHorses(List<String> ownedHorses) {
+    public void setOwnedHorses(List<BaseListItem> ownedHorses) {
         this.ownedHorses = ownedHorses;
     }
 
-    public List<String> getStudentHorses() {
+    public List<BaseListItem> getStudentHorses() {
         return studentHorses;
     }
 
-    public void setStudentHorses(List<String> studentHorses) {
+    public void setStudentHorses(List<BaseListItem> studentHorses) {
         this.studentHorses = studentHorses;
     }
 
-    public List<String> getStudents() {
+    public List<BaseListItem> getStudents() {
         return students;
     }
 
-    public void setStudents(List<String> students) {
+    public void setStudents(List<BaseListItem> students) {
         this.students = students;
     }
 

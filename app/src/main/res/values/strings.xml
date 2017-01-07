@@ -70,6 +70,14 @@
     <string name="current_owner">Current Owner</string>
     <string name="date_of_purchase">Date of Purchase</string>
     <string name="purchase_price">Purchase Price</string>
+
+    //----Need to Organize
+
+    <string name="title_activity_skill_tree">SkillTree</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="empty_resource">No Resources: Click to add +</string>
+    <string name="resource_create_link_hint">Link address</string>
+    <string name="submit">Submit</string>
     <string name="night_mode">Night Mode</string>
     <string name="instructor">Instructor</string>
     <string name="auto_change_theme">Auto Change Day/Night</string>
@@ -87,6 +95,10 @@
     <string name="time_unknown">Unknown Time</string>
     <string name="hint_complete_level_description">Complete Level Description</string>
     <string name="hint_learning_level_description">Learning Level Description</string>
+    <string name="sending">Sending</string>
+    <string name="create_new_resource_label">Horse &amp; Riders Companion</string>
+    <string name="title_too_short">Title too short</string>
+    <string name="empty_field">Field cannot be left empty</string>
 
     //---- Plurals
     <plurals name="time_seconds">
@@ -128,9 +140,6 @@
         <item quantity="one">%d Comment</item>
         <item quantity="other">%d Comments</item>
     </plurals>
-    <string name="title_activity_skill_tree">SkillTree</string>
-    <string name="section_format">Hello World from section: %1$d</string>
-    <string name="empty_resource">No Resources: Click to add +</string>
 
 
 </resources>

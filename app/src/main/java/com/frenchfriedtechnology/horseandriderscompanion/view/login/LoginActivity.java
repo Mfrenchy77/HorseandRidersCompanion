@@ -149,7 +149,7 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
     @Subscribe
     public void LoginEvent(LoginEvent event) {
         if (event.isSuccess()) {
-            MainActivity.start(context, event.getEmail());
+            MainActivity.start(context, event.getEmail(), true);
             finish();
         } else {
             DialogFactory.showErrorSnackBar(context, findViewById(android.R.id.content), new Throwable(event.getMessage())).show();

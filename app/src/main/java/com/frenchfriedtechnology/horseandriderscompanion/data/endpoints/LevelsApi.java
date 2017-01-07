@@ -17,7 +17,7 @@ import java.util.List;
 public class LevelsApi {
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-    public void createOrEditLevel(Level level, String path) {
+    public void createOrUpdateLevel(Level level, String path) {
         //create Level
         databaseReference.child(path)
                 .child(Constants.LEVELS)

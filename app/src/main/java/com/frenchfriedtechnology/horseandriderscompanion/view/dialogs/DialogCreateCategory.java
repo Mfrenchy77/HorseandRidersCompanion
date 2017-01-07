@@ -37,7 +37,6 @@ import timber.log.Timber;
 
 public class DialogCreateCategory extends DialogFragment {
 
-
     @StringDef({NEW_CATEGORY, EDIT_CATEGORY})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Tags {

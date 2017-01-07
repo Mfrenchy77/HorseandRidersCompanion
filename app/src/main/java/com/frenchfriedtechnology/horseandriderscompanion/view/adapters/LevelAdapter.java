@@ -1,6 +1,5 @@
 package com.frenchfriedtechnology.horseandriderscompanion.view.adapters;
 
-import android.content.Context;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
 
@@ -9,6 +8,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.frenchfriedtechnology.horseandriderscompanion.BusProvider;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Level;
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LevelEditEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LevelSelectEvent;
@@ -32,10 +32,12 @@ import static com.frenchfriedtechnology.horseandriderscompanion.events.LevelSele
 class LevelAdapter extends BaseQuickAdapter<Level> {
 
     private List<Level> levels = new ArrayList<>();
+    private List<Resource> resources = new ArrayList<>();
     private boolean rider;
 
-    LevelAdapter(List<Level> levels, boolean rider) {
+    LevelAdapter(List<Level> levels, List<Resource> resources, boolean rider) {
         super(R.layout.item_level, levels);
+        this.resources = resources;
         this.rider = rider;
         this.levels = levels;
     }
@@ -73,7 +75,9 @@ class LevelAdapter extends BaseQuickAdapter<Level> {
             Timber.d("setSkillPosition: " + position);
             BusProvider.getBusProviderInstance().post(new LevelEditEvent(level));
         }
-
+        if (!resources.isEmpty()) {
+            Timber.d("Resources size: " + resources.size());
+        }
         //----set level values and click events
         holder.setText(R.id.level_title, level.getLevelName());
         View levelIndicator = holder.getView(R.id.level_indicator);

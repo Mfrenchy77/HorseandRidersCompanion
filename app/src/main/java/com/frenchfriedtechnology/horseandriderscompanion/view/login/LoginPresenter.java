@@ -4,11 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.frenchfriedtechnology.horseandriderscompanion.BusProvider;
-import com.frenchfriedtechnology.horseandriderscompanion.HorseAndRidersCompanion;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.RiderProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.AppPrefs;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
-import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.RealmService;
+import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.realmServices.RealmProfileService;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LoginEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.util.DialogFactory;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BasePresenter;
@@ -26,16 +25,17 @@ import timber.log.Timber;
  */
 public class LoginPresenter extends BasePresenter<LoginMvpView> {
 
+    private final RealmProfileService realmProfileService;
+    private FirebaseAuth.AuthStateListener authListener;
+    private Context context;
+
     @Inject
-    LoginPresenter() {
-      }
+    LoginPresenter(RealmProfileService realmProfileService) {
+        this.realmProfileService = realmProfileService;
+    }
 
     @Inject
     FirebaseAuth mAuth;
-
-    private RealmService realmService = new RealmService();
-    private Context context;
-    private FirebaseAuth.AuthStateListener authListener;
 
     /**
      * This main authorization check happens here
@@ -51,7 +51,8 @@ public class LoginPresenter extends BasePresenter<LoginMvpView> {
             if (user != null) {
                 Timber.d("user signed in");
                 //user is authorized--create or update Realm
-                RiderProfile riderProfile = realmService.getUsersRiderProfile(user.getEmail());
+
+                RiderProfile riderProfile = realmProfileService.getUsersRiderProfile(user.getEmail());
                 if (riderProfile == null) {
                     //No Profile saved in Realm
                     //create a default profile, if user has a firebase account it will download
@@ -61,11 +62,11 @@ public class LoginPresenter extends BasePresenter<LoginMvpView> {
                     riderProfile.setName(user.getDisplayName());
                     riderProfile.setId(user.getUid());
                     riderProfile.setLastEditBy(user.getDisplayName());
-                    realmService.createOrUpdateRiderProfileToRealm(riderProfile, new RealmService.OnTransactionCallback() {
+                    realmProfileService.createOrUpdateRiderProfileToRealm(riderProfile, new RealmProfileService.RealmProfileCallback() {
                         @Override
                         public void onRealmSuccess() {
                             //Realm profile created
-                            RiderProfile profile = realmService.getUsersRiderProfile(user.getEmail());
+                            RiderProfile profile = realmProfileService.getUsersRiderProfile(user.getEmail());
                             //setup App preferences for user
                             AppPrefs.setActiveUser(profile.getName());
                             new UserPrefs().setUserEmail(profile.getEmail());
@@ -82,17 +83,13 @@ public class LoginPresenter extends BasePresenter<LoginMvpView> {
                     });
                 } else {
                     //user already has a saved profile, send to main activity
+                    new UserPrefs().setEditor(riderProfile.isEditor());
                     BusProvider.getBusProviderInstance().post(new LoginEvent(true, "User signed in", user.getEmail()));
                 }
             } else {
                 Timber.d("user signed out");
             }
         };
-    }
-
-    @Override
-    public void detachView() {
-        super.detachView();
     }
 
     /**

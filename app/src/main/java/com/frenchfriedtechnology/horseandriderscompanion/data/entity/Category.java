@@ -1,52 +1,34 @@
 package com.frenchfriedtechnology.horseandriderscompanion.data.entity;
 
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.firebase.database.IgnoreExtraProperties;
-
-import org.parceler.Parcel;
-
 
 /**
  * Model for Skill Tree Category
  */
 
-@Parcel
 @IgnoreExtraProperties
-public class Category implements Comparable<Category> {
+public class Category implements Comparable<Category>, Parcelable {
 
     public Category() {
         //required
     }
 
-    String id;
+    private String id;
 
-    String name;
+    private String name;
 
-    String description;
+    private String description;
 
-    String lastEditBy;
+    private int position = -1;
 
-    long lastEditDate;
+    private boolean rider;
 
-    int position = -1;
+    private String lastEditBy;
 
-    public int getPosition() {
-        return position;
-    }
-
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    private long lastEditDate = 0;
 
     public String getId() {
         return id;
@@ -80,6 +62,31 @@ public class Category implements Comparable<Category> {
         this.name = name;
     }
 
+    public boolean isRider() {
+        return rider;
+    }
+
+    public void setRider(boolean rider) {
+        this.rider = rider;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public int compareTo(@NonNull Category category) {
         if (this.getPosition() > category.getPosition())
@@ -88,4 +95,42 @@ public class Category implements Comparable<Category> {
             return -1;
         else return 0;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(android.os.Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeString(this.name);
+        dest.writeString(this.description);
+        dest.writeInt(this.position);
+        dest.writeByte(this.rider ? (byte) 1 : (byte) 0);
+        dest.writeString(this.lastEditBy);
+        dest.writeLong(this.lastEditDate);
+    }
+
+    protected Category(android.os.Parcel in) {
+        this.id = in.readString();
+        this.name = in.readString();
+        this.description = in.readString();
+        this.position = in.readInt();
+        this.rider = in.readByte() != 0;
+        this.lastEditBy = in.readString();
+        this.lastEditDate = in.readLong();
+    }
+
+    public static final Parcelable.Creator<Category> CREATOR = new Parcelable.Creator<Category>() {
+        @Override
+        public Category createFromParcel(android.os.Parcel source) {
+            return new Category(source);
+        }
+
+        @Override
+        public Category[] newArray(int size) {
+            return new Category[size];
+        }
+    };
 }

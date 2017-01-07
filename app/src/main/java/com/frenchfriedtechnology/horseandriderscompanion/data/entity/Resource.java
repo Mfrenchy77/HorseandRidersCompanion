@@ -2,6 +2,8 @@ package com.frenchfriedtechnology.horseandriderscompanion.data.entity;
 
 import org.parceler.Parcel;
 
+import java.util.List;
+
 /**
  * Model of Resource
  */
@@ -11,41 +13,36 @@ public class Resource {
         //required
     }
 
-    String thumbnail;
     String id;
-    String title;
+
+    String name;
+
+    String thumbnail;
+
     String description;
+
     String url;
-    String addedBy;
-    long addedDate;
-    long numberOrRates;
+
+    long numberOfRates;
+
     long rating;
-    String categoryId;
-    String skillId;
-    String levelId;
 
-    public String getAddedBy() {
-        return addedBy;
+    List<BaseListItem> categoryIds;
+
+    List<BaseListItem> skillIds;
+
+    List<BaseListItem> levelIds;
+
+    String lastEditBy;
+
+    long lastEditDate;
+
+    public List<BaseListItem> getCategoryIds() {
+        return categoryIds;
     }
 
-    public void setAddedBy(String addedBy) {
-        this.addedBy = addedBy;
-    }
-
-    public long getAddedDate() {
-        return addedDate;
-    }
-
-    public void setAddedDate(long addedDate) {
-        this.addedDate = addedDate;
-    }
-
-    public String getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
+    public void setCategoryIds(List<BaseListItem> categoryIds) {
+        this.categoryIds = categoryIds;
     }
 
     public String getDescription() {
@@ -64,20 +61,44 @@ public class Resource {
         this.id = id;
     }
 
-    public String getLevelId() {
-        return levelId;
+    public String getLastEditBy() {
+        return lastEditBy;
     }
 
-    public void setLevelId(String levelId) {
-        this.levelId = levelId;
+    public void setLastEditBy(String lastEditBy) {
+        this.lastEditBy = lastEditBy;
     }
 
-    public long getNumberOrRates() {
-        return numberOrRates;
+    public long getLastEditDate() {
+        return lastEditDate;
     }
 
-    public void setNumberOrRates(long numberOrRates) {
-        this.numberOrRates = numberOrRates;
+    public void setLastEditDate(long lastEditDate) {
+        this.lastEditDate = lastEditDate;
+    }
+
+    public List<BaseListItem> getLevelIds() {
+        return levelIds;
+    }
+
+    public void setLevelIds(List<BaseListItem> levelIds) {
+        this.levelIds = levelIds;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public long getNumberOfRates() {
+        return numberOfRates;
+    }
+
+    public void setNumberOfRates(long numberOfRates) {
+        this.numberOfRates = numberOfRates;
     }
 
     public long getRating() {
@@ -88,12 +109,12 @@ public class Resource {
         this.rating = rating;
     }
 
-    public String getSkillId() {
-        return skillId;
+    public List<BaseListItem> getSkillIds() {
+        return skillIds;
     }
 
-    public void setSkillId(String skillId) {
-        this.skillId = skillId;
+    public void setSkillIds(List<BaseListItem> skillIds) {
+        this.skillIds = skillIds;
     }
 
     public String getThumbnail() {
@@ -102,14 +123,6 @@ public class Resource {
 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getUrl() {

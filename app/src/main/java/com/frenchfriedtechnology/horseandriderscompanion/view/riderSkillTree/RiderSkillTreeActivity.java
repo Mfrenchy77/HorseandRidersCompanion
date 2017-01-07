@@ -64,7 +64,7 @@ public class RiderSkillTreeActivity extends BaseSkillTreeActivity implements Rid
 
     private static final String VIEW_PAGER_ITEM = "VIEW_PAGE_ITEM";
     private static final String EMAIL = "Email";
-    private List<Resource> levelResources = new ArrayList<>();
+    private List<Resource> resources = new ArrayList<>();
     private RiderProfile riderProfile = new RiderProfile();
 
 
@@ -114,7 +114,8 @@ public class RiderSkillTreeActivity extends BaseSkillTreeActivity implements Rid
 
     @Override
     public void getResources(List<Resource> resources) {
-        levelResources = resources;
+        this.resources = resources;
+        skillTreePagerAdapter.setResources(resources);
     }
 
     private void initPagerAdapter() {
@@ -144,6 +145,7 @@ public class RiderSkillTreeActivity extends BaseSkillTreeActivity implements Rid
         category.setId(ViewUtil.createId());
         category.setLastEditDate(System.currentTimeMillis());
         category.setLastEditBy(AccountManager.currentUser());
+        category.setRider(true);
         category.setPosition(getCategories().size() + 1);
         basePresenter.createCategory(category);
     }
@@ -191,16 +193,18 @@ public class RiderSkillTreeActivity extends BaseSkillTreeActivity implements Rid
         skill.setCategoryId(event.getCategoryId());
         skill.setId(event.isEdit() ? event.getSkillId() : ViewUtil.createId());
         skill.setSkillName(event.getSkillName());
+        skill.setDescription(event.getSkillDescription());
         skill.setLastEditDate(System.currentTimeMillis());
-        skill.setLastEditedBy(AccountManager.currentUser());
+        skill.setLastEditBy(AccountManager.currentUser());
         skill.setPosition((getSkills().size() + 1));
+        skill.setRider(true);
         basePresenter.createSkill(skill);
     }
 
     @Subscribe
     public void updateSkillEvent(SkillUpdateEvent event) {
         Skill editedSkill = event.getSkill();
-        editedSkill.setLastEditedBy(AccountManager.currentUser());
+        editedSkill.setLastEditBy(AccountManager.currentUser());
         editedSkill.setLastEditDate(System.currentTimeMillis());
         basePresenter.editSkill(editedSkill);
     }
@@ -215,7 +219,7 @@ public class RiderSkillTreeActivity extends BaseSkillTreeActivity implements Rid
 
     @Subscribe
     public void levelSelectedEvent(LevelSelectEvent event) {
-        presenter.getResourcesForLevel(event.getLevel().getId());
+        List<Resource> levelResources;
         switch (event.getTag()) {
             //Dialog Update Level
             case EDIT_LEVEL:
@@ -226,19 +230,31 @@ public class RiderSkillTreeActivity extends BaseSkillTreeActivity implements Rid
                 break;
             //Adjust Rider/Horse SkillLevel and show Resources for level
             case RIDER_ADJUST:
+                levelResources = getResourcesForLevel(event.getLevel().getId());
                 DialogCreateAdjustLevel.newInstance(RIDER_ADJUST, event.getLevel(), event.getSkillId(), levelResources).show(getFragmentManager(), null);
                 break;
             case HORSE_ADJUST:
+                levelResources = getResourcesForLevel(event.getLevel().getId());
                 DialogCreateAdjustLevel.newInstance(HORSE_ADJUST, event.getLevel(), event.getSkillId(), levelResources).show(getFragmentManager(), null);
                 break;
         }
+    }
+
+    private List<Resource> getResourcesForLevel(String levelId) {
+        List<Resource> levelResources = new ArrayList<>();
+        for (int i = 0; i < resources.size(); i++) {
+            if (resources.get(i).getLevelIds().contains(levelId)) {
+                levelResources.add(resources.get(i));
+            }
+        }
+        return levelResources;
     }
 
     @Subscribe
     public void createLevelEvent(LevelCreateEvent event) {
         Level level = event.getLevel();
         level.setPosition((getLevels().size() + 1));
-
+        level.setRider(true);
         basePresenter.createLevel(level);
     }
 

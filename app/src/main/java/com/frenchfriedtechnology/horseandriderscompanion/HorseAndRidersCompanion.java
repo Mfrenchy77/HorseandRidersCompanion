@@ -9,8 +9,6 @@ import com.frenchfriedtechnology.horseandriderscompanion.di.component.Applicatio
 import com.frenchfriedtechnology.horseandriderscompanion.di.component.DaggerApplicationComponent;
 import com.frenchfriedtechnology.horseandriderscompanion.di.module.ApplicationModule;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import timber.log.Timber;
 
 public class HorseAndRidersCompanion extends Application {
@@ -38,15 +36,7 @@ public class HorseAndRidersCompanion extends Application {
         if (isDebuggable) {
             Timber.plant(new Timber.DebugTree());
         }
-
-        Realm.init(this);
-        RealmConfiguration config = new RealmConfiguration.Builder()
-                .name(getResources().getString(R.string.app_name))
-                .deleteRealmIfMigrationNeeded()
-                .build();
-        Realm.setDefaultConfiguration(config);
     }
-
 
     public ApplicationComponent getComponent() {
         if (mApplicationComponent == null) {

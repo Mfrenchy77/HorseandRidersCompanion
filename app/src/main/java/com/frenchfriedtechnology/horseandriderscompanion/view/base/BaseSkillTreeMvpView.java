@@ -21,4 +21,7 @@ interface BaseSkillTreeMvpView extends MvpView {
     void getSkills(List<Skill> skills);
 
     void getLevels(List<Level> levels);
+
+    void getResources(List<Resource> resources);
 }
+

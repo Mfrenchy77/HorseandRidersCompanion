@@ -1,13 +1,24 @@
 package com.frenchfriedtechnology.horseandriderscompanion.util;
 
+import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.res.Resources;
+import android.widget.EditText;
 
 import com.frenchfriedtechnology.horseandriderscompanion.HorseAndRidersCompanion;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class TimeConversionUtils {
+import timber.log.Timber;
+
+public class TimeUtils {
+    private String format = "MM/dd/yy";
 
     /**
      * @return a human readable string indicating when the item was last edited
@@ -70,5 +81,49 @@ public class TimeConversionUtils {
         }
 
         return res.getString(R.string.time_unknown);
+    }
+
+    /**
+     * return a String from a long for a representation of a date
+     */
+    public String millisToDate(long dateMillis) {
+        Date date = new Date(dateMillis);
+        return new SimpleDateFormat(format, Locale.US).format(date);
+    }
+
+    /**
+     * return a long from a String to represent a date
+     *
+     * @param dateToChange String of date
+     * @return date as millis
+     */
+    public long dateToMillis(String dateToChange) {
+        Date date = null;
+        try {
+            date = new SimpleDateFormat(format, Locale.US).parse(dateToChange);
+        } catch (ParseException e) {
+            Timber.e(e.getMessage());
+        }
+        return date != null ? date.getTime() : 0;
+    }
+
+    public void chooseDate(Context context, EditText targetView) {
+
+        Calendar currentDate = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.US);
+        DatePickerDialog.OnDateSetListener onDateSetListener =
+                (view, year, monthOfYear, dayOfMonth) -> {
+                    Calendar newDate = Calendar.getInstance();
+                    newDate.set(year, monthOfYear, dayOfMonth);
+                    targetView.setText(sdf.format(newDate.getTime()));
+
+                };
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(context,
+                onDateSetListener,
+                currentDate.get(Calendar.YEAR),
+                currentDate.get(Calendar.MONTH),
+                currentDate.get(Calendar.DAY_OF_MONTH));
+        datePickerDialog.show();
     }
 }

@@ -17,23 +17,30 @@ public class ResourcesApi {
 
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-    public void createOrEditResource(String levelId, Resource resource) {
-        databaseReference.child(Constants.RESOURCES)
-                .child(levelId).child(resource.getId())
-                .setValue(resource);
+    public void createOrUpdateResource(Resource resource, ResourceCreatedCallback callaback) {
+        databaseReference
+                .child(Constants.RESOURCES)
+                .child(resource.getId())
+                .setValue(resource).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                callaback.onSuccess();
+            } else {
+                callaback.onError("Error creating Resource: " + task.getResult().toString());
+            }
+        });
     }
 
-    public void getResourcesForLevel(String id, ResourcesCallback callback) {
-        //get resources for levelId
+    public void getAllResources(ResourcesCallback callback) {
+        //get all resources
         RxFirebaseDatabase.observeValueEvent(databaseReference
-                .child(Constants.RESOURCES)
-                .child(id), DataSnapshotMapper.listOf(Resource.class))
+                .child(Constants.RESOURCES), DataSnapshotMapper.listOf(Resource.class))
                 .subscribe(callback::onSuccess, callback::onError);
     }
 
-    public void deleteResource(String levelId, Resource resource) {
-        databaseReference.child(Constants.RESOURCES)
-                .child(levelId).child(resource.getId())
+    public void deleteResource(Resource resource) {
+        databaseReference
+                .child(Constants.RESOURCES)
+                .child(resource.getId())
                 .removeValue();
     }
 
@@ -44,5 +51,10 @@ public class ResourcesApi {
         void onError(final Throwable throwable);
     }
 
+    public interface ResourceCreatedCallback {
+        void onSuccess();
+
+        void onError(final String error);
+    }
 
 }

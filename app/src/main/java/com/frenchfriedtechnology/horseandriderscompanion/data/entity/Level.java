@@ -21,9 +21,9 @@ public class Level implements Comparable<Level> {
         //required
     }
 
-    String levelName;
-
     String id;
+
+    String levelName;
 
     String skillId;
 
@@ -37,11 +37,53 @@ public class Level implements Comparable<Level> {
     @Exclude
     int level = Constants.NO_PROGRESS;
 
+    int position = -1;
+
+    boolean rider;
+
     String lastEditBy;
 
     long lastEditDate;
 
-    int position = -1;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getLastEditBy() {
+        return lastEditBy;
+    }
+
+    public void setLastEditBy(String lastEditBy) {
+        this.lastEditBy = lastEditBy;
+    }
+
+    public long getLastEditDate() {
+        return lastEditDate;
+    }
+
+    public void setLastEditDate(long lastEditDate) {
+        this.lastEditDate = lastEditDate;
+    }
+
+    public String getLevelName() {
+        return levelName;
+    }
+
+    public void setLevelName(String levelName) {
+        this.levelName = levelName;
+    }
+
+    public boolean isRider() {/**/
+        return rider;
+    }
+
+    public void setRider(boolean rider) {
+        this.rider = rider;
+    }
 
     public String getCompleteDescription() {
         return completeDescription;
@@ -75,30 +117,6 @@ public class Level implements Comparable<Level> {
         this.description = description;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getLastEditBy() {
-        return lastEditBy;
-    }
-
-    public void setLastEditBy(String lastEditBy) {
-        this.lastEditBy = lastEditBy;
-    }
-
-    public long getLastEditDate() {
-        return lastEditDate;
-    }
-
-    public void setLastEditDate(long lastEditDate) {
-        this.lastEditDate = lastEditDate;
-    }
-
     @Exclude
     @Constants.LevelState
     public int getLevel() {
@@ -108,14 +126,6 @@ public class Level implements Comparable<Level> {
     @Exclude
     public void setLevel(@Constants.LevelState int level) {
         this.level = level;
-    }
-
-    public String getLevelName() {
-        return levelName;
-    }
-
-    public void setLevelName(String levelName) {
-        this.levelName = levelName;
     }
 
     public String getSkillId() {

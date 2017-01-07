@@ -12,6 +12,7 @@ import com.frenchfriedtechnology.horseandriderscompanion.BusProvider;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Category;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Level;
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Skill;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.SkillLevel;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
@@ -49,6 +50,7 @@ public class BaseSkillTreeActivity extends BaseActivity implements BaseSkillTree
     private List<Category> categories = new ArrayList<>();
     private List<Skill> skills = new ArrayList<>();
     private List<Level> levels = new ArrayList<>();
+    private List<Resource> resources = new ArrayList<>();
 
     protected SkillTreePagerAdapter skillTreePagerAdapter;
     private FloatingActionButton addCategoryFab;
@@ -139,19 +141,32 @@ public class BaseSkillTreeActivity extends BaseActivity implements BaseSkillTree
     @Override
     public void getCategories(List<Category> categories) {
         this.categories = categories;
-        skillTreePagerAdapter.setCategories(categories);
+        if (skillTreePagerAdapter != null) {
+            skillTreePagerAdapter.setCategories(categories);
+        }
     }
 
     @Override
     public void getSkills(List<Skill> skills) {
-        skillTreePagerAdapter.setAllSkills(skills);
-        this.skills = skills;
+        if (skillTreePagerAdapter != null) {
+            skillTreePagerAdapter.setAllSkills(skills);
+            this.skills = skills;
+        }
     }
 
     @Override
     public void getLevels(List<Level> newLevels) {
-        BusProvider.getBusProviderInstance().post(new LevelsFetch(newLevels));
-        levels = newLevels;
+        if (skillTreePagerAdapter != null) {
+            BusProvider.getBusProviderInstance().post(new LevelsFetch(newLevels));
+            skillTreePagerAdapter.setAllLevels(newLevels);
+            levels = newLevels;
+
+        }
+    }
+
+    @Override
+    public void getResources(List<Resource> resources) {
+        skillTreePagerAdapter.setResources(resources);
     }
 
     /**
@@ -198,6 +213,7 @@ public class BaseSkillTreeActivity extends BaseActivity implements BaseSkillTree
         return skills;
     }
 
+
     /**
      * Tells Base Presenter if profile is either Horse or Rider
      */
@@ -206,6 +222,7 @@ public class BaseSkillTreeActivity extends BaseActivity implements BaseSkillTree
         basePresenter.getLevels();
         basePresenter.getSkills();
         basePresenter.getCategories();
+        basePresenter.getResources();
         this.rider = rider;
     }
 

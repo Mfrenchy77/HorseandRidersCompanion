@@ -38,7 +38,6 @@ import timber.log.Timber;
 
 public class DialogHorseProfile extends DialogFragment {
 
-
     @StringDef({NEW_HORSE, EDIT_HORSE})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Tags {
@@ -98,7 +97,7 @@ public class DialogHorseProfile extends DialogFragment {
         ImageButton deleteButton = (ImageButton) view.findViewById(R.id.delete_item_button);
         deleteButton.setVisibility(tag.equals(EDIT_HORSE) ? View.VISIBLE : View.GONE);
         deleteButton.setOnClickListener(view1 -> {
-            if (horseProfile.getHorseName() != null) {
+            if (horseProfile.getName() != null) {
                 BusProvider.getBusProviderInstance().post(new HorseProfileDeleteEvent(horseProfile.getId()));
                 dismiss();
             } else {
@@ -109,7 +108,7 @@ public class DialogHorseProfile extends DialogFragment {
 
         //Edit HorseProfile()
         if (tag.equals(EDIT_HORSE)) {
-            horseProfileName.setText(horseProfile.getHorseName());
+            horseProfileName.setText(horseProfile.getName());
             horseProfileBreed.setText(horseProfile.getBreed());
 ////set millis to date            horseProfileDob.setText(horseProfile.getDateOfBirth());
 //            horseProfileDateOfPurchase.setText(horseProfile.getDateOfPurchase());
@@ -129,7 +128,7 @@ public class DialogHorseProfile extends DialogFragment {
             if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(owner)) {
                 HorseProfile horseProfile = new HorseProfile();
                 horseProfile.setId(tag.equals(EDIT_HORSE) ? horseProfile.getId() : ViewUtil.createId());
-                horseProfile.setHorseName(horseProfileName.getText().toString());
+                horseProfile.setName(horseProfileName.getText().toString());
                 horseProfile.setBreed(horseProfileBreed.getText().toString());
 //            horseProfile.setDateOfBirth(horseProfileDob.getText());
 //            horseProfile.setDateOfPurchase(horseProfileDateOfPurchase.getText());

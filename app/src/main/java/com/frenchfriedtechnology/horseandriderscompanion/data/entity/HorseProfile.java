@@ -21,7 +21,7 @@ public class HorseProfile {
 
     String id;
 
-    String horseName;
+    String name;
 
     String breed;
 
@@ -42,7 +42,6 @@ public class HorseProfile {
     long purchasePrice;
 
     HashMap<String, SkillLevel> skillLevels = new HashMap<>(0);
-
     long lastEditDate = 0;
 
     String lastEditBy = null;
@@ -135,12 +134,12 @@ public class HorseProfile {
         this.height = height;
     }
 
-    public String getHorseName() {
-        return horseName;
+    public String getName() {
+        return name;
     }
 
-    public void setHorseName(String horseName) {
-        this.horseName = horseName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPicUrl() {

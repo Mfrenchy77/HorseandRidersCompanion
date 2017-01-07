@@ -4,21 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.frenchfriedtechnology.horseandriderscompanion.BusProvider;
-import com.frenchfriedtechnology.horseandriderscompanion.HorseAndRidersCompanion;
+import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.RiderProfileApi;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.RiderProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.AppPrefs;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
-import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.RealmService;
+import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.realmServices.RealmProfileService;
 import com.frenchfriedtechnology.horseandriderscompanion.events.RegisterEvent;
-import com.frenchfriedtechnology.horseandriderscompanion.util.Constants;
-import com.frenchfriedtechnology.horseandriderscompanion.util.ViewUtil;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BasePresenter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 
 import javax.inject.Inject;
 
@@ -30,22 +25,20 @@ import timber.log.Timber;
 
 public class RegisterPresenter extends BasePresenter<RegisterMvpView> {
 
+    private FirebaseAuth.AuthStateListener authStateListener;
+    private RealmProfileService realmProfileService;
+
     @Inject
-    RegisterPresenter() {
+    RegisterPresenter(RealmProfileService realmProfileService) {
+        this.realmProfileService = realmProfileService;
     }
 
     @Inject
     FirebaseAuth auth;
-    private RealmService realmService = new RealmService();
-
-    private DatabaseReference databaseReference;
-    private FirebaseAuth.AuthStateListener authStateListener;
-
 
     @Override
     public void attachView(RegisterMvpView view) {
         super.attachView(view);
-        databaseReference = FirebaseDatabase.getInstance().getReference();
         authStateListener = firebaseAuth -> {
 
             FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -83,6 +76,7 @@ public class RegisterPresenter extends BasePresenter<RegisterMvpView> {
      * Register User with Firebase and rename Display nome to chosen name
      */
     // TODO: 16/12/16 Need to send email confirmation if registering with email
+    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     void register(Context context, String email, String password, String riderName) {
         checkViewAttached();
         getMvpView().showProgress();
@@ -100,17 +94,19 @@ public class RegisterPresenter extends BasePresenter<RegisterMvpView> {
                         UserProfileChangeRequest changeRequest = new UserProfileChangeRequest.Builder()
                                 .setDisplayName(riderName)
                                 .build();
-                        auth.getCurrentUser().updateProfile(changeRequest).addOnCompleteListener(task1 -> {
-                            if (task1.isSuccessful()) {
-                                //this is needed for display name to show up in auth listener
-                                user.reload();
-                                auth.signOut();
-                                auth.signInWithEmailAndPassword(email, password);
-                                getMvpView().hideProgress();
-                            } else {
-                                Timber.d("Error Changing Display Name");
-                            }
-                        });
+                        if (auth.getCurrentUser() != null) {
+                            auth.getCurrentUser().updateProfile(changeRequest).addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+                                    //this is needed for display name to show up in auth listener
+                                    user.reload();
+                                    auth.signOut();
+                                    auth.signInWithEmailAndPassword(email, password);
+                                    getMvpView().hideProgress();
+                                } else {
+                                    Timber.d("Error Changing Display Name");
+                                }
+                            });
+                        }
                     }
                 });
     }
@@ -128,13 +124,10 @@ public class RegisterPresenter extends BasePresenter<RegisterMvpView> {
         riderProfile.setName(riderName);
         riderProfile.setLastEditBy(riderName);
         riderProfile.setLastEditDate(System.currentTimeMillis());
-        realmService.createOrUpdateRiderProfileToRealm(riderProfile, new RealmService.OnTransactionCallback() {
+        realmProfileService.createOrUpdateRiderProfileToRealm(riderProfile, new RealmProfileService.RealmProfileCallback() {
             @Override
             public void onRealmSuccess() {
-                databaseReference.child(Constants.RIDER_PROFILE)
-                        .child(new ViewUtil().convertEmailToPath(email))
-                        .setValue(riderProfile)
-                        .addOnCompleteListener(task -> Timber.d("Created Firebase Profile"));
+                RiderProfileApi.createOrUpdateRiderProfile(riderProfile);
                 Timber.d("Created Realm Profile");
             }
 

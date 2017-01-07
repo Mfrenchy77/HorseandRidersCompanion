@@ -1,5 +1,6 @@
 package com.frenchfriedtechnology.horseandriderscompanion.data.mappers;
 
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.BaseListItem;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.RiderProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.SkillLevel;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.ListItem;
@@ -41,7 +42,8 @@ public class RiderProfileMapper {
         if (riderProfile.getOwnedHorses() != null) {
             Timber.d("Owned Horse List: " + riderProfile.getOwnedHorses().size());
             for (int i = 0; i < riderProfile.getOwnedHorses().size(); i++) {
-                ListItem item = new ListItem(riderProfile.getOwnedHorses().get(i));
+                ListItem item = new ListItem(riderProfile.getOwnedHorses().get(i).getId(),
+                        riderProfile.getOwnedHorses().get(i).getName());
                 ownedHorseList.add(item);
             }
             realmRiderProfile.setOwnedHorses(ownedHorseList);
@@ -51,7 +53,8 @@ public class RiderProfileMapper {
         if (riderProfile.getStudentHorses().size() != 0) {
             Timber.d("Student Horse List: " + riderProfile.getStudentHorses().size());
             for (int i = 0; i < riderProfile.getOwnedHorses().size(); i++) {
-                ListItem item = new ListItem(riderProfile.getStudentHorses().get(i));
+                ListItem item = new ListItem(riderProfile.getStudentHorses().get(i).getId(),
+                        riderProfile.getOwnedHorses().get(i).getName());
                 studentHorseList.add(item);
             }
             realmRiderProfile.setStudentHorses(studentHorseList);
@@ -61,20 +64,22 @@ public class RiderProfileMapper {
         if (riderProfile.getStudents().size() != 0) {
             Timber.d("Student List: " + riderProfile.getStudents().size());
             for (int i = 0; i < riderProfile.getOwnedHorses().size(); i++) {
-                ListItem item = new ListItem(riderProfile.getStudents().get(i));
+                ListItem item = new ListItem(riderProfile.getStudents().get(i).getId(),
+                        riderProfile.getOwnedHorses().get(i).getName());
                 studentRiderList.add(item);
             }
-            realmRiderProfile.setStudentHorses(studentRiderList);
+            realmRiderProfile.setStudents(studentRiderList);
         }
 
         RealmList<ListItem> instructorList = new RealmList<>();
         if (riderProfile.getInstructors().size() != 0) {
             Timber.d("Instructor List: " + riderProfile.getInstructors().size());
             for (int i = 0; i < riderProfile.getOwnedHorses().size(); i++) {
-                ListItem item = new ListItem(riderProfile.getInstructors().get(i));
+                ListItem item = new ListItem(riderProfile.getInstructors().get(i).getId(),
+                        riderProfile.getOwnedHorses().get(i).getName());
                 instructorList.add(item);
             }
-            realmRiderProfile.setStudentHorses(instructorList);
+            realmRiderProfile.setInstructors(instructorList);
         }
 
         RealmList<RealmSkillLevel> skillLevels = new RealmList<>();
@@ -110,29 +115,49 @@ public class RiderProfileMapper {
         riderProfileEntity.setLastEditBy(realmRiderProfile.getLastEditBy());
         riderProfileEntity.setLastEditDate(realmRiderProfile.getLastEditDate());
 
-        List<String> ownedHorseList = new ArrayList<>();
-        for (ListItem listItem : realmRiderProfile.getOwnedHorses()) {
-            ownedHorseList.add(listItem.getId());
+        List<BaseListItem> ownedHorseList = new ArrayList<>();
+        if (realmRiderProfile.getOwnedHorses() != null) {
+            Timber.d("Owned Horse List: " + realmRiderProfile.getOwnedHorses().size());
+            for (int i = 0; i < realmRiderProfile.getOwnedHorses().size(); i++) {
+                BaseListItem item = new BaseListItem(realmRiderProfile.getOwnedHorses().get(i).getId(),
+                        realmRiderProfile.getOwnedHorses().get(i).getName());
+                ownedHorseList.add(item);
+            }
+            riderProfileEntity.setOwnedHorses(ownedHorseList);
         }
-        riderProfileEntity.setOwnedHorses(ownedHorseList);
 
-        List<String> studentHorseList = new ArrayList<>();
-        for (ListItem listItem : realmRiderProfile.getStudentHorses()) {
-            studentHorseList.add(listItem.getId());
+        List<BaseListItem> studentHorseList = new ArrayList<>();
+        if (realmRiderProfile.getStudentHorses() != null) {
+            Timber.d("Student Horse List: " + realmRiderProfile.getStudentHorses().size());
+            for (int i = 0; i < realmRiderProfile.getStudentHorses().size(); i++) {
+                BaseListItem item = new BaseListItem(realmRiderProfile.getStudentHorses().get(i).getId(),
+                        realmRiderProfile.getStudentHorses().get(i).getName());
+                studentHorseList.add(item);
+            }
+            riderProfileEntity.setStudentHorses(studentHorseList);
         }
-        riderProfileEntity.setStudentHorses(studentHorseList);
 
-        List<String> studentRiderList = new ArrayList<>();
-        for (ListItem listItem : realmRiderProfile.getStudents()) {
-            studentRiderList.add(listItem.getId());
+        List<BaseListItem> studentList = new ArrayList<>();
+        if (realmRiderProfile.getStudents() != null) {
+            Timber.d("Student List: " + realmRiderProfile.getStudents().size());
+            for (int i = 0; i < realmRiderProfile.getStudents().size(); i++) {
+                BaseListItem item = new BaseListItem(realmRiderProfile.getStudents().get(i).getId(),
+                        realmRiderProfile.getStudents().get(i).getName());
+                studentList.add(item);
+            }
+            riderProfileEntity.setStudents(studentList);
         }
-        riderProfileEntity.setStudents(studentRiderList);
 
-        List<String> instructorList = new ArrayList<>();
-        for (ListItem listItem : realmRiderProfile.getInstructors()) {
-            instructorList.add(listItem.getId());
+        List<BaseListItem> instructorList = new ArrayList<>();
+        if (realmRiderProfile.getInstructors() != null) {
+            Timber.d("Instructor List: " + realmRiderProfile.getInstructors().size());
+            for (int i = 0; i < realmRiderProfile.getInstructors().size(); i++) {
+                BaseListItem item = new BaseListItem(realmRiderProfile.getInstructors().get(i).getId(),
+                        realmRiderProfile.getInstructors().get(i).getName());
+                instructorList.add(item);
+            }
+            riderProfileEntity.setInstructors(instructorList);
         }
-        riderProfileEntity.setInstructors(instructorList);
 
         HashMap<String, SkillLevel> skillLevels = new HashMap<>();
         for (RealmSkillLevel realmSkillLevel : realmRiderProfile.getSkillLevels()) {

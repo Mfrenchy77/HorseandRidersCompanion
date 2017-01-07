@@ -15,13 +15,13 @@ public class RealmSkillLevel extends RealmObject {
     private
     String levelId;
 
+    @Constants.LevelState
+    private int level;
+
     private String lastEditBy;
 
     private long lastEditDate;
 
-    @Constants.LevelState
-    private
-    int level;
 
     public String getLastEditBy() {
         return lastEditBy;

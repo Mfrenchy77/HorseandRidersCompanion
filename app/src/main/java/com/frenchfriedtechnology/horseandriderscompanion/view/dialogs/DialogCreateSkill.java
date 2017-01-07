@@ -18,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.frenchfriedtechnology.horseandriderscompanion.BusProvider;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Skill;
@@ -37,7 +36,6 @@ import timber.log.Timber;
  */
 
 public class DialogCreateSkill extends DialogFragment {
-
 
     @StringDef({NEW_SKILL, EDIT_SKILL})
     @Retention(RetentionPolicy.SOURCE)

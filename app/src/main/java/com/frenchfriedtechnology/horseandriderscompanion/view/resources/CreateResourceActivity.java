@@ -1,49 +1,54 @@
 package com.frenchfriedtechnology.horseandriderscompanion.view.resources;
 
 import android.content.Intent;
+import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.CardView;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.ThumbnailRequestCoordinator;
 import com.frenchfriedtechnology.horseandriderscompanion.AccountManager;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BaseActivity;
 
-import butterknife.Bind;
+import javax.inject.Inject;
+
 import butterknife.OnClick;
-import butterknife.OnTextChanged;
 import timber.log.Timber;
 
 /**
  * Activity for Creating a resource and allows share intercepts from sources outside of application
  */
 
-public class CreateResourceActivity extends BaseActivity {
-    @Bind(R.id.post_content_title)
-    TextView contentTitle;
-    @Bind(R.id.post_content_subverse)
-    TextView contentSubverse;
-    @Bind(R.id.post_content_link)
-    TextView contentLink;
-    @Bind(R.id.post_content_message)
-    TextView contentMessage;
-    @Bind(R.id.post_content_title_wrapper)
-    TextInputLayout contentTitleWrapper;
-    @Bind(R.id.post_content_subverse_wrapper)
-    TextInputLayout contentSubverseWrapper;
-    @Bind(R.id.post_content_message_wrapper)
-    TextInputLayout contentMessageWrapper;
+public class CreateResourceActivity extends BaseActivity implements CreateResourceMvpView {
 
-    @Bind(R.id.post_content_button)
-    Button contentButton;
-    @Bind(R.id.post_content_root)
-    View root;
+    public static final String ACTION_CREATE_RESOURCE = "com.frenchfriedtechnology.horseandriderscompanion.ACTION_CREATE_RESOURCE";
+    public static final String ACTION_EDIT_RESOURCE = "com.frenchfriedtechnology.horseandriderscompanion.ACTION_EDIT_RESOURCE";
+
+    private static final String EXTRA_SHARE_SCREENSHOT_AS_STREAM = "share_screenshot_as_stream";
+    public static final String EXTRA_KEY_TITLE = "EXTRA_KEY_TITLE";
+    public static final String EXTRA_KEY_URL = "EXTRA_KEY_URL";
+    public static final String EXTRA_KEY_RESOURCE = "EXTRA_KEY_RESOURCE";
+    public static final String EXTRA_KEY_ID = "EXTRA_KEY_ID";
+
+    private TextInputLayout createResourceTitleWrapper, createResourceDescriptionWrapper;
+    private TextInputEditText resourceTitle, resourceLink, resourceDescription;
+    private ImageView createResourceThumbnail;
+    private Button createResourceButton;
+    private CardView root;
+
+    @Inject
+    CreateResourcePresenter presenter;
 
     private boolean externalShare;
 
@@ -59,25 +64,32 @@ public class CreateResourceActivity extends BaseActivity {
         Intent intent = getIntent();
         externalShare = Intent.ACTION_SEND.equals(intent.getAction());
 
+        root = (CardView) findViewById(R.id.create_resource_root);
+        resourceTitle = (TextInputEditText) findViewById(R.id.create_resource_title);
+        resourceLink = (TextInputEditText) findViewById(R.id.create_resource_link);
+        resourceDescription = (TextInputEditText) findViewById(R.id.create_resource_description);
+        createResourceTitleWrapper = (TextInputLayout) findViewById(R.id.create_resource_title_wrapper);
+        createResourceDescriptionWrapper = (TextInputLayout) findViewById(R.id.create_resource_description_wrapper);
+        createResourceThumbnail = (ImageView) findViewById(R.id.create_resource_thumbnail);
+        createResourceButton = (Button) findViewById(R.id.create_resource_button);
+        createResourceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onSubmitClicked();
+            }
+        });
         if (externalShare) {
             handleExternalShare(intent);
         } else {
-            //only external shares
+            //handle EDITs
             Timber.d("Intent.ActionSend = Null");
         }
 
-        FragmentManager fm = getSupportFragmentManager();
-        PostContentPresenter postContentPresenter = (PostContentPresenter) fm.findFragmentByTag(PRESENTER_TAG);
-
-        if (postContentPresenter == null) {
-            postContentPresenter = new PostContentPresenter();
-            fm.beginTransaction().add(postContentPresenter, PRESENTER_TAG).commit();
-        }
     }
 
 
     /**
-     * Handles a share intent from a 3rd party app
+     * Handles a share intent from a 3rd party
      *
      * @param intent an intent from a 3rd party
      */
@@ -88,21 +100,43 @@ public class CreateResourceActivity extends BaseActivity {
             String text = extras.getString(Intent.EXTRA_TEXT);
             String title = extras.getString(Intent.EXTRA_TITLE);
             String subject = extras.getString(Intent.EXTRA_SUBJECT);
+            try {
+
+                // imageUri is always null
+                Uri imageUri = intent.getParcelableExtra(EXTRA_SHARE_SCREENSHOT_AS_STREAM);
+                // Uri imageUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                if (imageUri != null) {
+                    Timber.d("image exists");
+                    Glide.with(this).load(imageUri).into(createResourceThumbnail);
+                    createResourceThumbnail.setVisibility(View.VISIBLE);
+                    createResourceThumbnail.setImageURI(null);
+                    createResourceThumbnail.setImageURI(imageUri);
+                } else {
+                    createResourceThumbnail.setVisibility(View.GONE);
+                }
+            } catch (Throwable t) {
+                Timber.d("no image available" + t.getMessage());
+            }
+            Timber.d("EXTRA: " + extras);
+            Timber.d("EXTRA_STREAM: " + intent.getParcelableArrayExtra(EXTRA_SHARE_SCREENSHOT_AS_STREAM));
+            Timber.d("EXTRA_TEXT: " + text);
+            Timber.d("EXTRA_TITLE: " + title);
+            Timber.d("EXTRA_SUBJECT: " + subject);
 
             if (subject != null) {
-                contentTitle.setText(subject);
+                resourceTitle.setText(subject);
             }
             if (title != null) {
-                contentTitle.setText(title); // override subject
+                resourceTitle.setText(title); // override subject
             }
 
             if (text != null) {
                 boolean isLink = URLUtil.isValidUrl(text);
 
                 if (isLink) {
-                    contentLink.setText(text);
+                    resourceLink.setText(text);
                 } else {
-                    contentMessage.setText(text);
+                    resourceDescription.setText(text);
                 }
             }
         } else {
@@ -111,49 +145,21 @@ public class CreateResourceActivity extends BaseActivity {
         }
     }
 
-    @OnTextChanged(R.id.post_content_link)
-    void onUrlChanged() {
-        contentMessage.setVisibility(TextUtils.isEmpty(contentLink.getText()) ? View.VISIBLE : View.GONE);
-    }
+    private void onSubmitClicked() {
+        Resource resource = validatePost();
 
-    @OnTextChanged(R.id.post_content_message)
-    void onMessageChanged() {
-        contentLink.setVisibility(TextUtils.isEmpty(contentMessage.getText()) ? View.VISIBLE : View.GONE);
-        contentMessageWrapper.setError(null);
-    }
-
-    @OnTextChanged(R.id.post_content_title)
-    void onPostTitleChanged() {
-        contentTitleWrapper.setError(null);
-    }
-
-    @OnTextChanged(R.id.post_content_subverse)
-    void onSubverseChanged() {
-        contentSubverseWrapper.setError(null);
-    }
-
-    @OnClick(R.id.post_content_button)
-    void onSubmitClicked() {
-        setPosting();
-        Resource resource = new Resource();
-        resource.setTitle(contentTitle.getText().toString());
-        resource.setDescription(contentMessage.getText().toString());
-        resource.setUrl(contentLink.getText().toString());
-        resource.setAddedBy(AccountManager.currentUser());
-        resource.setAddedDate(System.currentTimeMillis());
-
-        //presenter.submitNewResource(resource)
+        presenter.submitNewResource(resource);
  /*       ApiBodyUserSubmission body = validatePost();
 
         if (new AccountManager().isGuest()) { //Check if User is guest to prevent crashes
             SnackbarUtils.displayLongDismissibleSnackbar(root, Voater.getContext().getString(R.string.err_message_security));
             finish();
         } else if (body != null) {
-            if (ACTION_CREATE_CONTENT.equals(getIntent().getAction())) {
+            if (ACTION_CREATE_RESOURCE.equals(getIntent().getAction())) {
                 BusProvider.Instance.getBus().post(new Content.Ui
                         .ContentPostEvent(body, contentSubverse.getText().toString(), false, id));
                 finish();
-            } else if (ACTION_EDIT_CONTENT.equals(getIntent().getAction())) {
+            } else if (ACTION_EDIT_RESOURCE.equals(getIntent().getAction())) {
                 BusProvider.Instance.getBus().post(new Content.Ui
                         .ContentPostEvent(body, contentSubverse.getText().toString(), true, id));
                 finish();
@@ -171,13 +177,56 @@ public class CreateResourceActivity extends BaseActivity {
      *
      * @param posting true if posting, otherwise false
      */
-    private void setPosting(boolean posting) {
-        contentTitle.setEnabled(!posting);
-        contentLink.setEnabled(!posting);
-        contentMessage.setEnabled(!posting);
+    @Override
+    public void setPosting(boolean posting) {
+        resourceTitle.setEnabled(!posting);
+        resourceLink.setEnabled(!posting);
+        resourceDescription.setEnabled(!posting);
 
-        contentButton.setEnabled(!posting);
-        contentButton.setText(posting ? R.string.sending : R.string.submit);
+        createResourceButton.setEnabled(!posting);
+        createResourceButton.setText(posting ? R.string.sending : R.string.submit);
+    }
+
+
+    /**
+     * Validates the input fields and constructs a request body if they are valid.
+     *
+     * @return a request body if valid, otherwise null
+     */
+    private Resource validatePost() {
+        Resource resource = null;
+        boolean valid = true;
+
+        String title = resourceTitle.getText().toString();
+        String url = resourceLink.getText().toString();
+        String description = resourceDescription.getText().toString();
+
+        if (TextUtils.isEmpty(title)) {
+            createResourceTitleWrapper.setError(getString(R.string.empty_field
+            ));
+            valid = false;
+        } else if (title.length() < 5) {
+            createResourceTitleWrapper.setError(getString(R.string.title_too_short));
+            valid = false;
+        }
+        url = (url.equals("")) ? null : url;
+        description = (description.equals("")) ? null : description;
+
+        if (url == null && description == null) {
+            createResourceDescriptionWrapper.setError(getString(R.string.empty_field));
+            valid = false;
+        }
+
+        if (valid) {
+            resource = new Resource();
+            resource.setName(resourceTitle.getText().toString());
+            resource.setDescription(resourceDescription.getText().toString());
+            resource.setUrl(resourceLink.getText().toString());
+            resource.setLastEditBy(AccountManager.currentUser());
+            resource.setLastEditDate(System.currentTimeMillis());
+
+        }
+        return resource;
     }
 
 }

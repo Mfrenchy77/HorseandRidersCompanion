@@ -85,7 +85,7 @@ public class ProfileFragment extends Fragment {
 
     private void inflateHorseView(View rootView) {
         TextView profileName = (TextView) rootView.findViewById(R.id.profile_rider_name);
-        profileName.setText(horseProfile.getHorseName());
+        profileName.setText(horseProfile.getName());
     }
 
 

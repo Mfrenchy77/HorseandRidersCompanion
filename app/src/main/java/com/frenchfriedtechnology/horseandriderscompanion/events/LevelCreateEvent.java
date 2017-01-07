@@ -2,7 +2,6 @@ package com.frenchfriedtechnology.horseandriderscompanion.events;
 
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Level;
 
-
 public class LevelCreateEvent {
     private boolean edit;
     private Level level = new Level();

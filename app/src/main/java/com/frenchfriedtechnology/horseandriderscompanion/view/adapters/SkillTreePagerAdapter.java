@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Category;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.HorseProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Level;
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.RiderProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Skill;
 import com.frenchfriedtechnology.horseandriderscompanion.view.riderSkillTree.CategoryFragment;
@@ -19,8 +20,6 @@ import com.frenchfriedtechnology.horseandriderscompanion.view.riderSkillTree.Pro
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import timber.log.Timber;
 
 import static com.frenchfriedtechnology.horseandriderscompanion.view.riderSkillTree.ProfileFragment.HORSE_PROFILE;
 import static com.frenchfriedtechnology.horseandriderscompanion.view.riderSkillTree.ProfileFragment.RIDER_PROFILE;
@@ -34,6 +33,7 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
     private List<Category> categories = new ArrayList<>();
     private List<Skill> allSkills = new ArrayList<>();
     private List<Level> allLevels = new ArrayList<>();
+    private List<Resource> resources = new ArrayList<>();
     private HorseProfile horseProfile = new HorseProfile();
     private RiderProfile riderProfile = new RiderProfile();
     private boolean rider;
@@ -80,6 +80,14 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
         this.categories = categories;
         sortCategories();
         notifyDataSetChanged();
+    }
+
+    public void setResources(List<Resource> resources) {
+        this.resources = resources;
+    }
+
+    public List<Resource> getResources() {
+        return resources;
     }
 
     private List<Skill> getSkillsForCategory(Category category) {
@@ -137,8 +145,7 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
             Category category = categories.get(position - 1);
             return CategoryFragment.newInstance(category,
                     getSkillsForCategory(category),
-                    allLevels,
-                    rider);
+                    allLevels, resources, rider);
         }
     }
 
@@ -164,4 +171,5 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
             return categories.get(position - 1).getName();
         }
     }
+
 }

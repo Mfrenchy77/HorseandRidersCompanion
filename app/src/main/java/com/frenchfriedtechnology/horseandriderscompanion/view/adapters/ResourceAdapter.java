@@ -1,7 +1,6 @@
 package com.frenchfriedtechnology.horseandriderscompanion.view.adapters;
 
 import android.view.View;
-import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -9,7 +8,6 @@ import com.frenchfriedtechnology.horseandriderscompanion.R;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.iarcuschin.simpleratingbar.SimpleRatingBar;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import timber.log.Timber;
@@ -30,7 +28,7 @@ public class ResourceAdapter extends BaseQuickAdapter<Resource> {
         int position = holder.getAdapterPosition();
 
         //----setup resource values and click events
-        holder.setText(R.id.resource_title, resource.getTitle());
+        holder.setText(R.id.resource_title, resource.getName());
         holder.setText(R.id.resource_rating_count, (int) resource.getRating());
         holder.setText(R.id.resource_description, resource.getDescription());
         SimpleRatingBar ratingBar = holder.getView(R.id.resource_rating_bar);

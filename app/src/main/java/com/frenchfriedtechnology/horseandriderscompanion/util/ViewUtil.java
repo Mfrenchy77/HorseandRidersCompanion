@@ -10,8 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-
 public class ViewUtil {
+
     private static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static SecureRandom rnd = new SecureRandom();
 
@@ -21,11 +21,32 @@ public class ViewUtil {
 
     // TODO: 22/12/16 replace this with a better obfuscator
     public String convertEmailToPath(String email) {
-        return email.replace(".", "^");
+        String convertedEmail = email.replace(".", "666");
+        convertedEmail = convertedEmail.replace("@", "999");
+        convertedEmail = convertedEmail.replace("f", "5");
+        convertedEmail = convertedEmail.replace("e", "1");
+        convertedEmail = convertedEmail.replace("g", "2");
+        convertedEmail = convertedEmail.replace("m", "");
+        convertedEmail = convertedEmail.replace("a", "p");
+        convertedEmail = convertedEmail.replace("i", "a");
+        convertedEmail = convertedEmail.replace("co", "l");
+
+        return convertedEmail;
     }
 
     public String revertPathToEmail(String path) {
-        return path.replace("^", ".");
+
+        String convertedEmail = path.replace("666", ".");
+        convertedEmail = convertedEmail.replace("999", "@");
+        convertedEmail = convertedEmail.replace("5", "f");
+        convertedEmail = convertedEmail.replace("1", "e");
+        convertedEmail = convertedEmail.replace("2", "g");
+        convertedEmail = convertedEmail.replace("!", "m");
+        convertedEmail = convertedEmail.replace("p", "a");
+        convertedEmail = convertedEmail.replace("a", "i");
+        convertedEmail = convertedEmail.replace("l", "co");
+
+        return convertedEmail;
     }
 
     public static long convertIdToNumber(String id) {

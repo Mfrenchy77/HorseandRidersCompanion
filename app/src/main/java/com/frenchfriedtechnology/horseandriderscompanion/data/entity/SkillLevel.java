@@ -1,6 +1,7 @@
 package com.frenchfriedtechnology.horseandriderscompanion.data.entity;
 
 import com.frenchfriedtechnology.horseandriderscompanion.util.Constants;
+import com.google.firebase.database.IgnoreExtraProperties;
 
 import org.parceler.Parcel;
 
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * Model of a SkillLevel for Horse/Rider profile
  */
 @Parcel
+@IgnoreExtraProperties
 public class SkillLevel implements Serializable {
 
     public SkillLevel() {
@@ -18,12 +20,22 @@ public class SkillLevel implements Serializable {
 
     String levelId;
 
+    @Constants.LevelState
+    int level;
+
+    String name;
+
     String lastEditBy;
 
     long lastEditDate;
 
-    @Constants.LevelState
-    int level;
+    public String getLevelId() {
+        return levelId;
+    }
+
+    public void setLevelId(String levelId) {
+        this.levelId = levelId;
+    }
 
     public String getLastEditBy() {
         return lastEditBy;
@@ -41,6 +53,14 @@ public class SkillLevel implements Serializable {
         this.lastEditDate = lastEditDate;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Constants.LevelState
     public int getLevel() {
         return level;
@@ -48,13 +68,5 @@ public class SkillLevel implements Serializable {
 
     public void setLevel(int level) {
         this.level = level;
-    }
-
-    public String getLevelId() {
-        return levelId;
-    }
-
-    public void setLevelId(String levelId) {
-        this.levelId = levelId;
     }
 }

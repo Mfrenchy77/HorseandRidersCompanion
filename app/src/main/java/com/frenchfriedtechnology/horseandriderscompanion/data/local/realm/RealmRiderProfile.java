@@ -1,5 +1,6 @@
 package com.frenchfriedtechnology.horseandriderscompanion.data.local.realm;
 
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -8,7 +9,8 @@ import io.realm.annotations.PrimaryKey;
  * Realm Object for RiderProfile
  */
 
-public class RealmRiderProfile extends RealmObject {
+
+public class RealmRiderProfile extends RealmObject{
 
     @PrimaryKey
     private String email;

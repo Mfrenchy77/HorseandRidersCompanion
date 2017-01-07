@@ -3,7 +3,6 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/colorPrimary"
               android:orientation="vertical">
 
     <ImageView
@@ -24,8 +23,7 @@
         android:layout_margin="@dimen/spacing_normal"
         android:gravity="center"
         android:text="Johnny McNutface"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-        android:textColor="@android:color/white"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"/>
 
     <ViewFlipper
         android:id="@+id/owned_horses_view_flipper"

@@ -1,89 +1,66 @@
 package com.frenchfriedtechnology.horseandriderscompanion.view.riderSkillTree;
 
-import android.content.Context;
-
-import com.frenchfriedtechnology.horseandriderscompanion.HorseAndRidersCompanion;
-import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.ResourcesApi;
 import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.RiderProfileApi;
-import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.RiderProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.SkillLevel;
-import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
-import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.RealmService;
+import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.realmServices.RealmProfileService;
 import com.frenchfriedtechnology.horseandriderscompanion.data.sync.ProfileSyncer;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BasePresenter;
 
 
 import java.util.HashMap;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import timber.log.Timber;
 
 /**
- * Created by matteo on 10/12/16 for HorseandRidersCompanion.
+ * Presenter for representing a Rider's SkillTree
  */
 
 public class RiderSkillTreePresenter extends BasePresenter<RiderSkillTreeMvpView> {
-    @Inject
-    RiderSkillTreePresenter(/*Context context*/) {/*
-        ((HorseAndRidersCompanion) context.getApplicationContext()).getComponent().inject(this);*/
-    }
 
-    private RealmService realmService = new RealmService();
+    private ProfileSyncer profileSyncer;
+    private final RealmProfileService realmProfileService;
     private RiderProfile riderProfile = new RiderProfile();
+    private RiderProfile remoteRiderProfile = new RiderProfile();
+
+    @Inject
+    public RiderSkillTreePresenter(RealmProfileService realmProfileService, ProfileSyncer profileSyncer) {
+        this.realmProfileService = realmProfileService;
+        this.profileSyncer = profileSyncer;
+    }
 
     @Override
     public void attachView(RiderSkillTreeMvpView view) {
         super.attachView(view);
     }
 
-    @Override
-    public void detachView() {
-        super.detachView();
-    }
-
     //---- Profile Actions
 
     void getRiderProfile(String email) {
-
-        this.riderProfile = realmService.getUsersRiderProfile(email);
-       /* Log.d("SkillTreePresenter", "\r\nUser's Rider Profile: " + riderProfile.getName()
-                + "\r\nEmail: " + riderProfile.getEmail()
-                + "\r\nId: " + riderProfile.getId()
-                + "\r\nLast Edit by: " + riderProfile.getLastEditBy()
-                + "\r\nLast Edit date: " + riderProfile.getLastEditDate()
-                + "\r\nEditor: " + riderProfile.isEditor()
-                + "\r\nSubscribed: " + riderProfile.isSubscribed()
-                + "\r\nSubscription date: " + riderProfile.getSubscriptionDate()
-                + "\r\nSubscription end date:" + riderProfile.getSubscriptionEndDate()
-                + "\r\nSkill Level size: " + riderProfile.getSkillLevels().size());
-        new UserPrefs().setEditor(riderProfile.isEditor());*/
-        if (isViewAttached()) {
-            getMvpView().getRiderProfile(riderProfile);
-            getMvpView().updateAdapter();
-            Timber.d("getRiderProfile() called");
-        }
+        checkViewAttached();
+        riderProfile = realmProfileService.getUsersRiderProfile(email);
         RiderProfileApi.getRiderProfile(email, new RiderProfileApi.RiderProfileCallback() {
-
             @Override
-            public void onSuccess(RiderProfile firebaseRiderProfile) {
-                //sync and update
-                new UserPrefs().setEditor(firebaseRiderProfile.isEditor());
-                Timber.d("RiderProfile sync and update: " +
-                        riderProfile.getName());
+            public void onSuccess(RiderProfile firebaseProfile) {
+                remoteRiderProfile = firebaseProfile;
+                profileSyncer.syncProfile(riderProfile, firebaseProfile);
                 if (isViewAttached()) {
-                    getMvpView().getRiderProfile(new ProfileSyncer().syncProfile(riderProfile, firebaseRiderProfile, realmService));
+                    getMvpView().getRiderProfile(profileSyncer.syncProfile(riderProfile, remoteRiderProfile));
                 }
             }
 
             @Override
             public void onError(Throwable throwable) {
-                Timber.e("Get Profile Error: " + throwable);
+                Timber.e(throwable.toString());
             }
         });
-
+        if (remoteRiderProfile != null) {
+            getMvpView().getRiderProfile(profileSyncer.syncProfile(riderProfile, remoteRiderProfile));
+        } else if (riderProfile != null) {
+            getMvpView().getRiderProfile(riderProfile);
+        }
     }
 
     /**
@@ -114,7 +91,7 @@ public class RiderSkillTreePresenter extends BasePresenter<RiderSkillTreeMvpView
         riderProfile.setLastEditBy(riderProfile.getName());
         riderProfile.setLastEditDate(System.currentTimeMillis());
 
-        realmService.createOrUpdateRiderProfileToRealm(riderProfile, new RealmService.OnTransactionCallback() {
+        realmProfileService.createOrUpdateRiderProfileToRealm(riderProfile, new RealmProfileService.RealmProfileCallback() {
             @Override
             public void onRealmSuccess() {
                 RiderProfileApi.createOrUpdateRiderProfile(riderProfile);
@@ -124,21 +101,6 @@ public class RiderSkillTreePresenter extends BasePresenter<RiderSkillTreeMvpView
             @Override
             public void onRealmError(Throwable e) {
                 Timber.d("Error Updating Realm Profile");
-
-            }
-        });
-    }
-
-    //----Resources
-    public void getResourcesForLevel(String id) {
-        new ResourcesApi().getResourcesForLevel(id, new ResourcesApi.ResourcesCallback() {
-            @Override
-            public void onSuccess(List<Resource> resources) {
-                getMvpView().getResources(resources);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
 
             }
         });

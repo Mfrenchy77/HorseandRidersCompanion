@@ -1,9 +1,9 @@
 package com.frenchfriedtechnology.horseandriderscompanion.data.entity;
 
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import org.parceler.Parcel;
+
 
 @Parcel
 public class Skill implements Comparable<Skill> {
@@ -11,9 +11,9 @@ public class Skill implements Comparable<Skill> {
         //required
     }
 
-    String skillName;
-
     String id;
+
+    String skillName;
 
     String categoryId;
 
@@ -21,10 +21,11 @@ public class Skill implements Comparable<Skill> {
 
     int position = -1;
 
-    String lastEditedBy;
+    boolean rider;
+
+    String lastEditBy;
 
     long lastEditDate;
-
 
     public String getCategoryId() {
         return categoryId;
@@ -50,6 +51,14 @@ public class Skill implements Comparable<Skill> {
         this.id = id;
     }
 
+    public String getLastEditBy() {
+        return lastEditBy;
+    }
+
+    public void setLastEditBy(String lastEditBy) {
+        this.lastEditBy = lastEditBy;
+    }
+
     public long getLastEditDate() {
         return lastEditDate;
     }
@@ -58,20 +67,20 @@ public class Skill implements Comparable<Skill> {
         this.lastEditDate = lastEditDate;
     }
 
-    public String getLastEditedBy() {
-        return lastEditedBy;
-    }
-
-    public void setLastEditedBy(String lastEditedBy) {
-        this.lastEditedBy = lastEditedBy;
-    }
-
     public int getPosition() {
         return position;
     }
 
     public void setPosition(int position) {
         this.position = position;
+    }
+
+    public boolean isRider() {
+        return rider;
+    }
+
+    public void setRider(boolean rider) {
+        this.rider = rider;
     }
 
     public String getSkillName() {
@@ -90,5 +99,4 @@ public class Skill implements Comparable<Skill> {
             return -1;
         else return 0;
     }
-
 }

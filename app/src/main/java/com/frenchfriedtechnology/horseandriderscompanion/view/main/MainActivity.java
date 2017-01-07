@@ -6,7 +6,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -26,8 +25,10 @@ import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.frenchfriedtechnology.horseandriderscompanion.R;
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.BaseListItem;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.HorseProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.RiderProfile;
+import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.ListItem;
 import com.frenchfriedtechnology.horseandriderscompanion.events.HorseProfileCreateEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.HorseProfileDeleteEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.ThemeChangedEvent;
@@ -56,6 +57,10 @@ import static com.frenchfriedtechnology.horseandriderscompanion.view.dialogs.Dia
  */
 public class MainActivity extends BaseActivity implements MainMvpView, NavigationView.OnNavigationItemSelectedListener {
     // TODO: 22/12/16 this needs to be redesigned to add the suggestions and what's new feed
+
+    private static final String EXTRA_TRIGGER_SYNC_FLAG =
+            "com.frenchfriedtechnology.horseandriderscompanion.view.main.MainActivity.EXTRA_TRIGGER_SYNC_FLAG";
+
     private static final String EMAIL = "Email";
     private ViewFlipper viewFlipperHorse;
     private ListView horseList;
@@ -72,7 +77,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
     private boolean showAccountOptions;
     private ImageView expandChevron;
     private NavigationView navigationView;
-    private RiderProfile riderProfile = new RiderProfile();
+    private RiderProfile userRiderProfile = new RiderProfile();
     private List<HorseProfile> horseProfiles = new ArrayList<>();
 
     @Inject
@@ -91,6 +96,10 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
 
         mPresenter.attachView(this);
         mPresenter.getRiderProfile(getIntent().getStringExtra(EMAIL));
+/*
+        if (getIntent().getBooleanExtra(EXTRA_TRIGGER_SYNC_FLAG, true)) {
+            startService(SyncService.getStartIntent(this));
+        }*/
 
         horseList = (ListView) findViewById(R.id.horses_list);
         horseList.setOnItemClickListener((adapterView, view, i, l) -> onHorseSelected(i));
@@ -105,7 +114,6 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_hnr);
         setSupportActionBar(toolbar);
-        toolbar.setTitle(riderProfile.getName());
         setupToolbar(toolbar);
 
         setUpNavigationDrawer();
@@ -166,23 +174,31 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
 
     }
 
+    @SuppressWarnings("Convert2streamapi")
     @Override
     public void getUserProfile(RiderProfile riderProfile) {
-        this.riderProfile = riderProfile;
-        if (riderProfile.getOwnedHorses() != null) {
-            mPresenter.getHorseProfiles(riderProfile.getOwnedHorses());
+        List<String> horseIds = new ArrayList<>();
+        for (BaseListItem ownedHorse : riderProfile.getOwnedHorses()) {
+            horseIds.add(ownedHorse.getId());
         }
-
+        this.userRiderProfile = riderProfile;
+        toolbar.setTitle(riderProfile.getName());
+        if (riderProfile.getOwnedHorses() != null) {
+            mPresenter.getHorseProfiles(horseIds);
+        }
+        Timber.d("Profile gotten for: " + userRiderProfile.getName());
     }
 
+
+    // TODO: 30/12/16 move the adapter initilize out of here and uses getProfile for setup
     @SuppressWarnings("Convert2streamapi")
     @Override
     public void getHorseProfile(List<HorseProfile> horseProfiles) {
         this.horseProfiles = horseProfiles;
         List<String> horseNames = new ArrayList<>();
         for (HorseProfile horseProfile : horseProfiles) {
-            if (!horseNames.contains(horseProfile.getHorseName())) {
-                horseNames.add(horseProfile.getHorseName());
+            if (!horseNames.contains(horseProfile.getName())) {
+                horseNames.add(horseProfile.getName());
             }
         }
         adapter = new StringAdapter(this, horseNames);
@@ -213,7 +229,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
     private String getHorseIdFromName(String horse) {
         String horseId = null;
         for (int i = 0; i < horseProfiles.size(); i++) {
-            if (horseProfiles.get(i).getHorseName().equals(horse)) {
+            if (horseProfiles.get(i).getName().equals(horse)) {
                 horseId = horseProfiles.get(i).getId();
                 break;
             }
@@ -237,8 +253,8 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
      * Open SkillTree Activity
      */
     public void openSkillTree() {
-        if (riderProfile != null) {
-            RiderSkillTreeActivity.start(this, riderProfile.getEmail());
+        if (userRiderProfile != null) {
+            RiderSkillTreeActivity.start(this, userRiderProfile.getEmail());
         }
     }
 
@@ -250,7 +266,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
     @Subscribe
     public void onCreateOrEditHorseProfile(HorseProfileCreateEvent event) {
         mPresenter.createOrUpdateHorseProfile(event.getHorseProfile());
-        showToast("Horse: " + event.getHorseProfile().getHorseName());
+        showToast("Horse: " + event.getHorseProfile().getName());
     }
 
     @Subscribe
@@ -265,8 +281,9 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
         recreate();
     }
 
-    public static void start(Context context, String email) {
+    public static void start(Context context, String email, boolean triggerDataSyncOnCreate) {
         Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra(EXTRA_TRIGGER_SYNC_FLAG, triggerDataSyncOnCreate);
         intent.putExtra(EMAIL, email);
         context.startActivity(intent);
     }
@@ -289,7 +306,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
         expandChevron = (ImageView) view.findViewById(R.id.expand_menu_chevron);
 
         TextView textUser = (TextView) view.findViewById(R.id.profile_username);
-        textUser.setText(riderProfile.getName());
+        textUser.setText(userRiderProfile.getName());
         LinearLayout accountNameLayout = (LinearLayout) view.findViewById(R.id.account_name_layout);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

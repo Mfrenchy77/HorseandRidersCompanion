@@ -19,10 +19,9 @@ public class Constants {
     public final static String HORSE_SKILL_TREE = "Horse_Skill_Tree";
 
     public final static String CATEGORIES = "Categories";
+    public static final String RESOURCES = "Resources";
     public final static String SKILLS = "Skills";
     public final static String LEVELS = "Levels";
-
-    public static final String RESOURCES = "Resources";
 
     /**
      * Possible level states
@@ -31,7 +30,6 @@ public class Constants {
     @Retention(RetentionPolicy.SOURCE)
     public @interface LevelState {
     }
-
 
     public static final int NO_PROGRESS = 0;
     public static final int LEARNING = 1;

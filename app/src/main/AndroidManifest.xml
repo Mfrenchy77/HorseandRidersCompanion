@@ -20,12 +20,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:windowSoftInputMode="stateHidden|adjustResize"
             android:name=".view.register.RegisterActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:label="@string/app_name"
             android:parentActivityName=".view.login.LoginActivity"
             android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             tools:ignore="UnusedAttribute"/>
         <activity
             android:name=".view.main.MainActivity"
@@ -34,19 +34,19 @@
             android:theme="@style/AppTheme"
             tools:ignore="UnusedAttribute"/>
         <activity
-            android:windowSoftInputMode="stateHidden|adjustResize"
             android:name=".view.login.LoginActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:label="@string/app_name"
             android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             tools:ignore="UnusedAttribute"/>
         <activity
-            android:windowSoftInputMode="stateHidden|adjustResize"
             android:name=".view.forgot.ForgotActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:label="@string/app_name"
             android:parentActivityName=".view.login.LoginActivity"
             android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             tools:ignore="UnusedAttribute"/>
         <activity
             android:name=".view.SettingsActivity"
@@ -72,6 +72,15 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".view.main.MainActivity"/>
+        </activity>
+        <activity
+            android:name=".view.resources.CreateResourceActivity"
+            android:label="@string/create_new_resource_label">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="text/plain"/>
+            </intent-filter>
         </activity>
         <!--
      ATTENTION: This was auto-generated to add Google Play services to your project for

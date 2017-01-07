@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.frenchfriedtechnology.horseandriderscompanion.BusProvider;
-import com.frenchfriedtechnology.horseandriderscompanion.HorseAndRidersCompanion;
-import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.RealmService;
 import com.frenchfriedtechnology.horseandriderscompanion.events.ForgotEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.RegisterEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BasePresenter;

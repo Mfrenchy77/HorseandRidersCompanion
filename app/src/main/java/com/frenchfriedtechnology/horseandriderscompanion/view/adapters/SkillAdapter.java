@@ -12,6 +12,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.frenchfriedtechnology.horseandriderscompanion.BusProvider;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Level;
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Skill;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LevelSelectEvent;
@@ -37,10 +38,12 @@ public class SkillAdapter extends BaseQuickAdapter<Skill> {
     private Context context;
     private List<Skill> skills;
     private List<Level> allLevels;
+    private List<Resource> resources;
     private boolean rider;
 
-    public SkillAdapter(Context context, List<Skill> skills, List<Level> levels, boolean rider) {
+    public SkillAdapter(Context context, List<Skill> skills, List<Level> levels, List<Resource> resources, boolean rider) {
         super(R.layout.item_skill, skills);
+        this.resources = resources;
         this.context = context;
         this.skills = skills;
         this.allLevels = levels;
@@ -65,6 +68,16 @@ public class SkillAdapter extends BaseQuickAdapter<Skill> {
             }
         }
         return levels;
+    }
+
+    private List<Resource> getResourcesForLevel(String levelId) {
+        List<Resource> levelResources = new ArrayList<>();
+        for (int i = 0; i < resources.size(); i++) {
+            if (resources.get(i).getLevelIds().contains(levelId)) {
+                levelResources.add(resources.get(i));
+            }
+        }
+        return levelResources;
     }
 
     private void onItemMove(int fromPosition, int toPosition) {
@@ -98,9 +111,13 @@ public class SkillAdapter extends BaseQuickAdapter<Skill> {
         });
 
         //----set up levels for skill
+        List<Resource> levelResource = new ArrayList<>();
         List<Level> levels = getLevelsForSkill(skill);
+        for (Level level : levels) {
+            levelResource.addAll(getResourcesForLevel(level.getId()));
+        }
         RecyclerView levelsRecycler = holder.getView(R.id.level_recycler);
-        LevelAdapter levelAdapter = new LevelAdapter(levels, isRider());
+        LevelAdapter levelAdapter = new LevelAdapter(levels, levelResource,isRider());
         levelAdapter.setHasStableIds(true);
         levelAdapter.sortLevels();
         levelsRecycler.setLayoutManager(new LinearLayoutManager(context));

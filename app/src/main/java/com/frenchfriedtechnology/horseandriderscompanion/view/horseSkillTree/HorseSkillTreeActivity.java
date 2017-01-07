@@ -102,8 +102,8 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
     public void getHorseProfile(HorseProfile profile) {
         this.horseProfile = profile;
         skillTreePagerAdapter.notifyDataSetChanged();
-        toolbar.setTitle(horseProfile.getHorseName());
-        setTitle(horseProfile.getHorseName());
+        toolbar.setTitle(horseProfile.getName());
+        setTitle(horseProfile.getName());
     }
 
     @Override
@@ -142,6 +142,7 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
         category.setLastEditDate(System.currentTimeMillis());
         category.setLastEditBy(AccountManager.currentUser());
         category.setPosition(getCategories().size() + 1);
+        category.setRider(false);
         basePresenter.createCategory(category);
 
     }
@@ -189,16 +190,18 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
         skill.setCategoryId(event.getCategoryId());
         skill.setId(event.isEdit() ? event.getSkillId() : ViewUtil.createId());
         skill.setSkillName(event.getSkillName());
+        skill.setDescription(event.getSkillDescription());
         skill.setLastEditDate(System.currentTimeMillis());
-        skill.setLastEditedBy(AccountManager.currentUser());
+        skill.setLastEditBy(AccountManager.currentUser());
         skill.setPosition((getSkills().size() + 1));
+        skill.setRider(false);
         basePresenter.createSkill(skill);
     }
 
     @Subscribe
     public void updateSkillEvent(SkillUpdateEvent event) {
         Skill editedSkill = event.getSkill();
-        editedSkill.setLastEditedBy(AccountManager.currentUser());
+        editedSkill.setLastEditBy(AccountManager.currentUser());
         editedSkill.setLastEditDate(System.currentTimeMillis());
         basePresenter.editSkill(editedSkill);
     }
@@ -212,7 +215,6 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
 
     @Subscribe
     public void levelSelectedEvent(LevelSelectEvent event) {
-        presenter.getResourcesForLevel(event.getLevel().getId());
         switch (event.getTag()) {
             //Dialog Update Level
             case EDIT_LEVEL:
@@ -236,6 +238,7 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
         Level level = event.getLevel();
         if (!event.isEdit()) {
             level.setPosition((getLevels().size() + 1));
+            level.setRider(false);
         }
         basePresenter.createLevel(level);
     }

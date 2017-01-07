@@ -8,6 +8,7 @@ import com.frenchfriedtechnology.horseandriderscompanion.view.horseSkillTree.Hor
 import com.frenchfriedtechnology.horseandriderscompanion.view.login.LoginActivity;
 import com.frenchfriedtechnology.horseandriderscompanion.view.main.MainActivity;
 import com.frenchfriedtechnology.horseandriderscompanion.view.register.RegisterActivity;
+import com.frenchfriedtechnology.horseandriderscompanion.view.resources.CreateResourceActivity;
 import com.frenchfriedtechnology.horseandriderscompanion.view.riderSkillTree.RiderSkillTreeActivity;
 
 import dagger.Subcomponent;
@@ -34,4 +35,7 @@ public interface ActivityComponent {
     void inject(RiderSkillTreeActivity riderSkillTreeActivity);
 
     void inject(HorseSkillTreeActivity horseSkillTreeActivity);
+
+    void inject(CreateResourceActivity createResourceActivity);
+
 }
