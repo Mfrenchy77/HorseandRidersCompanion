@@ -6,6 +6,7 @@ import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.RiderPro
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.BaseListItem;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.HorseProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.RiderProfile;
+import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.realmServices.RealmProfileService;
 import com.frenchfriedtechnology.horseandriderscompanion.data.sync.ProfileSyncer;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BasePresenter;
@@ -96,6 +97,8 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
             @Override
             public void onSuccess(RiderProfile firebaseProfile) {
                 remoteRiderProfile = firebaseProfile;
+                new UserPrefs().setEditor(firebaseProfile.isEditor());
+
                 getMvpView().getUserProfile(profileSyncer.syncProfile(riderProfile, firebaseProfile));
             }
 

@@ -83,17 +83,28 @@ public class ProfileFragment extends Fragment {
 
     private void inflateRiderView(View rootView) {
         Timber.d("ProfileName: " + riderProfile.getName());
+
         TextView profileName = (TextView) rootView.findViewById(R.id.profile_rider_name);
         profileName.setText(riderProfile.getName());
+
         TextView editDate = (TextView) rootView.findViewById(R.id.profile_rider_last_edit);
-        editDate.setText(String.format("Edited: %s %s", TimeUtils.lastEditDate(riderProfile.getLastEditDate()), " ago"));
+        editDate.setText(String.format("Edited: %s %s",
+                TimeUtils.lastEditDate(riderProfile.getLastEditDate()), " ago"));
+
+        TextView editBy = (TextView) rootView.findViewById(R.id.profile_rider_last_edit_by);
+        editBy.setText(String.format("By: %s", riderProfile.getLastEditBy()));
+
         TextView email = (TextView) rootView.findViewById(R.id.profile_rider_email);
         email.setText(String.format("Email: %s", riderProfile.getEmail()));
+
         TextView subscription = (TextView) rootView.findViewById(R.id.profile_rider_subscription);
         subscription.setText(String.format("Subscribed: %s", riderProfile.isSubscribed()));
+
         TextView editor = (TextView) rootView.findViewById(R.id.profile_rider_editor);
         if (riderProfile.isEditor()) {
-            editor.setText("You have been adorned with the \"Editor\" ability, this allows you to make significant changes to the way Horse & Rider's Companion Looks.\n\nUse it Wisely!");
+            editor.setText("You have been adorned with the \"Editor\" ability," +
+                    " this allows you to make significant changes to the way " +
+                    "Horse & Rider's Companion Looks.\n\nUse it Wisely!");
         }
     }
 

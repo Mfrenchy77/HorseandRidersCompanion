@@ -3,6 +3,7 @@ package com.frenchfriedtechnology.horseandriderscompanion.view.riderSkillTree;
 import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.RiderProfileApi;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.RiderProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.SkillLevel;
+import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.realmServices.RealmProfileService;
 import com.frenchfriedtechnology.horseandriderscompanion.data.sync.ProfileSyncer;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BasePresenter;
@@ -45,6 +46,7 @@ public class RiderSkillTreePresenter extends BasePresenter<RiderSkillTreeMvpView
             @Override
             public void onSuccess(RiderProfile firebaseProfile) {
                 remoteRiderProfile = firebaseProfile;
+                new UserPrefs().setEditor(firebaseProfile.isEditor());
                 profileSyncer.syncProfile(riderProfile, firebaseProfile);
                 if (isViewAttached()) {
                     getMvpView().getRiderProfile(profileSyncer.syncProfile(riderProfile, remoteRiderProfile));
