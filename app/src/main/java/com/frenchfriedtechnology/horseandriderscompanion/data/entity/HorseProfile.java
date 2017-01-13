@@ -42,7 +42,7 @@ public class HorseProfile {
 
     long purchasePrice;
 
-    HashMap<Long, SkillLevel> skillLevels = new HashMap<>(0);
+    HashMap<String, SkillLevel> skillLevels = new HashMap<>(0);
 
     long lastEditDate = 0;
 
@@ -58,11 +58,11 @@ public class HorseProfile {
         this.notes = notes;
     }
 
-    public HashMap<Long, SkillLevel> getSkillLevels() {
+    public HashMap<String, SkillLevel> getSkillLevels() {
         return skillLevels;
     }
 
-    public void setSkillLevels(HashMap<Long, SkillLevel> skillLevels) {
+    public void setSkillLevels(HashMap<String, SkillLevel> skillLevels) {
         this.skillLevels = skillLevels;
     }
 

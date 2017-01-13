@@ -64,7 +64,7 @@ public class HorseSkillTreePresenter extends BasePresenter<HorseSkillTreeMvpView
      */
     void updateHorseSkillTreeLevel(SkillLevel skillLevel) {
 
-        HashMap<Long, SkillLevel> levels = new HashMap<>();
+        HashMap<String, SkillLevel> levels = new HashMap<>();
         //check for existing skillLevel and remove it
         if (horseProfile.getSkillLevels() != null) {
             Timber.d("UpdateHorseSkillLevel() horseSkillLevel size " + horseProfile.getSkillLevels().size());
@@ -72,12 +72,12 @@ public class HorseSkillTreePresenter extends BasePresenter<HorseSkillTreeMvpView
             if (levels.containsKey(skillLevel.getLevelId())) {
                 //replace old with new
                 levels.remove(skillLevel.getLevelId());
-                levels.put(skillLevel.getLevelId(), skillLevel);
+                levels.put(String.valueOf(skillLevel.getLevelId()), skillLevel);
                 Timber.d("Replaced Skill Level");
             } else {
                 //create new
                 Timber.d("Created new Skill Level");
-                levels.put(skillLevel.getLevelId(), skillLevel);
+                levels.put(String.valueOf(skillLevel.getLevelId()), skillLevel);
             }
         } else {
             Timber.d("Skill Levels is Null");

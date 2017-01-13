@@ -22,10 +22,6 @@ import java.lang.annotation.RetentionPolicy;
 
 import timber.log.Timber;
 
-/**
- * Created by matteo on 16/12/16 for HorseandRidersCompanion.
- */
-
 public class ProfileFragment extends Fragment {
 
     @StringDef({HORSE_PROFILE, RIDER_PROFILE})
