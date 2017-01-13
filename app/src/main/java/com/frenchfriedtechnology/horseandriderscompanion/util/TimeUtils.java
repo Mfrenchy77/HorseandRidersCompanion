@@ -35,10 +35,8 @@ public class TimeUtils {
 
 
     private static String getTimeDifferenceAsString(long now, long editDate) {
-        Timber.d("Now: " + now);
-        Timber.d("EditDate: " + editDate);
+
         long difference = now - editDate;
-        Timber.d("difference: " + difference);
         int seconds = (int) TimeUnit.MILLISECONDS.toSeconds(difference);
         Resources res = HorseAndRidersCompanion.getContext().getResources();
 

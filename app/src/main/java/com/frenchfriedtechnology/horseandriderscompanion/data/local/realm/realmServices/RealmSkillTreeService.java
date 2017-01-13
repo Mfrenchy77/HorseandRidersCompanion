@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 import timber.log.Timber;
 
 /**
@@ -43,11 +44,16 @@ public class RealmSkillTreeService {
         List<Category> categories = new ArrayList<>();
         Timber.d("getCategories() called, rider: " + rider);
         final Realm realm = realmProvider.get();
-        List<RealmCategory> realmCategories = realm.where(RealmCategory.class).equalTo("rider", rider).findAll();
+        RealmResults<RealmCategory> realmResults = realm.where(RealmCategory.class).equalTo("rider", rider).findAll();
+
+        List<RealmCategory> realmCategories = realm.copyFromRealm(realmResults);
+
         for (RealmCategory category : realmCategories) {
             categories.add(new CategoryMapper().realmToEntity(category));
+            Timber.d("categoryName: " + category.getName());
         }
         realm.close();
+        Timber.d("Categories: " + categories.size());
         return categories;
 
     }
@@ -133,7 +139,8 @@ public class RealmSkillTreeService {
         List<Skill> skills = new ArrayList<>();
         Timber.d("getSkills() called, rider: " + rider);
         Realm realm = realmProvider.get();
-        List<RealmSkill> realmSkills = realm.where(RealmSkill.class).equalTo("rider", rider).findAll();
+        RealmResults realmResults = realm.where(RealmSkill.class).equalTo("rider", rider).findAll();
+        List<RealmSkill> realmSkills = realm.copyFromRealm(realmResults);
         for (RealmSkill skill : realmSkills) {
             skills.add(new SkillMapper().realmToEntity(skill));
         }
@@ -221,9 +228,11 @@ public class RealmSkillTreeService {
      */
     public List<Level> getLevels(boolean rider) {
         List<Level> levels = new ArrayList<>();
-        Timber.d("getResources() called, rider: " + rider);
+        Timber.d("getLevels() called, rider: " + rider);
         Realm realm = realmProvider.get();
-        List<RealmLevel> realmLevels = realm.where(RealmLevel.class).equalTo("rider", rider).findAll();
+
+        RealmResults realmResults = realm.where(RealmLevel.class).equalTo("rider", rider).findAll();
+        List<RealmLevel> realmLevels = realm.copyFromRealm(realmResults);
         for (RealmLevel realmLevel : realmLevels) {
             levels.add(new LevelMapper().realmToEntity(realmLevel));
         }
@@ -312,7 +321,8 @@ public class RealmSkillTreeService {
         List<Resource> resources = new ArrayList<>();
         Timber.d("getResources() called");
         Realm realm = realmProvider.get();
-        List<RealmResource> realmResources = realm.where(RealmResource.class).findAll();
+        RealmResults realmResults = realm.where(RealmResource.class).findAll();
+        List<RealmResource> realmResources = realm.copyFromRealm(realmResults);
         for (RealmResource realmResource : realmResources) {
             resources.add(new ResourceMapper().realmToEntity(realmResource));
         }

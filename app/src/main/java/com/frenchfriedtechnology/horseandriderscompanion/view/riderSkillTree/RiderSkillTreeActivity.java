@@ -2,6 +2,7 @@ package com.frenchfriedtechnology.horseandriderscompanion.view.riderSkillTree;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -25,6 +26,7 @@ import com.frenchfriedtechnology.horseandriderscompanion.events.LevelCreateEvent
 import com.frenchfriedtechnology.horseandriderscompanion.events.LevelDeleteEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LevelEditEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LevelSelectEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.events.ResourceSelectedEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.SkillCreateEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.SkillDeleteEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.SkillSelectEvent;
@@ -124,6 +126,7 @@ public class RiderSkillTreeActivity extends BaseSkillTreeActivity implements Rid
                 getLevels(),
                 getSkills(),
                 getCategories(),
+                getSkillTreeResources(),
                 null,
                 riderProfile,
                 true);
@@ -244,7 +247,7 @@ public class RiderSkillTreeActivity extends BaseSkillTreeActivity implements Rid
     private List<Resource> getResourcesForLevel(String levelId) {
         List<Resource> levelResources = new ArrayList<>();
         for (int i = 0; i < resources.size(); i++) {
-            if (resources.get(i).getLevelIds().contains(levelId)) {
+            if (resources.get(i).getSkillTreeIds().contains(levelId)) {
                 levelResources.add(resources.get(i));
             }
         }
@@ -288,6 +291,13 @@ public class RiderSkillTreeActivity extends BaseSkillTreeActivity implements Rid
     @Subscribe
     public void getLevelsEvent(LevelsFetch event) {
         skillTreePagerAdapter.setAllLevels(setSkillLevelToLevel(riderProfile.getSkillLevels().values(), event.getLevels()));
+    }
+
+    @Subscribe
+    public void resourceSelectedEvent(ResourceSelectedEvent event) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(event.getUrl()));
+        startActivity(intent);
     }
 
     public static void start(Context context, String email) {

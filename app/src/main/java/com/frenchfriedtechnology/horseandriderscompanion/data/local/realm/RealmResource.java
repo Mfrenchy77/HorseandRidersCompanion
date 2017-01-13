@@ -24,23 +24,12 @@ public class RealmResource extends RealmObject {
 
     private long rating;
 
-    private RealmList<ListItem> categoryIds;
-
-    private RealmList<ListItem> skillIds;
-
-    private RealmList<ListItem> levelIds;
+    private RealmList<ListItem> skillTreeIds;
 
     private String lastEditBy;
 
     private long lastEditDate;
 
-    public RealmList<ListItem> getCategoryIds() {
-        return categoryIds;
-    }
-
-    public void setCategoryIds(RealmList<ListItem> categoryIds) {
-        this.categoryIds = categoryIds;
-    }
 
     public String getDescription() {
         return description;
@@ -74,14 +63,6 @@ public class RealmResource extends RealmObject {
         this.lastEditDate = lastEditDate;
     }
 
-    public RealmList<ListItem> getLevelIds() {
-        return levelIds;
-    }
-
-    public void setLevelIds(RealmList<ListItem> levelIds) {
-        this.levelIds = levelIds;
-    }
-
     public String getName() {
         return name;
     }
@@ -106,14 +87,6 @@ public class RealmResource extends RealmObject {
         this.rating = rating;
     }
 
-    public RealmList<ListItem> getSkillIds() {
-        return skillIds;
-    }
-
-    public void setSkillIds(RealmList<ListItem> skillIds) {
-        this.skillIds = skillIds;
-    }
-
     public String getThumbnail() {
         return thumbnail;
     }
@@ -128,5 +101,13 @@ public class RealmResource extends RealmObject {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public RealmList<ListItem> getSkillTreeIds() {
+        return skillTreeIds;
+    }
+
+    public void setSkillTreeIds(RealmList<ListItem> skillTreeIds) {
+        this.skillTreeIds = skillTreeIds;
     }
 }

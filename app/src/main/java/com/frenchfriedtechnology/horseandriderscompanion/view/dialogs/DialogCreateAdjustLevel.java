@@ -200,7 +200,7 @@ public class DialogCreateAdjustLevel extends DialogFragment {
         LinearLayout resourcesLayout = (LinearLayout) view.findViewById(R.id.resources_layout);
         BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(resourcesLayout);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        bottomSheetBehavior.setPeekHeight(ViewUtil.dpToPx(50));
+        bottomSheetBehavior.setPeekHeight((int) ViewUtil.dpToPx(50));
         ResourceAdapter resourceAdapter = new ResourceAdapter(resources);
         RecyclerView resourcesRecycler = (RecyclerView) view.findViewById(R.id.level_resources_recycler);
         resourcesRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));

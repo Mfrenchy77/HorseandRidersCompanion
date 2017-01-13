@@ -47,10 +47,12 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
                                  List<Level> allLevels,
                                  List<Skill> allSkills,
                                  List<Category> categories,
+                                 List<Resource> resources,
                                  HorseProfile horseProfile,
                                  RiderProfile riderProfile,
                                  boolean rider) {
         super(fm);
+        this.resources = resources;
         this.allLevels = allLevels;
         this.allSkills = allSkills;
         this.categories = categories;
@@ -99,6 +101,7 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
 
     public void setResources(List<Resource> resources) {
         this.resources = resources;
+        notifyDataSetChanged();
     }
 
     public List<Resource> getResources() {

@@ -7,19 +7,28 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.ThumbnailRequestCoordinator;
 import com.frenchfriedtechnology.horseandriderscompanion.AccountManager;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.BaseListItem;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
+import com.frenchfriedtechnology.horseandriderscompanion.util.ViewUtil;
+import com.frenchfriedtechnology.horseandriderscompanion.view.adapters.SkillTreeSelectAdapter;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BaseActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -44,6 +53,8 @@ public class CreateResourceActivity extends BaseActivity implements CreateResour
     private TextInputLayout createResourceTitleWrapper, createResourceDescriptionWrapper;
     private TextInputEditText resourceTitle, resourceLink, resourceDescription;
     private ImageView createResourceThumbnail;
+    private RecyclerView skillTreeRecycler;
+    private SkillTreeSelectAdapter skillTreeSelectAdapter;
     private Button createResourceButton;
     private CardView root;
 
@@ -60,7 +71,9 @@ public class CreateResourceActivity extends BaseActivity implements CreateResour
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        activityComponent().inject(this);
+        presenter.attachView(this);
+        presenter.getSkillTreeItems();
         Intent intent = getIntent();
         externalShare = Intent.ACTION_SEND.equals(intent.getAction());
 
@@ -147,8 +160,10 @@ public class CreateResourceActivity extends BaseActivity implements CreateResour
 
     private void onSubmitClicked() {
         Resource resource = validatePost();
-
-        presenter.submitNewResource(resource);
+        if (resource != null) {
+            presenter.submitNewResource(resource);
+            finish();
+        }
  /*       ApiBodyUserSubmission body = validatePost();
 
         if (new AccountManager().isGuest()) { //Check if User is guest to prevent crashes
@@ -187,6 +202,14 @@ public class CreateResourceActivity extends BaseActivity implements CreateResour
         createResourceButton.setText(posting ? R.string.sending : R.string.submit);
     }
 
+    @Override
+    public void getSkillTreeList(List<BaseListItem> skillTreeList) {
+
+        skillTreeRecycler = (RecyclerView) findViewById(R.id.create_resource_skill_tree_selector);
+        skillTreeSelectAdapter = new SkillTreeSelectAdapter(this, skillTreeList);
+        skillTreeRecycler.setLayoutManager(new LinearLayoutManager(this));
+        skillTreeRecycler.setAdapter(skillTreeSelectAdapter);
+    }
 
     /**
      * Validates the input fields and constructs a request body if they are valid.
@@ -201,12 +224,22 @@ public class CreateResourceActivity extends BaseActivity implements CreateResour
         String url = resourceLink.getText().toString();
         String description = resourceDescription.getText().toString();
 
+        List<BaseListItem> selectedSkillTreeItems = new ArrayList<>();
+        for (int i = 0; i < skillTreeSelectAdapter.getSkillTree().size(); i++) {
+            if (skillTreeSelectAdapter.getSkillTree().get(i).isSelected()) {
+                selectedSkillTreeItems.add(skillTreeSelectAdapter.getSkillTree().get(i));
+            }
+        }
         if (TextUtils.isEmpty(title)) {
             createResourceTitleWrapper.setError(getString(R.string.empty_field
             ));
             valid = false;
         } else if (title.length() < 5) {
             createResourceTitleWrapper.setError(getString(R.string.title_too_short));
+            valid = false;
+        }
+        if (selectedSkillTreeItems.size() < 1) {
+            Toast.makeText(this, "Please choose at least one Category for the new Resource", Toast.LENGTH_LONG).show();
             valid = false;
         }
         url = (url.equals("")) ? null : url;
@@ -216,14 +249,16 @@ public class CreateResourceActivity extends BaseActivity implements CreateResour
             createResourceDescriptionWrapper.setError(getString(R.string.empty_field));
             valid = false;
         }
-
+        Timber.d("selectedSkillTreeItems size: " + selectedSkillTreeItems.size());
         if (valid) {
             resource = new Resource();
+            resource.setId(ViewUtil.createId());
             resource.setName(resourceTitle.getText().toString());
             resource.setDescription(resourceDescription.getText().toString());
             resource.setUrl(resourceLink.getText().toString());
             resource.setLastEditBy(AccountManager.currentUser());
             resource.setLastEditDate(System.currentTimeMillis());
+            resource.setSkillTreeIds(selectedSkillTreeItems);
 
         }
         return resource;

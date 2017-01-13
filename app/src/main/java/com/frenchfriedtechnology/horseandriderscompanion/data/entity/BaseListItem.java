@@ -1,11 +1,15 @@
 package com.frenchfriedtechnology.horseandriderscompanion.data.entity;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import org.parceler.Parcel;
 
 /**
  * Base Item
  */
 @Parcel
+@IgnoreExtraProperties
 public class BaseListItem {
 
     public BaseListItem() {
@@ -20,6 +24,24 @@ public class BaseListItem {
     String id;
 
     String name;
+    @Exclude
+    int depth;
+    @Exclude
+    boolean selected = false;
+    @Exclude
+    boolean collapsed;
+    @Exclude
+    String parentId = null;
+
+    @Exclude
+    public String getParentId() {
+        return parentId;
+    }
+
+    @Exclude
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
 
     public String getId() {
         return id;
@@ -35,6 +57,37 @@ public class BaseListItem {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Exclude
+    public boolean isCollapsed() {
+        return collapsed;
+    }
+
+    public void setCollapsed(boolean collapsed) {
+        this.collapsed = collapsed;
+    }
+
+    @Exclude
+    public int getDepth() {
+        return depth;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    @Exclude
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public void toggle() {
+        collapsed = !isCollapsed();
     }
 }
 

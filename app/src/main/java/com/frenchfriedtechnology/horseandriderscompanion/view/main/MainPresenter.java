@@ -30,24 +30,12 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     private RiderProfile riderProfile = new RiderProfile();
     private RiderProfile remoteRiderProfile = new RiderProfile();
 
-    /* private final DataManager dataManager;
-     private Subscription getProfileSubscription;
-     private Subscription deleteProfileSubscription;
-     private RiderProfileHandler riderProfileHandler;*/
-
     @Inject
     public MainPresenter(RealmProfileService realmProfileService,
                          ProfileSyncer profileSyncer) {
         this.realmProfileService = realmProfileService;
         this.profileSyncer = profileSyncer;
     }
-   /*
-    @Inject
-       MainPresenter(DataManager dataManager, RiderProfileHandler riderProfileHandler, RealmProfileService realmProfileService) {
-        this.realmProfileService = realmProfileService;
-        this.riderProfileHandler = riderProfileHandler;
-        this.dataManager = dataManager;
-    }*/
 
     @Inject
     FirebaseAuth mAuth;
@@ -60,9 +48,6 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     public void attachView(MainMvpView view) {
         super.attachView(view);
 
-/*
-        databaseReference = FirebaseDatabase.getInstance().getReference();
-*/
 
         //perform profile fetch and sync
         mAuthListener = firebaseAuth -> {
@@ -80,17 +65,10 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     @Override
     public void detachView() {
         super.detachView();
-        /*if (subscription != null) {
-            subscription.unsubscribe();
-        }*/
     }
 
     //---- User's Profile
-    private void setProfileFetched(boolean profileFetched) {
-        this.profileFetched = profileFetched;
-    }
-
-    void getRiderProfile(String email) {
+     void getRiderProfile(String email) {
         riderProfile = realmProfileService.getUsersRiderProfile(email);
         getMvpView().getUserProfile(riderProfile);
         RiderProfileApi.getRiderProfile(email, new RiderProfileApi.RiderProfileCallback() {

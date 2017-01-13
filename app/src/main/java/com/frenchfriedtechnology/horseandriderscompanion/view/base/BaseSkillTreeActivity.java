@@ -166,7 +166,10 @@ public class BaseSkillTreeActivity extends BaseActivity implements BaseSkillTree
 
     @Override
     public void getResources(List<Resource> resources) {
-        skillTreePagerAdapter.setResources(resources);
+        this.resources = resources;
+        if (skillTreePagerAdapter != null) {
+            skillTreePagerAdapter.setResources(resources);
+        }
     }
 
     /**
@@ -213,6 +216,9 @@ public class BaseSkillTreeActivity extends BaseActivity implements BaseSkillTree
         return skills;
     }
 
+    protected List<Resource> getSkillTreeResources() {
+        return resources;
+    }
 
     /**
      * Tells Base Presenter if profile is either Horse or Rider

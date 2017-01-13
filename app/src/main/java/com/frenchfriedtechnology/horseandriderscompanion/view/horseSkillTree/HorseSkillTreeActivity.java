@@ -122,6 +122,7 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
                 getLevels(),
                 getSkills(),
                 getCategories(),
+                getSkillTreeResources(),
                 horseProfile,
                 null,
                 false);

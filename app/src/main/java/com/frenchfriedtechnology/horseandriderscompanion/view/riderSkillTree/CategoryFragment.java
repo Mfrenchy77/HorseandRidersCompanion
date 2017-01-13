@@ -3,6 +3,7 @@ package com.frenchfriedtechnology.horseandriderscompanion.view.riderSkillTree;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,22 +11,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.frenchfriedtechnology.horseandriderscompanion.BusProvider;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.BaseListItem;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Category;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Level;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Skill;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
 import com.frenchfriedtechnology.horseandriderscompanion.events.SkillSelectEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.util.ViewUtil;
+import com.frenchfriedtechnology.horseandriderscompanion.view.adapters.ResourceAdapter;
 import com.frenchfriedtechnology.horseandriderscompanion.view.adapters.SkillAdapter;
 
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 
 /**
@@ -75,7 +82,7 @@ public class CategoryFragment extends Fragment {
         List<Resource> skillResources = new ArrayList<>();
 
         for (int i = 0; i < resources.size(); i++) {
-            if (resources.get(i).getSkillIds().contains(skillId)) {
+            if (resources.get(i).getSkillTreeIds().contains(skillId)) {
                 skillResources.add(resources.get(i));
             }
         }
@@ -83,9 +90,49 @@ public class CategoryFragment extends Fragment {
         return skillResources;
     }
 
+    private boolean matchResourceWithCategory(String categoryId, List<BaseListItem> skillTreeIds) {
+        for (int i = 0; i < skillTreeIds.size(); i++) {
+            if (skillTreeIds.get(i).getId().equals(categoryId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void initCategory(View rootView) {
         final Category category = getArguments().getParcelable(CATEGORY);
+
         //set Resources
+        List<Resource> allResources = Parcels.unwrap(getArguments().getParcelable(RESOURCES));
+        List<Resource> resources = new ArrayList<>();
+        for (int i = 0; i < allResources.size(); i++) {
+            if (allResources.get(i).getSkillTreeIds() != null) {
+                if (matchResourceWithCategory(category.getId(), allResources.get(i).getSkillTreeIds())) {
+                    resources.add(allResources.get(i));
+                }
+            }
+        }
+        Timber.d("all resources size: " + allResources.size());
+        LinearLayout resourcesLayout = (LinearLayout) rootView.findViewById(R.id.resources_layout);
+        BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(resourcesLayout);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        bottomSheetBehavior.setPeekHeight((int) ViewUtil.dpToPx(50));
+        ResourceAdapter resourceAdapter = new ResourceAdapter(resources);
+        RecyclerView resourcesRecycler = (RecyclerView) rootView.findViewById(R.id.level_resources_recycler);
+        resourcesRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+        resourcesRecycler.setAdapter(resourceAdapter);
+        Timber.d("Resources Empty? " + resources.isEmpty());
+
+        //----setup empty list
+        TextView emptyResource = (TextView) rootView.findViewById(R.id.empty_resource);
+        emptyResource.setVisibility(resources.isEmpty() ? View.VISIBLE : View.GONE);
+        emptyResource.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Timber.d("Empty Resource clicked");
+                //open add resource dialog
+            }
+        });
 
         //editor actions
         ImageButton addSkillButton = (ImageButton) rootView.findViewById(R.id.add_skill_button);
@@ -95,7 +142,6 @@ public class CategoryFragment extends Fragment {
 
         //setup SkillAdapter
         List<Skill> skills = Parcels.unwrap(getArguments().getParcelable(SKILLS));
-        List<Resource> allResources = Parcels.unwrap(getArguments().getParcelable(RESOURCES));
         List<Resource> skillResources = new ArrayList<>();
         for (Skill skill : skills) {
             skillResources.addAll(getResourcesForSkill(skill.getId(), allResources));

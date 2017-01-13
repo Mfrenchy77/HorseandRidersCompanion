@@ -73,7 +73,7 @@ public class SkillAdapter extends BaseQuickAdapter<Skill> {
     private List<Resource> getResourcesForLevel(String levelId) {
         List<Resource> levelResources = new ArrayList<>();
         for (int i = 0; i < resources.size(); i++) {
-            if (resources.get(i).getLevelIds().contains(levelId)) {
+            if (resources.get(i).getSkillTreeIds().contains(levelId)) {
                 levelResources.add(resources.get(i));
             }
         }

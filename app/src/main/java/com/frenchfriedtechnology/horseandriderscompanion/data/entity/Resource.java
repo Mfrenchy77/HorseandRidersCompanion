@@ -23,27 +23,15 @@ public class Resource {
 
     String url;
 
-    long numberOfRates;
+    long numberOfRates = 0;
 
-    long rating;
+    long rating = 0;
 
-    List<BaseListItem> categoryIds;
-
-    List<BaseListItem> skillIds;
-
-    List<BaseListItem> levelIds;
+    List<BaseListItem> skillTreeIds;
 
     String lastEditBy;
 
     long lastEditDate;
-
-    public List<BaseListItem> getCategoryIds() {
-        return categoryIds;
-    }
-
-    public void setCategoryIds(List<BaseListItem> categoryIds) {
-        this.categoryIds = categoryIds;
-    }
 
     public String getDescription() {
         return description;
@@ -77,14 +65,6 @@ public class Resource {
         this.lastEditDate = lastEditDate;
     }
 
-    public List<BaseListItem> getLevelIds() {
-        return levelIds;
-    }
-
-    public void setLevelIds(List<BaseListItem> levelIds) {
-        this.levelIds = levelIds;
-    }
-
     public String getName() {
         return name;
     }
@@ -109,14 +89,6 @@ public class Resource {
         this.rating = rating;
     }
 
-    public List<BaseListItem> getSkillIds() {
-        return skillIds;
-    }
-
-    public void setSkillIds(List<BaseListItem> skillIds) {
-        this.skillIds = skillIds;
-    }
-
     public String getThumbnail() {
         return thumbnail;
     }
@@ -131,5 +103,13 @@ public class Resource {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public List<BaseListItem> getSkillTreeIds() {
+        return skillTreeIds;
+    }
+
+    public void setSkillTreeIds(List<BaseListItem> skillTreeIds) {
+        this.skillTreeIds = skillTreeIds;
     }
 }
