@@ -1,7 +1,15 @@
 package com.frenchfriedtechnology.horseandriderscompanion.events;
 
-/**
- * Created by matteo on 11/01/17 for HorseandRidersCompanion.
- */
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
+
 public class ResourceUpdateEvent {
+    private Resource resource;
+
+    public ResourceUpdateEvent(Resource resource) {
+        this.resource = resource;
+    }
+
+    public Resource getResource() {
+        return resource;
+    }
 }

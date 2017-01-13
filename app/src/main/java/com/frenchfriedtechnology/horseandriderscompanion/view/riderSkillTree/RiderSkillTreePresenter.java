@@ -1,12 +1,15 @@
 package com.frenchfriedtechnology.horseandriderscompanion.view.riderSkillTree;
 
+import com.frenchfriedtechnology.horseandriderscompanion.AccountManager;
 import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.RiderProfileApi;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.RiderProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.SkillLevel;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.realmServices.RealmProfileService;
 import com.frenchfriedtechnology.horseandriderscompanion.data.sync.ProfileSyncer;
+import com.frenchfriedtechnology.horseandriderscompanion.events.LevelAdjustedEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BasePresenter;
+import com.squareup.otto.Subscribe;
 
 
 import java.util.HashMap;
@@ -68,43 +71,53 @@ public class RiderSkillTreePresenter extends BasePresenter<RiderSkillTreeMvpView
     /**
      * Update User's Rider Profile with a new Skill Level
      */
-    void updateRiderSkillLevel(SkillLevel skillLevel) {
 
-        HashMap<String, SkillLevel> levels = new HashMap<>();
+    @Subscribe
+    public void levelAdjustedEvent(LevelAdjustedEvent event) {
+        if (event.isRider()) {
+            SkillLevel skillLevel = new SkillLevel();
+            skillLevel.setLevel(event.getProgress());
+            skillLevel.setLevelId(event.getLevelId());
+            skillLevel.setLastEditDate(System.currentTimeMillis());
+            skillLevel.setLastEditBy(AccountManager.currentUser());
 
-        //check for existing skillLevel and remove it
-        if (riderProfile.getSkillLevels() != null) {
-            Timber.d("UpdateRiderSkillLevel() riderSKillLevel size " + riderProfile.getSkillLevels().size());
-            levels = riderProfile.getSkillLevels();
-            if (levels.containsKey(skillLevel.getLevelId())) {
-                //replace old with new
-                levels.remove(skillLevel.getLevelId());
-                levels.put(skillLevel.getLevelId(), skillLevel);
-                Timber.d("Replaced Skill Level");
+            HashMap<String, SkillLevel> levels = new HashMap<>();
+
+            //check for existing skillLevel and remove it
+            if (riderProfile.getSkillLevels() != null) {
+                Timber.d("UpdateRiderSkillLevel() riderSKillLevel size " + riderProfile.getSkillLevels().size());
+                levels = riderProfile.getSkillLevels();
+                if (levels.containsKey(skillLevel.getLevelId())) {
+                    //replace old with new
+                    levels.remove(skillLevel.getLevelId());
+                    levels.put(String.valueOf(skillLevel.getLevelId()), skillLevel);
+                    Timber.d("Replaced Skill Level");
+                } else {
+                    //create new
+                    Timber.d("Created new Skill Level");
+                    levels.put(String.valueOf(skillLevel.getLevelId()), skillLevel);
+                }
             } else {
-                //create new
-                Timber.d("Created new Skill Level");
-                levels.put(skillLevel.getLevelId(), skillLevel);
+                Timber.d("SkillLevel is Null");
             }
-        } else {
-            Timber.d("SkillLevel is Null");
+            riderProfile.setSkillLevels(levels);
+            riderProfile.setLastEditBy(riderProfile.getName());
+            riderProfile.setLastEditDate(System.currentTimeMillis());
+
+            realmProfileService.createOrUpdateRiderProfileToRealm(riderProfile, new RealmProfileService.RealmProfileCallback() {
+                @Override
+                public void onRealmSuccess() {
+
+                    RiderProfileApi.createOrUpdateRiderProfile(riderProfile);
+                    Timber.d("Updated Realm Profile");
+                }
+
+                @Override
+                public void onRealmError(Throwable e) {
+                    Timber.d("Error Updating Realm Profile");
+
+                }
+            });
         }
-        riderProfile.setSkillLevels(levels);
-        riderProfile.setLastEditBy(riderProfile.getName());
-        riderProfile.setLastEditDate(System.currentTimeMillis());
-
-        realmProfileService.createOrUpdateRiderProfileToRealm(riderProfile, new RealmProfileService.RealmProfileCallback() {
-            @Override
-            public void onRealmSuccess() {
-                RiderProfileApi.createOrUpdateRiderProfile(riderProfile);
-                Timber.d("Updated Realm Profile");
-            }
-
-            @Override
-            public void onRealmError(Throwable e) {
-                Timber.d("Error Updating Realm Profile");
-
-            }
-        });
     }
 }

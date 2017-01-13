@@ -2,13 +2,13 @@ package com.frenchfriedtechnology.horseandriderscompanion.events;
 
 public class SkillDeleteEvent {
 
-    private String skillId;
+    private long skillId;
 
-    public SkillDeleteEvent(String skillId) {
+    public SkillDeleteEvent(long skillId) {
         this.skillId = skillId;
     }
 
-    public String getSkillId() {
+    public long getSkillId() {
         return skillId;
     }
 }

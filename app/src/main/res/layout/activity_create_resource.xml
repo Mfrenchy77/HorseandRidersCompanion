@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="@dimen/spacing_normal"
+    android:animateLayoutChanges="true"
     android:fitsSystemWindows="true"
     app:cardBackgroundColor="@color/colorPrimaryDark"
     app:cardCornerRadius="@dimen/spacing_normal"

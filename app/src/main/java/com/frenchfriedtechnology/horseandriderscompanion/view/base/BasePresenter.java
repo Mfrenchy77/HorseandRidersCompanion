@@ -1,5 +1,7 @@
 package com.frenchfriedtechnology.horseandriderscompanion.view.base;
 
+import com.frenchfriedtechnology.horseandriderscompanion.BusProvider;
+
 /**
  * Base class that implements the Presenter interface and provides a base implementation for
  * attachView() and detachView(). It also handles keeping a reference to the mvpView that
@@ -12,11 +14,13 @@ public class BasePresenter<T extends MvpView> implements Presenter<T> {
     @Override
     public void attachView(T mvpView) {
         mMvpView = mvpView;
+        BusProvider.getBusProviderInstance().register(this);
     }
 
     @Override
     public void detachView() {
         mMvpView = null;
+        BusProvider.getBusProviderInstance().unregister(this);
     }
 
     public boolean isViewAttached() {

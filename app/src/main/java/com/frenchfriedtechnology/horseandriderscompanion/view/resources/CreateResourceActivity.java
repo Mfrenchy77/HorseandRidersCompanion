@@ -23,6 +23,7 @@ import com.frenchfriedtechnology.horseandriderscompanion.AccountManager;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.BaseListItem;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.TreeNode;
 import com.frenchfriedtechnology.horseandriderscompanion.util.ViewUtil;
 import com.frenchfriedtechnology.horseandriderscompanion.view.adapters.SkillTreeSelectAdapter;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BaseActivity;
@@ -202,6 +203,14 @@ public class CreateResourceActivity extends BaseActivity implements CreateResour
         createResourceButton.setText(posting ? R.string.sending : R.string.submit);
     }
 
+
+    @Override
+    public void getTreeNode(TreeNode treeNode) {
+/*
+        skillTreeSelectAdapter.setSkillTree(skillTreeList);
+*/
+    }
+
     @Override
     public void getSkillTreeList(List<BaseListItem> skillTreeList) {
 
@@ -252,7 +261,7 @@ public class CreateResourceActivity extends BaseActivity implements CreateResour
         Timber.d("selectedSkillTreeItems size: " + selectedSkillTreeItems.size());
         if (valid) {
             resource = new Resource();
-            resource.setId(ViewUtil.createId());
+            resource.setId(ViewUtil.createLongId());
             resource.setName(resourceTitle.getText().toString());
             resource.setDescription(resourceDescription.getText().toString());
             resource.setUrl(resourceLink.getText().toString());

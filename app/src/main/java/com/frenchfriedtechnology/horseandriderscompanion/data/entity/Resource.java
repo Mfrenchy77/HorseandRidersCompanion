@@ -2,6 +2,7 @@ package com.frenchfriedtechnology.horseandriderscompanion.data.entity;
 
 import org.parceler.Parcel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ public class Resource {
         //required
     }
 
-    String id;
+    long id;
 
     String name;
 
@@ -27,11 +28,21 @@ public class Resource {
 
     long rating = 0;
 
-    List<BaseListItem> skillTreeIds;
+    List<BaseListItem> skillTreeIds = new ArrayList<>();
+
+    List<BaseListItem> usersWhoRated = new ArrayList<>();
 
     String lastEditBy;
 
     long lastEditDate;
+
+    public List<BaseListItem> getUsersWhoRated() {
+        return usersWhoRated;
+    }
+
+    public void setUsersWhoRated(List<BaseListItem> usersWhoRated) {
+        this.usersWhoRated = usersWhoRated;
+    }
 
     public String getDescription() {
         return description;
@@ -41,11 +52,11 @@ public class Resource {
         this.description = description;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 

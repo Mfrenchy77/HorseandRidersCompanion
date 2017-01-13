@@ -28,9 +28,6 @@ import com.frenchfriedtechnology.horseandriderscompanion.R;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.BaseListItem;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.HorseProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.RiderProfile;
-import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.ListItem;
-import com.frenchfriedtechnology.horseandriderscompanion.events.HorseProfileCreateEvent;
-import com.frenchfriedtechnology.horseandriderscompanion.events.HorseProfileDeleteEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.ThemeChangedEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BaseActivity;
 import com.frenchfriedtechnology.horseandriderscompanion.view.SettingsActivity;
@@ -174,7 +171,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
     @SuppressWarnings("Convert2streamapi")
     @Override
     public void getUserProfile(RiderProfile riderProfile) {
-        List<String> horseIds = new ArrayList<>();
+        List<Long> horseIds = new ArrayList<>();
         for (BaseListItem ownedHorse : riderProfile.getOwnedHorses()) {
             horseIds.add(ownedHorse.getId());
         }
@@ -214,8 +211,8 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
      */
     public void onHorseSelected(int position) {
         String horse = adapter.getItem(position);
-        String horseId = getHorseIdFromName(horse);
-        if (horseId != null) {
+        long horseId = getHorseIdFromName(horse);
+        if (horseId != 0) {
             HorseSkillTreeActivity.start(this, horseId);
         } else {
             Timber.d("Horse Id is Null");
@@ -223,8 +220,8 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
         showToast("Open Horse Skill Tree for " + horse);
     }
 
-    private String getHorseIdFromName(String horse) {
-        String horseId = null;
+    private long getHorseIdFromName(String horse) {
+        long horseId = 0;
         for (int i = 0; i < horseProfiles.size(); i++) {
             if (horseProfiles.get(i).getName().equals(horse)) {
                 horseId = horseProfiles.get(i).getId();
@@ -236,7 +233,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
 
     public boolean onHorseLongClicked(int position) {
         for (int i = 0; i < horseProfiles.size(); i++) {
-            if (horseProfiles.get(i).getName().equals(adapter.getItem(position))){
+            if (horseProfiles.get(i).getName().equals(adapter.getItem(position))) {
                 DialogHorseProfile.newInstance(EDIT_HORSE, horseProfiles.get(i)).show(getFragmentManager(), null);
             }
         }
@@ -264,6 +261,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
         //Dialog form to create a horse profile
         DialogHorseProfile.newInstance(NEW_HORSE, null).show(getFragmentManager(), null);
     }
+/*
 
     @Subscribe
     public void onCreateOrEditHorseProfile(HorseProfileCreateEvent event) {
@@ -271,12 +269,13 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
         showToast("Horse: " + event.getHorseProfile().getName());
     }
 
+
     @Subscribe
     public void onDeleteHorseEvent(HorseProfileDeleteEvent event) {
         mPresenter.deleteHorseProfile(event.getId());
         showToast("Delete Horse: " + event.getId());
     }
-
+    */
     @Subscribe
     public void onThemeChangedEvent(ThemeChangedEvent event) {
         Timber.d("Theme Changed");

@@ -69,12 +69,12 @@ public class DialogCreateAdjustLevel extends DialogFragment {
     private TextInputEditText completeLevelDescription;
 
 
-    public static DialogCreateAdjustLevel newInstance(@StringRes String tag, @Nullable Level level, String skillId, List<Resource> resources) {
+    public static DialogCreateAdjustLevel newInstance(@StringRes String tag, @Nullable Level level, long skillId, List<Resource> resources) {
         Parcelable resourceList = Parcels.wrap(resources);
         Bundle args = new Bundle();
         args.putParcelable(LEVEL, Parcels.wrap(level));
         args.putString(TAG, tag);
-        args.putString(SKILL_ID, skillId);
+        args.putLong(SKILL_ID, skillId);
         args.putParcelable(RESOURCES, resourceList);
 
         DialogCreateAdjustLevel fragment = new DialogCreateAdjustLevel();
@@ -82,7 +82,8 @@ public class DialogCreateAdjustLevel extends DialogFragment {
         return fragment;
     }
 
-    private String tag, skillId;
+    private String tag;
+    private long skillId;
     private Level level = new Level();
 
     @Override
@@ -90,7 +91,7 @@ public class DialogCreateAdjustLevel extends DialogFragment {
         super.onCreate(savedInstanceState);
         tag = getArguments().getString(TAG);
         level = Parcels.unwrap(getArguments().getParcelable(LEVEL));
-        skillId = getArguments().getString(SKILL_ID);
+        skillId = getArguments().getLong(SKILL_ID);
     }
 
     @Override
@@ -142,7 +143,7 @@ public class DialogCreateAdjustLevel extends DialogFragment {
         ImageButton deleteButton = (ImageButton) view.findViewById(R.id.delete_item_button);
         deleteButton.setVisibility(tag.equals(EDIT_LEVEL) ? View.VISIBLE : View.GONE);
         deleteButton.setOnClickListener(view1 -> {
-            if (level.getId() != null) {
+            if (level.getId() != 0) {
                 BusProvider.getBusProviderInstance().post(new LevelDeleteEvent(level.getId()));
                 dismiss();
             } else {
@@ -168,7 +169,7 @@ public class DialogCreateAdjustLevel extends DialogFragment {
 
             Level newLevel = new Level();
             newLevel.setLevelName(name);
-            newLevel.setId(tag.equals(EDIT_LEVEL) ? level.getId() : ViewUtil.createId());
+            newLevel.setId(tag.equals(EDIT_LEVEL) ? level.getId() : ViewUtil.createLongId());
             newLevel.setLearningDescription(learningLevelDescription.getText().toString().trim());
             newLevel.setCompleteDescription(completeLevelDescription.getText().toString().trim());
             newLevel.setSkillId(skillId);
@@ -200,7 +201,7 @@ public class DialogCreateAdjustLevel extends DialogFragment {
         LinearLayout resourcesLayout = (LinearLayout) view.findViewById(R.id.resources_layout);
         BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(resourcesLayout);
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        bottomSheetBehavior.setPeekHeight((int) ViewUtil.dpToPx(50));
+        bottomSheetBehavior.setPeekHeight((int) ViewUtil.dpToPx(40));
         ResourceAdapter resourceAdapter = new ResourceAdapter(resources);
         RecyclerView resourcesRecycler = (RecyclerView) view.findViewById(R.id.level_resources_recycler);
         resourcesRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));

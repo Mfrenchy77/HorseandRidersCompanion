@@ -9,7 +9,6 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -104,23 +103,15 @@ public class DialogHorseProfile extends DialogFragment {
         horseProfileAge = (TextInputEditText) view.findViewById(R.id.horse_age);
 
         horseProfileColor = (TextInputEditText) view.findViewById(R.id.horse_color);
-        horseProfileColor.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        horseProfileColor.setOnEditorActionListener((v, actionId, event) -> {
 
-                horseProfileCurrentOwner.requestFocus();
-                onHeightClicked(horseProfileHeight);
-                return true;
+            horseProfileCurrentOwner.requestFocus();
+            onHeightClicked(horseProfileHeight);
+            return true;
 
-            }
         });
         horseProfileHeight = (TextInputEditText) view.findViewById(R.id.horse_height);
-        horseProfileHeight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onHeightClicked(horseProfileHeight);
-            }
-        });
+        horseProfileHeight.setOnClickListener(v -> onHeightClicked(horseProfileHeight));
 
         horseProfileCurrentOwner = (TextInputEditText) view.findViewById(R.id.horse_owner);
         horseProfileCurrentOwner.setOnEditorActionListener((v, actionId, event) -> {
@@ -200,11 +191,10 @@ public class DialogHorseProfile extends DialogFragment {
         String name = horseProfileName.getText().toString().trim();
         String owner = horseProfileCurrentOwner.getText().toString().trim();
 
-        // TODO: 12/12/16 Flesh out this entire interface more, open date picker for stuff ect
         if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(owner)) {
             if (!new ViewUtil().containsLetter(horseProfilePurchasePrice.getText().toString())) {
                 HorseProfile horseProfile = new HorseProfile();
-                horseProfile.setId(tag.equals(EDIT_HORSE) ? editHorseProfile.getId() : ViewUtil.createId());
+                horseProfile.setId(tag.equals(EDIT_HORSE) ? editHorseProfile.getId() : ViewUtil.createLongId());
                 horseProfile.setName(horseProfileName.getText().toString());
                 horseProfile.setBreed(horseProfileBreed.getText().toString());
                 horseProfile.setDateOfBirth(new TimeUtils().dateToMillis(horseProfileDob.getText().toString()));

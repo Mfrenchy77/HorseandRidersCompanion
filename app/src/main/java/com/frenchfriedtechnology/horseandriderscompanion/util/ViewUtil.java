@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
 
 import java.security.SecureRandom;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,6 +29,7 @@ public class ViewUtil {
     private String height, hands, inches;
     private static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static SecureRandom rnd = new SecureRandom();
+
     /**
      * @param dp a Density-Independent Pixel value
      * @return the pixels for the current screen
@@ -83,6 +85,11 @@ public class ViewUtil {
             randomStringBuilder.append(AB.charAt(rnd.nextInt(AB.length())));
         }
         return randomStringBuilder.toString();
+    }
+
+    public static long createLongId() {
+        Random random = new Random();
+        return random.nextLong();
     }
 
     /**

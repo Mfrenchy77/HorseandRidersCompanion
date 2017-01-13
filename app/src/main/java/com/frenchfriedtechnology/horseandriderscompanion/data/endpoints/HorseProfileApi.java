@@ -29,7 +29,8 @@ public class HorseProfileApi {
         Timber.d("createOrUpdateHorseProfile() called");
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         databaseReference.child(Constants.HORSE_PROFILE)
-                .child(horseProfile.getId()).setValue(horseProfile);
+                .child(String.valueOf(horseProfile.getId()))
+                .setValue(horseProfile);
     }
 
     /**
@@ -37,12 +38,12 @@ public class HorseProfileApi {
      *
      * @param ids horses' ids
      */
-    public static void getAllUsersHorses(List<String> ids, HorseProfileCallback callback) {
+    public static void getAllUsersHorses(List<Long> ids, HorseProfileCallback callback) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         //retrieve users profile
-        for (String id : ids) {
+        for (Long id : ids) {
             databaseReference.child(Constants.HORSE_PROFILE)
-                    .child(id)
+                    .child(String.valueOf(id))
                     .addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -65,10 +66,10 @@ public class HorseProfileApi {
      * @param id horse's id
      */
 
-    public static void getHorseProfile(String id, HorseProfileCallback callback) {
+    public static void getHorseProfile(long id, HorseProfileCallback callback) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         databaseReference.child(Constants.HORSE_PROFILE)
-                .child(id)
+                .child(String.valueOf(id))
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -89,10 +90,11 @@ public class HorseProfileApi {
      * @param id horse's id
      */
 
-    public static void deleteHorseProfile(String id) {
+    public static void deleteHorseProfile(long id) {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         databaseReference.child(Constants.HORSE_PROFILE)
-                .child(id).removeValue();
+                .child(String.valueOf(id))
+                .removeValue();
     }
 
     public interface HorseProfileCallback {

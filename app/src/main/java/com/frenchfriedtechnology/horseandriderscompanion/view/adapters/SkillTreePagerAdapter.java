@@ -112,7 +112,7 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
         List<Skill> categorySkills = new ArrayList<>();
         List<Skill> skills = getAllSkills();
         for (int i = 0; i < skills.size(); i++) {
-            if (skills.get(i).getCategoryId().equals(category.getId())) {
+            if (skills.get(i).getCategoryId()==category.getId()) {
                 categorySkills.add(skills.get(i));
             }
         }

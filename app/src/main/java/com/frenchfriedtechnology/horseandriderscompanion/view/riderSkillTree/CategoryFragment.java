@@ -78,7 +78,7 @@ public class CategoryFragment extends Fragment {
         return rootView;
     }
 
-    private List<Resource> getResourcesForSkill(String skillId, List<Resource> resources) {
+    private List<Resource> getResourcesForSkill(long skillId, List<Resource> resources) {
         List<Resource> skillResources = new ArrayList<>();
 
         for (int i = 0; i < resources.size(); i++) {
@@ -90,9 +90,9 @@ public class CategoryFragment extends Fragment {
         return skillResources;
     }
 
-    private boolean matchResourceWithCategory(String categoryId, List<BaseListItem> skillTreeIds) {
+    private boolean matchResourceWithCategory(long categoryId, List<BaseListItem> skillTreeIds) {
         for (int i = 0; i < skillTreeIds.size(); i++) {
-            if (skillTreeIds.get(i).getId().equals(categoryId)) {
+            if (skillTreeIds.get(i).getId() == categoryId) {
                 return true;
             }
         }
@@ -115,15 +115,17 @@ public class CategoryFragment extends Fragment {
         Timber.d("all resources size: " + allResources.size());
         LinearLayout resourcesLayout = (LinearLayout) rootView.findViewById(R.id.resources_layout);
         BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(resourcesLayout);
+/*
         bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        bottomSheetBehavior.setPeekHeight((int) ViewUtil.dpToPx(50));
+*/
+        bottomSheetBehavior.setPeekHeight((int) ViewUtil.dpToPx(45));
         ResourceAdapter resourceAdapter = new ResourceAdapter(resources);
         RecyclerView resourcesRecycler = (RecyclerView) rootView.findViewById(R.id.level_resources_recycler);
         resourcesRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
         resourcesRecycler.setAdapter(resourceAdapter);
         Timber.d("Resources Empty? " + resources.isEmpty());
 
-        //----setup empty list
+        //----setup empty Resource list
         TextView emptyResource = (TextView) rootView.findViewById(R.id.empty_resource);
         emptyResource.setVisibility(resources.isEmpty() ? View.VISIBLE : View.GONE);
         emptyResource.setOnClickListener(new View.OnClickListener() {

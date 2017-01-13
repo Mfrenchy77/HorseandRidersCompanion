@@ -32,8 +32,7 @@ public class SkillTreeSelectAdapter extends BaseQuickAdapter<BaseListItem> {
     @Override
     public long getItemId(int position) {
         if (!skillTree.isEmpty()) {
-            String id = skillTree.get(position).getId();
-            return ViewUtil.convertIdToNumber(id);
+            return skillTree.get(position).getId();
         } else {
             return super.getItemId(position);
         }
@@ -79,9 +78,9 @@ public class SkillTreeSelectAdapter extends BaseQuickAdapter<BaseListItem> {
 
     }
 
-    private void toggleChildren(String id) {
+    private void toggleChildren(long id) {
         for (int i = 0; i < skillTree.size(); i++) {
-            if (skillTree.get(i).getParentId() != null && skillTree.get(i).getParentId().equals(id)) {
+            if (skillTree.get(i).getParentId() != 0 && skillTree.get(i).getParentId() == id) {
                 skillTree.get(i).toggle();
             }
         }

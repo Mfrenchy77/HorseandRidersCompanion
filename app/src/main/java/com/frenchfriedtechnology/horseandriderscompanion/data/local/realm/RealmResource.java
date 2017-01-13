@@ -10,7 +10,7 @@ import io.realm.annotations.PrimaryKey;
 public class RealmResource extends RealmObject {
 
     @PrimaryKey
-    private String id;
+    private long id;
 
     private String name;
 
@@ -26,10 +26,19 @@ public class RealmResource extends RealmObject {
 
     private RealmList<ListItem> skillTreeIds;
 
+    private RealmList<ListItem> usersWhoRated;
+
     private String lastEditBy;
 
     private long lastEditDate;
 
+    public RealmList<ListItem> getUsersWhoRated() {
+        return usersWhoRated;
+    }
+
+    public void setUsersWhoRated(RealmList<ListItem> usersWhoRated) {
+        this.usersWhoRated = usersWhoRated;
+    }
 
     public String getDescription() {
         return description;
@@ -39,11 +48,11 @@ public class RealmResource extends RealmObject {
         this.description = description;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 

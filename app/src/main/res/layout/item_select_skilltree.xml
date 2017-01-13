@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:padding="@dimen/spacing_normal">
-
-    <android.support.v7.widget.AppCompatCheckedTextView
-        android:id="@+id/select_skill_tree_item"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
-        android:checked="false"
-        android:gravity="center_vertical"
-        tools:text="CheckBox"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>
-</FrameLayout>
+<android.support.v7.widget.AppCompatCheckedTextView
+    android:id="@+id/select_skill_tree_item"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+    android:checked="false"
+    android:padding="@dimen/spacing_normal"
+    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+    android:visibility="gone"
+    tools:text="CheckBox"
+    tools:visibility="visible"
+    />

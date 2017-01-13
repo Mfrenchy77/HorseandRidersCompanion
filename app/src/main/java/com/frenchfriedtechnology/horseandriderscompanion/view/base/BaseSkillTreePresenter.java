@@ -1,5 +1,9 @@
 package com.frenchfriedtechnology.horseandriderscompanion.view.base;
 
+import android.content.Intent;
+import android.net.Uri;
+
+import com.frenchfriedtechnology.horseandriderscompanion.AccountManager;
 import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.CategoriesApi;
 import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.LevelsApi;
 import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.ResourcesApi;
@@ -11,7 +15,20 @@ import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Skill;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.realmServices.RealmSkillTreeService;
 import com.frenchfriedtechnology.horseandriderscompanion.data.sync.SkillTreeSyncer;
 import com.frenchfriedtechnology.horseandriderscompanion.di.ConfigPersistent;
+import com.frenchfriedtechnology.horseandriderscompanion.events.CategoryCreateEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.events.CategoryDeleteEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.events.CategoryEditEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.events.LevelCreateEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.events.LevelDeleteEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.events.LevelEditEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.events.ResourceSelectedEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.events.ResourceUpdateEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.events.SkillCreateEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.events.SkillDeleteEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.events.SkillUpdateEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.util.Constants;
+import com.frenchfriedtechnology.horseandriderscompanion.util.ViewUtil;
+import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
@@ -73,9 +90,6 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
     }
 
     //----Category Actions
-    public void createCategory(Category newCategory) {
-        new CategoriesApi().createOrEditCategory(newCategory, skillTreePath());
-    }
 
     void getCategories() {
         realmCategories = realmSkillTreeService.getCategories(isRider());
@@ -105,19 +119,51 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
 
     }
 
-    public void editCategory(Category editedCategory) {
-        new CategoriesApi().createOrEditCategory(editedCategory, skillTreePath());
+    @Subscribe
+    public void createCategoryEvent(CategoryCreateEvent event) {
+        Category category = new Category();
+        category.setName(event.getCategoryName());
+        category.setDescription(event.getCategoryDescription());
+        category.setId(ViewUtil.createLongId());
+        category.setLastEditDate(System.currentTimeMillis());
+        category.setLastEditBy(AccountManager.currentUser());
+        category.setRider(isRider());
+        new CategoriesApi().createOrEditCategory(category, skillTreePath());
     }
+/*
+
+    public void createCategory(Category newCategory) {
+    }
+*/
+
+    @Subscribe
+    public void categoryUpdateEvent(CategoryEditEvent event) {
+        Category editCategory = event.getCategory();
+        editCategory.setLastEditDate(System.currentTimeMillis());
+        editCategory.setLastEditBy(AccountManager.currentUser());
+        new CategoriesApi().createOrEditCategory(editCategory, skillTreePath());
+    }
+/*
+
+    public void editCategory(Category editedCategory) {
+    }
+*/
+
+    @Subscribe
+    public void deleteCategoryEvent(CategoryDeleteEvent event) {
+        new CategoriesApi().deleteCategory(event.getCategoryName(), skillTreePath());
+    }
+/*
 
     public void deleteCategory(String deletedCategoryName) {
-        new CategoriesApi().deleteCategory(deletedCategoryName, skillTreePath());
     }
+*/
 
-    private Category matchCategoryId(String id, List<Category> categoriesToSearch) {
+    private Category matchCategoryId(long id, List<Category> categoriesToSearch) {
         Category matchedCategory = new Category();
         if (!categoriesToSearch.isEmpty()) {
             for (int i = 0; i < categoriesToSearch.size(); i++) {
-                if (categoriesToSearch.get(i).getId().equals(id)) {
+                if (categoriesToSearch.get(i).getId() == (id)) {
                     matchedCategory = categoriesToSearch.get(i);
                     return matchedCategory;
                 }
@@ -156,23 +202,48 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
         });
     }
 
-    public void createSkill(Skill skill) {
+    @Subscribe
+    public void createSkillEvent(SkillCreateEvent event) {
+        Skill skill = new Skill();
+        skill.setCategoryId(event.getCategoryId());
+        skill.setId(event.isEdit() ? event.getSkillId() : ViewUtil.createLongId());
+        skill.setSkillName(event.getSkillName());
+        skill.setDescription(event.getSkillDescription());
+        skill.setLastEditDate(System.currentTimeMillis());
+        skill.setLastEditBy(AccountManager.currentUser());
+        skill.setRider(isRider());
         new SkillsApi().createOrUpdateSkill(skill, skillTreePath());
     }
+/*
+    public void createSkill(Skill skill) {
+    }*/
 
-    public void editSkill(Skill editedSkill) {
+    @Subscribe
+    public void updateSkillEvent(SkillUpdateEvent event) {
+        Skill editedSkill = event.getSkill();
+        editedSkill.setLastEditBy(AccountManager.currentUser());
+        editedSkill.setLastEditDate(System.currentTimeMillis());
         new SkillsApi().createOrUpdateSkill(editedSkill, skillTreePath());
     }
+/*
+    public void editSkill(Skill editedSkill) {
+    }*/
+
+    @Subscribe
+    public void deleteSkillEvent(SkillDeleteEvent event) {
+        new SkillsApi().deleteSkill(event.getSkillId(), skillTreePath());
+    }
+/*
 
     public void deleteSkill(String deleteSkillId) {
-        new SkillsApi().deleteSkill(deleteSkillId, skillTreePath());
     }
+*/
 
-    private Skill matchSkillIds(String id, List<Skill> skillsToSearch) {
+    private Skill matchSkillIds(long id, List<Skill> skillsToSearch) {
         Skill matchedSkill = new Skill();
         if (!skillsToSearch.isEmpty()) {
             for (int i = 0; i < skillsToSearch.size(); i++) {
-                if (skillsToSearch.get(i).getId().equals(id)) {
+                if (skillsToSearch.get(i).getId() == id) {
                     matchedSkill = skillsToSearch.get(i);
                     return matchedSkill;
                 }
@@ -208,23 +279,49 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
         });
     }
 
-    public void createLevel(Level level) {
+    @Subscribe
+    public void createLevelEvent(LevelCreateEvent event) {
+        Level level = event.getLevel();
+        if (!event.isEdit()) {
+            level.setRider(isRider());
+        }
         new LevelsApi().createOrUpdateLevel(level, skillTreePath());
     }
+/*
+
+    public void createLevel(Level level) {
+    }
+
+*/
+
+    @Subscribe
+    public void updateLevelEvent(LevelEditEvent event) {
+        Level updatedLevel = event.getLevel();
+        updatedLevel.setLastEditBy(AccountManager.currentUser());
+        updatedLevel.setLastEditDate(System.currentTimeMillis());
+        new LevelsApi().createOrUpdateLevel(updatedLevel, skillTreePath());
+    }
+/*
 
     public void editLevel(Level editedLevel) {
-        new LevelsApi().createOrUpdateLevel(editedLevel, skillTreePath());
     }
+*/
+
+    @Subscribe
+    public void deleteLevelEvent(LevelDeleteEvent event) {
+        new LevelsApi().deleteLevel(event.getLevelId(), skillTreePath());
+    }
+/*
 
     public void deleteLevel(String deletedLevelId) {
-        new LevelsApi().deleteLevel(deletedLevelId, skillTreePath());
     }
+*/
 
-    private Level matchLevelIds(String id, List<Level> levelsToSearch) {
+    private Level matchLevelIds(long id, List<Level> levelsToSearch) {
         Level matchedLevel = new Level();
         if (!levelsToSearch.isEmpty()) {
             for (int i = 0; i < levelsToSearch.size(); i++) {
-                if (levelsToSearch.get(i).getId().equals(id)) {
+                if (levelsToSearch.get(i).getId() == id) {
                     matchedLevel = levelsToSearch.get(i);
                     return matchedLevel;
                 }
@@ -250,6 +347,7 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
                     Resource realmResource = matchResourceIds(firebaseResource.getId(), realmResources);
                     skillTreeSyncer.syncResource(realmResource, firebaseResource);
                 }
+                Timber.d("View attached: " + isViewAttached());
                 if (isViewAttached()) {
                     getMvpView().getResources(resources);
                 }
@@ -263,42 +361,26 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
     }
 
     public void createResource(Resource resource) {
-        new ResourcesApi().createOrUpdateResource(resource, new ResourcesApi.ResourceCreatedCallback() {
-            @Override
-            public void onSuccess() {
-
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        });
+        new ResourcesApi().createOrUpdateResource(resource);
     }
 
-    public void editResource(Resource editedResource) {
-        new ResourcesApi().createOrUpdateResource(editedResource, new ResourcesApi.ResourceCreatedCallback() {
-            @Override
-            public void onSuccess() {
+    @Subscribe
+    public void resourceUpdateEvent(ResourceUpdateEvent event) {
+        new ResourcesApi().createOrUpdateResource(event.getResource());
+    }
 
-            }
-
-            @Override
-            public void onError(String error) {
-
-            }
-        });
+    public void updateResource(Resource updatedResource) {
     }
 
     public void deleteResource(Resource resource) {
         new ResourcesApi().deleteResource(resource);
     }
 
-    private Resource matchResourceIds(String id, List<Resource> resourcesToSearch) {
+    private Resource matchResourceIds(long id, List<Resource> resourcesToSearch) {
         Resource matchedResource = new Resource();
         if (!resourcesToSearch.isEmpty()) {
             for (int i = 0; i < resourcesToSearch.size(); i++) {
-                if (resourcesToSearch.get(i).getId().equals(id)) {
+                if (resourcesToSearch.get(i).getId() == id) {
                     matchedResource = resourcesToSearch.get(i);
                     return matchedResource;
                 }
@@ -308,6 +390,13 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
             return matchedResource;
         }
         return null;
+    }
+
+    @Subscribe
+    public void resourceSelectedEvent(ResourceSelectedEvent event) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(event.getUrl()));
+        getMvpView().openIntent(intent);
     }
 }
 

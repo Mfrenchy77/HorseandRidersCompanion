@@ -50,26 +50,27 @@ public class DialogCreateSkill extends DialogFragment {
 
     private TextInputEditText skillName, skillDescription;
 
-    public static DialogCreateSkill newInstance(@StringRes String tag, @Nullable Skill skill, String categoryId) {
+    public static DialogCreateSkill newInstance(@StringRes String tag, @Nullable Skill skill, long categoryId) {
 
         Bundle args = new Bundle();
         args.putParcelable(SKILL, Parcels.wrap(skill));
         args.putString(TAG, tag);
-        args.putString(CATEGORY_ID, categoryId);
+        args.putLong(CATEGORY_ID, categoryId);
 
         DialogCreateSkill fragment = new DialogCreateSkill();
         fragment.setArguments(args);
         return fragment;
     }
 
-    private String tag, categoryId;
+    private String tag;
+    private long categoryId;
     private Skill skill = new Skill();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         tag = getArguments().getString(TAG);
-        categoryId = getArguments().getString(CATEGORY_ID);
+        categoryId = getArguments().getLong(CATEGORY_ID);
         skill = Parcels.unwrap(getArguments().getParcelable(SKILL));
     }
 
@@ -88,7 +89,7 @@ public class DialogCreateSkill extends DialogFragment {
         ImageButton deleteButton = (ImageButton) view.findViewById(R.id.delete_item_button);
         deleteButton.setVisibility(tag.equals(EDIT_SKILL) ? View.VISIBLE : View.GONE);
         deleteButton.setOnClickListener(view1 -> {
-            if (skill.getId() != null) {
+            if (skill.getId() != 0) {
                 BusProvider.getBusProviderInstance().post(new SkillDeleteEvent(skill.getId()));
                 dismiss();
             } else {
@@ -109,7 +110,7 @@ public class DialogCreateSkill extends DialogFragment {
             String description = skillDescription.getText().toString().trim();
             if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(description)) {
 
-                BusProvider.getBusProviderInstance().post(new SkillCreateEvent(categoryId, description, name, tag.equals(EDIT_SKILL), tag.equals(EDIT_SKILL) ? skill.getId() : null))
+                BusProvider.getBusProviderInstance().post(new SkillCreateEvent(categoryId, description, name, tag.equals(EDIT_SKILL), tag.equals(EDIT_SKILL) ? skill.getId() : 0))
                 ;
                 dismiss();
             } else {

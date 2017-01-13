@@ -11,6 +11,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.frenchfriedtechnology.horseandriderscompanion.BusProvider;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.BaseListItem;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Level;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Skill;
@@ -63,17 +64,26 @@ public class SkillAdapter extends BaseQuickAdapter<Skill> {
     private List<Level> getLevelsForSkill(Skill skill) {
         List<Level> levels = new ArrayList<>();
         for (int i = 0; i < allLevels.size(); i++) {
-            if (allLevels.get(i).getSkillId().equals(skill.getId())) {
+            if (allLevels.get(i).getSkillId() == skill.getId()) {
                 levels.add(allLevels.get(i));
             }
         }
         return levels;
     }
 
-    private List<Resource> getResourcesForLevel(String levelId) {
+    private boolean containsLevelId(long levelId, List<BaseListItem> skillTreeIds) {
+        for (int i = 0; i < skillTreeIds.size(); i++) {
+            if (skillTreeIds.get(i).getId() == levelId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<Resource> getResourcesForLevel(long levelId) {
         List<Resource> levelResources = new ArrayList<>();
         for (int i = 0; i < resources.size(); i++) {
-            if (resources.get(i).getSkillTreeIds().contains(levelId)) {
+            if (containsLevelId(levelId, resources.get(i).getSkillTreeIds())) {
                 levelResources.add(resources.get(i));
             }
         }
@@ -89,8 +99,7 @@ public class SkillAdapter extends BaseQuickAdapter<Skill> {
     @Override
     public long getItemId(int position) {
         if (!skills.isEmpty()) {
-            String id = skills.get(position).getId();
-            return ViewUtil.convertIdToNumber(id);
+            return skills.get(position).getId();
         } else {
             return super.getItemId(position);
         }

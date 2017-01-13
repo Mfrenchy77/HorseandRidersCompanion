@@ -18,7 +18,7 @@ public class SkillLevel implements Serializable {
         //required
     }
 
-    String levelId;
+    long levelId;
 
     @Constants.LevelState
     int level;
@@ -29,11 +29,11 @@ public class SkillLevel implements Serializable {
 
     long lastEditDate;
 
-    public String getLevelId() {
+    public long getLevelId() {
         return levelId;
     }
 
-    public void setLevelId(String levelId) {
+    public void setLevelId(long levelId) {
         this.levelId = levelId;
     }
 

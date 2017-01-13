@@ -10,26 +10,15 @@ import com.frenchfriedtechnology.horseandriderscompanion.AccountManager;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Category;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.HorseProfile;
-import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Level;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Skill;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.SkillLevel;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
-import com.frenchfriedtechnology.horseandriderscompanion.events.CategoryCreateEvent;
-import com.frenchfriedtechnology.horseandriderscompanion.events.CategoryDeleteEvent;
-import com.frenchfriedtechnology.horseandriderscompanion.events.CategoryEditEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.CategorySelectEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LevelsFetch;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LevelAdjustedEvent;
-import com.frenchfriedtechnology.horseandriderscompanion.events.LevelCreateEvent;
-import com.frenchfriedtechnology.horseandriderscompanion.events.LevelDeleteEvent;
-import com.frenchfriedtechnology.horseandriderscompanion.events.LevelEditEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LevelSelectEvent;
-import com.frenchfriedtechnology.horseandriderscompanion.events.SkillCreateEvent;
-import com.frenchfriedtechnology.horseandriderscompanion.events.SkillDeleteEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.SkillSelectEvent;
-import com.frenchfriedtechnology.horseandriderscompanion.events.SkillUpdateEvent;
-import com.frenchfriedtechnology.horseandriderscompanion.util.ViewUtil;
 import com.frenchfriedtechnology.horseandriderscompanion.view.adapters.SkillTreePagerAdapter;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BaseSkillTreeActivity;
 import com.frenchfriedtechnology.horseandriderscompanion.view.dialogs.DialogCreateCategory;
@@ -64,7 +53,7 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
 
     private static final String VIEW_PAGER_ITEM = "VIEW_PAGE_ITEM";
     private static final String HORSE_ID = "HORSE_ID";
-    private List<Resource> levelResources = new ArrayList<>();
+    private List<Resource> resources = new ArrayList<>();
     private HorseProfile horseProfile = new HorseProfile();
 
 
@@ -75,7 +64,7 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
         initPagerAdapter();
         activityComponent().inject(this);
         presenter.attachView(this);
-        presenter.getHorseProfile(getIntent().getStringExtra(HORSE_ID));
+        presenter.getHorseProfile(getIntent().getLongExtra(HORSE_ID, 0));
     }
 
     @Override
@@ -112,10 +101,6 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
         skillTreePagerAdapter.notifyDataSetChanged();
     }
 
-    @Override
-    public void getResources(List<Resource> resources) {
-        levelResources = resources;
-    }
 
     private void initPagerAdapter() {
         skillTreePagerAdapter = new SkillTreePagerAdapter(getSupportFragmentManager(),
@@ -134,7 +119,7 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
     }
 
     //----Category
-
+/*
     @Subscribe
     public void createCategoryEvent(CategoryCreateEvent event) {
         Category category = new Category();
@@ -147,7 +132,7 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
         category.setRider(false);
         basePresenter.createCategory(category);
 
-    }
+    }*/
 
     @Subscribe
     public void categorySelectedEvent(CategorySelectEvent event) {
@@ -160,19 +145,21 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
             //Show Category Details
         }
     }
-
+/*
     @Subscribe
     public void categoryUpdateEvent(CategoryEditEvent event) {
         Category editCategory = event.getCategory();
         editCategory.setLastEditDate(System.currentTimeMillis());
         editCategory.setLastEditBy(AccountManager.currentUser());
         basePresenter.editCategory(editCategory);
-    }
+    }*/
+/*
 
     @Subscribe
     public void deleteCategoryEvent(CategoryDeleteEvent event) {
         basePresenter.deleteCategory(event.getCategoryName());
     }
+*/
 
     //----Skills
 
@@ -185,7 +172,7 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
             DialogCreateSkill.newInstance(NEW_SKILL, skill, event.getCategoryId()).show(getFragmentManager(), null);
         }
     }
-
+/*
     @Subscribe
     public void createSkillEvent(SkillCreateEvent event) {
         Skill skill = new Skill();
@@ -198,7 +185,8 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
         skill.setPosition((getSkills().size() + 1));
         skill.setRider(false);
         basePresenter.createSkill(skill);
-    }
+    }*/
+/*
 
     @Subscribe
     public void updateSkillEvent(SkillUpdateEvent event) {
@@ -207,11 +195,12 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
         editedSkill.setLastEditDate(System.currentTimeMillis());
         basePresenter.editSkill(editedSkill);
     }
-
+*/
+/*
     @Subscribe
     public void deleteSkillEvent(SkillDeleteEvent event) {
         basePresenter.deleteSkill(event.getSkillId());
-    }
+    }*/
 
     //----Levels
 
@@ -220,44 +209,63 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
         switch (event.getTag()) {
             //Dialog Update Level
             case EDIT_LEVEL:
-                DialogCreateAdjustLevel.newInstance(EDIT_LEVEL, event.getLevel(), event.getSkillId(), null).show(getFragmentManager(), null);
+                DialogCreateAdjustLevel.newInstance(EDIT_LEVEL,
+                        event.getLevel(),
+                        event.getSkillId(),
+                        null)
+                        .show(getFragmentManager(), null);
                 break;
             case NEW_LEVEL:
-                DialogCreateAdjustLevel.newInstance(NEW_LEVEL, null, event.getSkillId(), null).show(getFragmentManager(), null);
+                DialogCreateAdjustLevel.newInstance(NEW_LEVEL,
+                        null,
+                        event.getSkillId(),
+                        null)
+                        .show(getFragmentManager(), null);
                 break;
             //Adjust Rider/Horse SkillLevel
             case RIDER_ADJUST:
-                DialogCreateAdjustLevel.newInstance(RIDER_ADJUST, event.getLevel(), event.getSkillId(), levelResources).show(getFragmentManager(), null);
+                DialogCreateAdjustLevel.newInstance(
+                        RIDER_ADJUST,
+                        event.getLevel(),
+                        event.getSkillId(),
+                        getResourcesForLevel(event.getLevel().getId()))
+                        .show(getFragmentManager(), null);
                 break;
             case HORSE_ADJUST:
-                DialogCreateAdjustLevel.newInstance(HORSE_ADJUST, event.getLevel(), event.getSkillId(), levelResources).show(getFragmentManager(), null);
+                DialogCreateAdjustLevel.newInstance(HORSE_ADJUST,
+                        event.getLevel(),
+                        event.getSkillId(),
+                        getResourcesForLevel(event.getLevel().getId()))
+                        .show(getFragmentManager(), null);
                 break;
         }
     }
 
-    @Subscribe
-    public void createLevelEvent(LevelCreateEvent event) {
-        Level level = event.getLevel();
-        if (!event.isEdit()) {
-            level.setPosition((getLevels().size() + 1));
-            level.setRider(false);
+    /*
+        @Subscribe
+        public void createLevelEvent(LevelCreateEvent event) {
+            Level level = event.getLevel();
+            if (!event.isEdit()) {
+                level.setPosition((getLevels().size() + 1));
+                level.setRider(false);
+            }
+            basePresenter.createLevel(level);
         }
-        basePresenter.createLevel(level);
-    }
 
-    @Subscribe
-    public void updateLevelEvent(LevelEditEvent event) {
-        Level updatedLevel = event.getLevel();
-        updatedLevel.setLastEditBy(AccountManager.currentUser());
-        updatedLevel.setLastEditDate(System.currentTimeMillis());
-        basePresenter.editLevel(updatedLevel);
-    }
+        @Subscribe
+        public void updateLevelEvent(LevelEditEvent event) {
+            Level updatedLevel = event.getLevel();
+            updatedLevel.setLastEditBy(AccountManager.currentUser());
+            updatedLevel.setLastEditDate(System.currentTimeMillis());
+            basePresenter.editLevel(updatedLevel);
+        }
 
-    @Subscribe
-    public void deleteLevelEvent(LevelDeleteEvent event) {
-        basePresenter.deleteLevel(event.getLevelId());
-    }
 
+        @Subscribe
+        public void deleteLevelEvent(LevelDeleteEvent event) {
+            basePresenter.deleteLevel(event.getLevelId());
+        }
+        */
     @Subscribe
     public void levelAdjustedEvent(LevelAdjustedEvent event) {
         if (!event.isRider()) {
@@ -276,7 +284,7 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
         skillTreePagerAdapter.setAllLevels(setSkillLevelToLevel(horseProfile.getSkillLevels().values(), event.getLevels()));
     }
 
-    public static void start(Context context, String horseId) {
+    public static void start(Context context, long horseId) {
         Intent intent = new Intent(context, HorseSkillTreeActivity.class);
         intent.putExtra(HORSE_ID, horseId);
         context.startActivity(intent);

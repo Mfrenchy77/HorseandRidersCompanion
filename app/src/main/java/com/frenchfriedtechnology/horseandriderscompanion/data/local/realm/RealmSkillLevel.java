@@ -13,7 +13,7 @@ public class RealmSkillLevel extends RealmObject {
 
     @PrimaryKey
     private
-    String levelId;
+    long levelId;
 
     @Constants.LevelState
     private int level;
@@ -47,11 +47,11 @@ public class RealmSkillLevel extends RealmObject {
         this.level = level;
     }
 
-    public String getLevelId() {
+    public long getLevelId() {
         return levelId;
     }
 
-    public void setLevelId(String levelId) {
+    public void setLevelId(long levelId) {
         this.levelId = levelId;
     }
 }

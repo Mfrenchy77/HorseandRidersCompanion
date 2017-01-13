@@ -167,7 +167,7 @@ public class RiderProfileMapper {
             level.setLastEditDate(realmSkillLevel.getLastEditDate());
             level.setLevel(realmSkillLevel.getLevel());
 
-            skillLevels.put(level.getLevelId(), level);
+            skillLevels.put(String.valueOf(level.getLevelId()), level);
         }
         riderProfileEntity.setSkillLevels(skillLevels);
         return riderProfileEntity;

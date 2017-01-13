@@ -21,7 +21,7 @@ public class LevelsApi {
         //create Level
         databaseReference.child(path)
                 .child(Constants.LEVELS)
-                .child(level.getId())
+                .child(String.valueOf(level.getId()))
                 .setValue(level);
     }
 
@@ -33,11 +33,11 @@ public class LevelsApi {
                 .subscribe(callback::onSuccess, callback::onError);
     }
 
-    public void deleteLevel(String deletedLevelId, String path) {
+    public void deleteLevel(long deletedLevelId, String path) {
         //delete Level
         databaseReference.child(path)
                 .child(Constants.LEVELS)
-                .child(deletedLevelId)
+                .child(String.valueOf(deletedLevelId))
                 .removeValue();
 
     }

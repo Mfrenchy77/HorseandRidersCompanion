@@ -4,11 +4,11 @@ public class SkillCreateEvent {
 
     private String skillName;
     private String skillDescription;
-    private String categoryId;
+    private long categoryId;
     private boolean edit;
-    private String skillId;
+    private long skillId;
 
-    public SkillCreateEvent(String categoryId, String skillDescription, String skillName, boolean edit, String skillId) {
+    public SkillCreateEvent(long categoryId, String skillDescription, String skillName, boolean edit, long skillId) {
         this.categoryId = categoryId;
         this.edit = edit;
         this.skillId = skillId;
@@ -20,11 +20,11 @@ public class SkillCreateEvent {
         return edit;
     }
 
-    public String getSkillId() {
+    public long getSkillId() {
         return skillId;
     }
 
-    public String getCategoryId() {
+    public long getCategoryId() {
         return categoryId;
     }
 

@@ -21,7 +21,7 @@ public class SkillsApi {
         //create Skill
         databaseReference.child(path)
                 .child(Constants.SKILLS)
-                .child(skill.getId())
+                .child(String.valueOf(skill.getId()))
                 .setValue(skill);
     }
 
@@ -33,11 +33,11 @@ public class SkillsApi {
                 .subscribe(callback::onSuccess, callback::onError);
     }
 
-    public void deleteSkill(String deletedSkillId, String path) {
+    public void deleteSkill(long deletedSkillId, String path) {
         //delete Skill
         databaseReference.child(path)
                 .child(Constants.SKILLS)
-                .child(deletedSkillId)
+                .child(String.valueOf(deletedSkillId))
                 .removeValue();
     }
 

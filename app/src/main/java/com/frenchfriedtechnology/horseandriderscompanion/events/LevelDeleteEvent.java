@@ -2,13 +2,13 @@ package com.frenchfriedtechnology.horseandriderscompanion.events;
 
 public class LevelDeleteEvent {
 
-    private String levelId;
+    private long levelId;
 
-    public LevelDeleteEvent(String levelId) {
+    public LevelDeleteEvent(long levelId) {
         this.levelId = levelId;
     }
 
-    public String getLevelId() {
+    public long getLevelId() {
         return levelId;
     }
 }

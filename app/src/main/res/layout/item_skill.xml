@@ -74,8 +74,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_margin="@dimen/spacing_micro"
                 android:gravity="center_vertical"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@color/white"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 tools:text="Skill"/>
 
             <TextView

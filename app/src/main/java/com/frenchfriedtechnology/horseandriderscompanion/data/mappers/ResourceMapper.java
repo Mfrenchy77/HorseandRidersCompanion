@@ -44,6 +44,17 @@ public class ResourceMapper {
             resourceEntity.setSkillTreeIds(skillTreeIdList);
         }
 
+        List<BaseListItem> usersWhoRated = new ArrayList<>();
+        if (realmResource.getUsersWhoRated() != null) {
+            Timber.d("Category List: " + realmResource.getUsersWhoRated().size());
+            for (int i = 0; i < realmResource.getUsersWhoRated().size(); i++) {
+                BaseListItem item = new BaseListItem(realmResource.getUsersWhoRated().get(i).getId(),
+                        realmResource.getUsersWhoRated().get(i).getName());
+                usersWhoRated.add(item);
+            }
+            resourceEntity.setUsersWhoRated(usersWhoRated);
+        }
+
 
         return resourceEntity;
     }
@@ -66,13 +77,22 @@ public class ResourceMapper {
 
         RealmList<ListItem> skillTreeIdsList = new RealmList<>();
         if (resourceEntity.getSkillTreeIds() != null) {
-            Timber.d("Category List: " + resourceEntity.getSkillTreeIds().size());
             for (int i = 0; i < resourceEntity.getSkillTreeIds().size(); i++) {
                 ListItem item = new ListItem(resourceEntity.getSkillTreeIds().get(i).getId(),
                         resourceEntity.getSkillTreeIds().get(i).getName());
                 skillTreeIdsList.add(item);
             }
             realmResource.setSkillTreeIds(skillTreeIdsList);
+        }
+
+        RealmList<ListItem> usersWhoRated = new RealmList<>();
+        if (resourceEntity.getUsersWhoRated() != null) {
+            for (int i = 0; i < resourceEntity.getUsersWhoRated().size(); i++) {
+                ListItem item = new ListItem(resourceEntity.getUsersWhoRated().get(i).getId(),
+                        resourceEntity.getUsersWhoRated().get(i).getName());
+                usersWhoRated.add(item);
+            }
+            realmResource.setUsersWhoRated(usersWhoRated);
         }
 
         return realmResource;

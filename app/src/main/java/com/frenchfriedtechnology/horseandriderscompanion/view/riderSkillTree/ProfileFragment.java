@@ -110,8 +110,35 @@ public class ProfileFragment extends Fragment {
 
     private void inflateHorseView(View rootView) {
         Timber.d("ProfileName: " + horseProfile.getName());
+
         TextView profileName = (TextView) rootView.findViewById(R.id.profile_horse_name);
         profileName.setText(horseProfile.getName());
+
+        TextView editDate = (TextView) rootView.findViewById(R.id.profile_horse_last_edit);
+        editDate.setText(String.format("Edited: %s %s",
+                TimeUtils.lastEditDate(horseProfile.getLastEditDate()), " ago"));
+
+        TextView editBy = (TextView) rootView.findViewById(R.id.profile_horse_last_edit_by);
+        editBy.setText(String.format("By: %s", horseProfile.getLastEditBy()));
+
+        TextView breedAndColor = (TextView) rootView.findViewById(R.id.profile_horse_breed);
+        breedAndColor.setText(String.format("%s - %s", horseProfile.getBreed(), horseProfile.getColor()));
+
+        TextView horseAge = (TextView) rootView.findViewById(R.id.profile_horse_age);
+        horseAge.setText(String.format("Age: %s - Dob: %s", horseProfile.getAge(), new TimeUtils().millisToDate(horseProfile.getDateOfBirth())));
+
+        TextView horseHeight = (TextView) rootView.findViewById(R.id.profile_horse_height);
+        horseHeight.setText(String.format("Height: %s", horseProfile.getHeight()));
+
+        TextView horseOwner = (TextView) rootView.findViewById(R.id.profile_horse_owner);
+        horseOwner.setText(String.format("Owned By: %s", horseProfile.getCurrentOwner()));
+
+        TextView horseLastPurchase = (TextView) rootView.findViewById(R.id.profile_horse_purchase);
+        horseLastPurchase.setText(String.format("Last Purchased: %s For: %s",
+                new TimeUtils().millisToDate(horseProfile.getDateOfPurchase()),
+                horseProfile.getPurchasePrice()));
+
+
     }
 
 

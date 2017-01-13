@@ -11,11 +11,11 @@ public class Skill implements Comparable<Skill> {
         //required
     }
 
-    String id;
+    long id;
 
     String skillName;
 
-    String categoryId;
+    long categoryId;
 
     String description;
 
@@ -27,11 +27,11 @@ public class Skill implements Comparable<Skill> {
 
     long lastEditDate;
 
-    public String getCategoryId() {
+    public long getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(String categoryId) {
+    public void setCategoryId(long categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -43,11 +43,11 @@ public class Skill implements Comparable<Skill> {
         this.description = description;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 

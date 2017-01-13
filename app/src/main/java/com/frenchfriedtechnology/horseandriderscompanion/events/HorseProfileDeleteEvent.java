@@ -1,13 +1,13 @@
 package com.frenchfriedtechnology.horseandriderscompanion.events;
 
 public class HorseProfileDeleteEvent {
-    private String id;
+    private long id;
 
-    public HorseProfileDeleteEvent(String id) {
+    public HorseProfileDeleteEvent(long id) {
         this.id = id;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 }

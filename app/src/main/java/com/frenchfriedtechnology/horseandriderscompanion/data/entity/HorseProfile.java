@@ -6,6 +6,7 @@ import com.google.firebase.database.IgnoreExtraProperties;
 import org.parceler.Parcel;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Model for Horse's Profile
@@ -19,7 +20,7 @@ public class HorseProfile {
         //required
     }
 
-    String id;
+    long id;
 
     String name;
 
@@ -41,16 +42,27 @@ public class HorseProfile {
 
     long purchasePrice;
 
-    HashMap<String, SkillLevel> skillLevels = new HashMap<>(0);
+    HashMap<Long, SkillLevel> skillLevels = new HashMap<>(0);
+
     long lastEditDate = 0;
 
     String lastEditBy = null;
 
-    public HashMap<String, SkillLevel> getSkillLevels() {
+    List<BaseListItem>notes;
+
+    public List<BaseListItem> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(List<BaseListItem> notes) {
+        this.notes = notes;
+    }
+
+    public HashMap<Long, SkillLevel> getSkillLevels() {
         return skillLevels;
     }
 
-    public void setSkillLevels(HashMap<String, SkillLevel> skillLevels) {
+    public void setSkillLevels(HashMap<Long, SkillLevel> skillLevels) {
         this.skillLevels = skillLevels;
     }
 
@@ -70,11 +82,11 @@ public class HorseProfile {
         this.lastEditDate = lastEditDate;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 

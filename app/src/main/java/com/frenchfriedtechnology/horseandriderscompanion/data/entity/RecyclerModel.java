@@ -1,8 +1,7 @@
 package com.frenchfriedtechnology.horseandriderscompanion.data.entity;
 
 /**
- * Created by matteo on 07/01/17 for HorseandRidersCompanion.
+ * Must be implemented by models within the CommentsRecyclerAdapter (glue for the two view models)
  */
-
-public class RecyclerModel {
+public interface RecyclerModel {
 }

@@ -4,6 +4,7 @@ import com.frenchfriedtechnology.horseandriderscompanion.data.entity.BaseListIte
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Category;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Level;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Skill;
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.TreeNode;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.MvpView;
 
 import java.util.List;
@@ -15,6 +16,8 @@ import java.util.List;
 public interface CreateResourceMvpView extends MvpView {
 
     void setPosting(boolean posting);
+
+    void getTreeNode(TreeNode treeNode);
 
     void getSkillTreeList(List<BaseListItem> skillTreeList);
 }

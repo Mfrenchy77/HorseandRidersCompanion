@@ -5,10 +5,10 @@ import com.frenchfriedtechnology.horseandriderscompanion.util.Constants;
 public class LevelAdjustedEvent {
     @Constants.LevelState
     private int progress;
-    private String levelId;
+    private long levelId;
     private boolean rider;
 
-    public LevelAdjustedEvent(String levelId, @Constants.LevelState int progress, boolean rider) {
+    public LevelAdjustedEvent(long levelId, @Constants.LevelState int progress, boolean rider) {
         this.progress = progress;
         this.levelId = levelId;
         this.rider = rider;
@@ -18,7 +18,7 @@ public class LevelAdjustedEvent {
         return rider;
     }
 
-    public String getLevelId() {
+    public long getLevelId() {
         return levelId;
     }
 

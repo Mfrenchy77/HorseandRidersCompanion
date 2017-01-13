@@ -9,9 +9,12 @@ import com.frenchfriedtechnology.horseandriderscompanion.data.entity.RiderProfil
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.realmServices.RealmProfileService;
 import com.frenchfriedtechnology.horseandriderscompanion.data.sync.ProfileSyncer;
+import com.frenchfriedtechnology.horseandriderscompanion.events.HorseProfileCreateEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.events.HorseProfileDeleteEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BasePresenter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.squareup.otto.Subscribe;
 
 
 import java.util.ArrayList;
@@ -68,7 +71,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     }
 
     //---- User's Profile
-     void getRiderProfile(String email) {
+    void getRiderProfile(String email) {
         riderProfile = realmProfileService.getUsersRiderProfile(email);
         getMvpView().getUserProfile(riderProfile);
         RiderProfileApi.getRiderProfile(email, new RiderProfileApi.RiderProfileCallback() {
@@ -179,17 +182,20 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     }*/
 
     //-----Horse Profile Actions
-
-    void createOrUpdateHorseProfile(HorseProfile horseProfile) {
+    @Subscribe
+    public void onCreateOrEditHorseProfile(HorseProfileCreateEvent event) {
         //create horse profile and add the id to a list in user's Rider Profile
         List<BaseListItem> horseList;
+        HorseProfile horseProfile = event.getHorseProfile();
+        horseProfile.setLastEditBy(AccountManager.currentUser());
+        horseProfile.setLastEditDate(System.currentTimeMillis());
         horseList = riderProfile.getOwnedHorses();
         BaseListItem listItem = new BaseListItem();
         listItem.setId(horseProfile.getId());
         listItem.setName(horseProfile.getName());
 
         for (int i = 0; i < horseList.size(); i++) {
-            if (horseList.get(i).getId().equals(horseProfile.getId())) {
+            if (horseList.get(i).getId() == horseProfile.getId()) {
                 Timber.d("Updating a horse");
                 horseList.remove(i);
                 riderProfile.setLastEditBy(AccountManager.currentUser());
@@ -217,7 +223,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     /**
      * get's all horse profiles for user
      */
-    void getHorseProfiles(List<String> ids) {
+    void getHorseProfiles(List<Long> ids) {
         checkViewAttached();
         List<HorseProfile> horseProfiles = new ArrayList<>();
         HorseProfileApi.getAllUsersHorses(ids, new HorseProfileApi.HorseProfileCallback() {
@@ -236,11 +242,11 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         });
     }
 
-    void getHorseProfile(String id) {
+    void getHorseProfile(long id) {
         HorseProfileApi.getHorseProfile(id, new HorseProfileApi.HorseProfileCallback() {
             @Override
             public void onSuccess(HorseProfile firebaseHorseProfile) {
-                Timber.d("Horsey got: " + firebaseHorseProfile.getName());
+                Timber.d("got Horsey: " + firebaseHorseProfile.getName());
             }
 
             @Override
@@ -250,10 +256,13 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         });
     }
 
-    void deleteHorseProfile(String id) {
-        if (riderProfile.getOwnedHorses().contains(id)) {
+
+    @Subscribe
+    public void onDeleteHorseEvent(HorseProfileDeleteEvent event) {
+
+        if (riderProfile.getOwnedHorses().contains(event.getId())) {
             for (int i = 0; i < riderProfile.getOwnedHorses().size(); i++) {
-                if (riderProfile.getOwnedHorses().get(i).equals(id)) {
+                if (riderProfile.getOwnedHorses().get(i).getId() == event.getId()) {
                     riderProfile.getOwnedHorses().remove(i);
                     riderProfile.setLastEditBy(AccountManager.currentUser());
                     riderProfile.setLastEditDate(System.currentTimeMillis());
@@ -261,7 +270,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
                         @Override
                         public void onRealmSuccess() {
                             RiderProfileApi.createOrUpdateRiderProfile(riderProfile);
-                            HorseProfileApi.deleteHorseProfile(id);
+                            HorseProfileApi.deleteHorseProfile(event.getId());
                         }
 
                         @Override

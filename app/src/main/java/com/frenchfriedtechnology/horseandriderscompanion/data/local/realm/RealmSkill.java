@@ -9,11 +9,11 @@ import io.realm.annotations.PrimaryKey;
 public class RealmSkill extends RealmObject {
 
     @PrimaryKey
-    private String id;
+    private long id;
 
     private String skillName;
 
-    private String categoryId;
+    private long categoryId;
 
     private String description;
 
@@ -25,11 +25,11 @@ public class RealmSkill extends RealmObject {
 
     private long lastEditDate;
 
-    public String getCategoryId() {
+    public long getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(String categoryId) {
+    public void setCategoryId(long categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -41,11 +41,11 @@ public class RealmSkill extends RealmObject {
         this.description = description;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 

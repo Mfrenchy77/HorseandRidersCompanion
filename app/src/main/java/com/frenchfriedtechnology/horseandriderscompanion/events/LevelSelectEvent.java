@@ -22,15 +22,15 @@ public class LevelSelectEvent {
 
     private Level level;
     private String tag;
-    private String skillId;
+    private long skillId;
 
-    public LevelSelectEvent(@StringRes String tag, Level level, String skillId) {
+    public LevelSelectEvent(@StringRes String tag, Level level, long skillId) {
         this.tag = tag;
         this.level = level;
         this.skillId = skillId;
     }
 
-    public String getSkillId() {
+    public long getSkillId() {
         return skillId;
     }
 

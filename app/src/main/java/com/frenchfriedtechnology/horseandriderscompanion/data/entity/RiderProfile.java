@@ -1,7 +1,5 @@
 package com.frenchfriedtechnology.horseandriderscompanion.data.entity;
 
-
-import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.ListItem;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import org.parceler.Parcel;
@@ -9,10 +7,6 @@ import org.parceler.Parcel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import io.realm.RealmModel;
-import io.realm.annotations.RealmClass;
-
 
 /**
  * Main model for Rider Profile
@@ -26,11 +20,12 @@ public class RiderProfile {
         //required
     }
 
-    String picUrl; //maybe get rid of this
+    String id;
 
     String name;
 
-    String id;
+    String picUrl; //maybe get rid of this
+
     long lastEditDate = 0;
 
     String lastEditBy = null;

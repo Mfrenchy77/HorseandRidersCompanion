@@ -1,5 +1,6 @@
 package com.frenchfriedtechnology.horseandriderscompanion.view.base;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,19 +11,24 @@ import android.widget.Switch;
 
 import com.frenchfriedtechnology.horseandriderscompanion.BusProvider;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.BaseListItem;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Category;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Level;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Skill;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.SkillLevel;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
+import com.frenchfriedtechnology.horseandriderscompanion.events.LevelSelectEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LevelsFetch;
+import com.frenchfriedtechnology.horseandriderscompanion.events.ResourceSelectedEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.view.adapters.SkillTreePagerAdapter;
+import com.frenchfriedtechnology.horseandriderscompanion.view.dialogs.DialogCreateAdjustLevel;
 import com.frenchfriedtechnology.horseandriderscompanion.view.dialogs.DialogCreateCategory;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.squareup.otto.Subscribe;
 
 
 import java.util.ArrayList;
@@ -33,6 +39,10 @@ import javax.inject.Inject;
 
 import timber.log.Timber;
 
+import static com.frenchfriedtechnology.horseandriderscompanion.events.LevelSelectEvent.EDIT_LEVEL;
+import static com.frenchfriedtechnology.horseandriderscompanion.events.LevelSelectEvent.HORSE_ADJUST;
+import static com.frenchfriedtechnology.horseandriderscompanion.events.LevelSelectEvent.NEW_LEVEL;
+import static com.frenchfriedtechnology.horseandriderscompanion.events.LevelSelectEvent.RIDER_ADJUST;
 import static com.frenchfriedtechnology.horseandriderscompanion.view.dialogs.DialogCreateCategory.NEW_CATEGORY;
 
 /**
@@ -50,7 +60,7 @@ public class BaseSkillTreeActivity extends BaseActivity implements BaseSkillTree
     private List<Category> categories = new ArrayList<>();
     private List<Skill> skills = new ArrayList<>();
     private List<Level> levels = new ArrayList<>();
-    private List<Resource> resources = new ArrayList<>();
+    private List<Resource> allResources = new ArrayList<>();
 
     protected SkillTreePagerAdapter skillTreePagerAdapter;
     private FloatingActionButton addCategoryFab;
@@ -166,10 +176,17 @@ public class BaseSkillTreeActivity extends BaseActivity implements BaseSkillTree
 
     @Override
     public void getResources(List<Resource> resources) {
-        this.resources = resources;
+        this.allResources = resources;
         if (skillTreePagerAdapter != null) {
             skillTreePagerAdapter.setResources(resources);
+        } else {
+            Timber.d("skillTreeAdapter Null: true");
         }
+    }
+
+    @Override
+    public void openIntent(Intent intent) {
+        startActivity(intent);
     }
 
     /**
@@ -188,13 +205,33 @@ public class BaseSkillTreeActivity extends BaseActivity implements BaseSkillTree
 
     private List<Level> matchSkillLevelToLevel(SkillLevel skillLevel, List<Level> levels) {
         for (int i = 0; i < levels.size(); i++) {
-            if (levels.get(i).getId().equals(skillLevel.getLevelId())) {
+            if (levels.get(i).getId() == skillLevel.getLevelId()) {
                 levels.get(i).setLevel(skillLevel.getLevel());
             }
         }
         return levels;
     }
 
+    protected List<Resource> getResourcesForLevel(long levelId) {
+        Timber.d("Resources size: " + getSkillTreeResources().size());
+        List<Resource> levelResources = new ArrayList<>();
+        for (int i = 0; i < getSkillTreeResources().size(); i++) {
+            if (containsSkillTreeId(getSkillTreeResources().get(i).getSkillTreeIds(), levelId)) {
+                levelResources.add(getSkillTreeResources().get(i));
+            }
+        }
+        Timber.d("ResourcesForLevel size: " + levelResources.size());
+        return levelResources;
+    }
+
+    private boolean containsSkillTreeId(List<BaseListItem> skillTreeIds, long levelId) {
+        for (int i = 0; i < skillTreeIds.size(); i++) {
+            if (skillTreeIds.get(i).getId() == levelId) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void addCategory() {
         DialogCreateCategory.newInstance(NEW_CATEGORY, null).show(getFragmentManager(), null);
@@ -217,7 +254,7 @@ public class BaseSkillTreeActivity extends BaseActivity implements BaseSkillTree
     }
 
     protected List<Resource> getSkillTreeResources() {
-        return resources;
+        return allResources;
     }
 
     /**
@@ -235,6 +272,7 @@ public class BaseSkillTreeActivity extends BaseActivity implements BaseSkillTree
     private boolean isRider() {
         return rider;
     }
+
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.

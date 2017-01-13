@@ -16,7 +16,7 @@ public class Category implements Comparable<Category>, Parcelable {
         //required
     }
 
-    private String id;
+    private long id;
 
     private String name;
 
@@ -30,11 +30,11 @@ public class Category implements Comparable<Category>, Parcelable {
 
     private long lastEditDate = 0;
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -103,7 +103,7 @@ public class Category implements Comparable<Category>, Parcelable {
 
     @Override
     public void writeToParcel(android.os.Parcel dest, int flags) {
-        dest.writeString(this.id);
+        dest.writeLong(this.id);
         dest.writeString(this.name);
         dest.writeString(this.description);
         dest.writeInt(this.position);
@@ -113,7 +113,7 @@ public class Category implements Comparable<Category>, Parcelable {
     }
 
     protected Category(android.os.Parcel in) {
-        this.id = in.readString();
+        this.id = in.readLong();
         this.name = in.readString();
         this.description = in.readString();
         this.position = in.readInt();

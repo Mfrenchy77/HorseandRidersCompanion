@@ -16,14 +16,23 @@ public class BaseListItem {
         //required
     }
 
-    public BaseListItem(String id, String name) {
+    public BaseListItem(long id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    String id;
+    public BaseListItem(String stringId, String name) {
+        this.stringId = stringId;
+        this.name = name;
+    }
+
+    long id;
+
+    String stringId;
 
     String name;
+
+    String message = null;
     @Exclude
     int depth;
     @Exclude
@@ -31,23 +40,39 @@ public class BaseListItem {
     @Exclude
     boolean collapsed;
     @Exclude
-    String parentId = null;
+    long parentId = 0;
+
+    public String getStringId() {
+        return stringId;
+    }
+
+    public void setStringId(String stringId) {
+        this.stringId = stringId;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
     @Exclude
-    public String getParentId() {
+    public long getParentId() {
         return parentId;
     }
 
     @Exclude
-    public void setParentId(String parentId) {
+    public void setParentId(long parentId) {
         this.parentId = parentId;
     }
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -64,6 +89,7 @@ public class BaseListItem {
         return collapsed;
     }
 
+    @Exclude
     public void setCollapsed(boolean collapsed) {
         this.collapsed = collapsed;
     }
@@ -73,10 +99,12 @@ public class BaseListItem {
         return depth;
     }
 
+    @Exclude
     public void setDepth(int depth) {
         this.depth = depth;
     }
 
+    @Exclude
     public boolean isSelected() {
         return selected;
     }
@@ -86,8 +114,13 @@ public class BaseListItem {
         this.selected = selected;
     }
 
+    @Exclude
     public void toggle() {
-        collapsed = !isCollapsed();
+        if (collapsed) {
+            setCollapsed(false);
+        } else {
+            setCollapsed(true);
+        }
     }
 }
 

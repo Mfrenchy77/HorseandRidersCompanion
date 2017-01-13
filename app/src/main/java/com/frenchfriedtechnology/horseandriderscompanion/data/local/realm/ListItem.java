@@ -14,21 +14,21 @@ public class ListItem extends RealmObject {
     public ListItem() {
     }
 
-    public ListItem(String id, String name) {
+    public ListItem(long id, String name) {
         this.id = id;
         this.name = name;
     }
 
     @PrimaryKey
-    private String id;
+    private long id;
 
     private String name;
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 

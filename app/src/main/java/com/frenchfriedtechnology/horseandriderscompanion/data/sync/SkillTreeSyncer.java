@@ -148,17 +148,7 @@ public class SkillTreeSyncer {
 
     private void syncResourceFirebaseToRealm(Resource localResource) {
         Timber.d("Resource Syncing Firebase to Realm ");
-        new ResourcesApi().createOrUpdateResource(localResource, new ResourcesApi.ResourceCreatedCallback() {
-            @Override
-            public void onSuccess() {
-                Timber.d("Resource Sync Success");
-            }
-
-            @Override
-            public void onError(String error) {
-                Timber.e("Error Syncing Resource: " + error);
-            }
-        });
+        new ResourcesApi().createOrUpdateResource(localResource);
     }
 
     private void syncResourceRealmToFirebase(Resource firebaseResource) {

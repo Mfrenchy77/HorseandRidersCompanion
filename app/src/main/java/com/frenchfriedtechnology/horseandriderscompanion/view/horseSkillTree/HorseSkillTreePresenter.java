@@ -40,7 +40,7 @@ public class HorseSkillTreePresenter extends BasePresenter<HorseSkillTreeMvpView
     /**
      * Retrieve Horse Profile
      */
-    void getHorseProfile(String id) {
+    void getHorseProfile(long id) {
         checkViewAttached();
         HorseProfileApi.getHorseProfile(id, new HorseProfileApi.HorseProfileCallback() {
             @Override
@@ -64,7 +64,7 @@ public class HorseSkillTreePresenter extends BasePresenter<HorseSkillTreeMvpView
      */
     void updateHorseSkillTreeLevel(SkillLevel skillLevel) {
 
-        HashMap<String, SkillLevel> levels = new HashMap<>();
+        HashMap<Long, SkillLevel> levels = new HashMap<>();
         //check for existing skillLevel and remove it
         if (horseProfile.getSkillLevels() != null) {
             Timber.d("UpdateHorseSkillLevel() horseSkillLevel size " + horseProfile.getSkillLevels().size());

@@ -17,17 +17,11 @@ public class ResourcesApi {
 
     private DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-    public void createOrUpdateResource(Resource resource, ResourceCreatedCallback callaback) {
+    public void createOrUpdateResource(Resource resource) {
         databaseReference
                 .child(Constants.RESOURCES)
-                .child(resource.getId())
-                .setValue(resource).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                callaback.onSuccess();
-            } else {
-                callaback.onError("Error creating Resource: " + task.getResult().toString());
-            }
-        });
+                .child(String.valueOf(resource.getId()))
+                .setValue(resource);
     }
 
     public void getAllResources(ResourcesCallback callback) {
@@ -40,7 +34,7 @@ public class ResourcesApi {
     public void deleteResource(Resource resource) {
         databaseReference
                 .child(Constants.RESOURCES)
-                .child(resource.getId())
+                .child(String.valueOf(resource.getId()))
                 .removeValue();
     }
 

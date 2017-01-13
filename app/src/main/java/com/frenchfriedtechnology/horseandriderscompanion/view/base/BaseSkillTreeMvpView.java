@@ -1,5 +1,7 @@
 package com.frenchfriedtechnology.horseandriderscompanion.view.base;
 
+import android.content.Intent;
+
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Category;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Level;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
@@ -23,5 +25,7 @@ interface BaseSkillTreeMvpView extends MvpView {
     void getLevels(List<Level> levels);
 
     void getResources(List<Resource> resources);
+
+    void openIntent(Intent intent);
 }
 

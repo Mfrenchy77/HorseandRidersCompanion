@@ -13,7 +13,6 @@ import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LevelEditEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LevelSelectEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.util.Constants;
-import com.frenchfriedtechnology.horseandriderscompanion.util.ViewUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,7 +60,7 @@ class LevelAdapter extends BaseQuickAdapter<Level> {
     @Override
     public long getItemId(int position) {
         if (!levels.isEmpty()) {
-            return ViewUtil.convertIdToNumber(levels.get(position).getId());
+            return levels.get(position).getId();
         } else {
             return super.getItemId(position);
         }

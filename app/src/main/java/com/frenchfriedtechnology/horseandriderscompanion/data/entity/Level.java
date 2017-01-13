@@ -21,11 +21,11 @@ public class Level implements Comparable<Level> {
         //required
     }
 
-    String id;
+    long id;
 
     String levelName;
 
-    String skillId;
+    long skillId;
 
     String description;
 
@@ -45,11 +45,11 @@ public class Level implements Comparable<Level> {
 
     long lastEditDate;
 
-    public String getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -128,11 +128,11 @@ public class Level implements Comparable<Level> {
         this.level = level;
     }
 
-    public String getSkillId() {
+    public long getSkillId() {
         return skillId;
     }
 
-    public void setSkillId(String skillId) {
+    public void setSkillId(long skillId) {
         this.skillId = skillId;
     }
 
