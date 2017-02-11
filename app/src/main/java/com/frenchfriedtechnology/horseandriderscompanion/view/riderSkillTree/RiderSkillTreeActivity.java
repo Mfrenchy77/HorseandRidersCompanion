@@ -114,7 +114,7 @@ public class RiderSkillTreeActivity extends BaseSkillTreeActivity implements Rid
         viewPager.setOffscreenPageLimit(4);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
-        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setupWithViewPager(viewPager,true);
     }
 /*
 

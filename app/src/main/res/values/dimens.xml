@@ -7,6 +7,7 @@
     <dimen name="spacing_nano">2dp</dimen>
     <dimen name="spacing_micro">4dp</dimen>
     <dimen name="spacing_normal">8dp</dimen>
+    <dimen name="spacing_normal_plus">10dp</dimen>
     <dimen name="spacing_double">16dp</dimen>
     <dimen name="spacing_triple">24dp</dimen>
     <dimen name="spacing_huge">72dp</dimen>

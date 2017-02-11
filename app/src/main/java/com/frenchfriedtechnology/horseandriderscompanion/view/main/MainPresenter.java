@@ -65,10 +65,6 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         };
     }
 
-    @Override
-    public void detachView() {
-        super.detachView();
-    }
 
     //---- User's Profile
     void getRiderProfile(String email) {

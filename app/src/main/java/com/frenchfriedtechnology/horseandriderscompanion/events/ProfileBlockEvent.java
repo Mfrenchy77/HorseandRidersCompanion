@@ -1,9 +1,13 @@
 package com.frenchfriedtechnology.horseandriderscompanion.events;
 
-/**
- * Created by matteo on 13/01/17 for HorseandRidersCompanion.
- */
 public class ProfileBlockEvent {
+    String email;
+
     public ProfileBlockEvent(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
     }
 }

@@ -18,17 +18,13 @@ import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Skill;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.SkillLevel;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
-import com.frenchfriedtechnology.horseandriderscompanion.events.LevelSelectEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LevelsFetch;
-import com.frenchfriedtechnology.horseandriderscompanion.events.ResourceSelectedEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.view.adapters.SkillTreePagerAdapter;
-import com.frenchfriedtechnology.horseandriderscompanion.view.dialogs.DialogCreateAdjustLevel;
 import com.frenchfriedtechnology.horseandriderscompanion.view.dialogs.DialogCreateCategory;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.squareup.otto.Subscribe;
 
 
 import java.util.ArrayList;
@@ -39,10 +35,6 @@ import javax.inject.Inject;
 
 import timber.log.Timber;
 
-import static com.frenchfriedtechnology.horseandriderscompanion.events.LevelSelectEvent.EDIT_LEVEL;
-import static com.frenchfriedtechnology.horseandriderscompanion.events.LevelSelectEvent.HORSE_ADJUST;
-import static com.frenchfriedtechnology.horseandriderscompanion.events.LevelSelectEvent.NEW_LEVEL;
-import static com.frenchfriedtechnology.horseandriderscompanion.events.LevelSelectEvent.RIDER_ADJUST;
 import static com.frenchfriedtechnology.horseandriderscompanion.view.dialogs.DialogCreateCategory.NEW_CATEGORY;
 
 /**
@@ -76,7 +68,7 @@ public class BaseSkillTreeActivity extends BaseActivity implements BaseSkillTree
 
     @Override
     protected int getResourceLayout() {
-        return R.layout.activity_skill_tree2;
+        return R.layout.activity_tab_layout;
     }
 
     @Override
@@ -93,7 +85,7 @@ public class BaseSkillTreeActivity extends BaseActivity implements BaseSkillTree
         setSupportActionBar(toolbar);
         setupToolbar(toolbar);
 
-        addCategoryFab = (FloatingActionButton) findViewById(R.id.add_category_fab);
+        addCategoryFab = (FloatingActionButton) findViewById(R.id.add_fab);
         addCategoryFab.setVisibility(new UserPrefs().isEditor() && new UserPrefs().isEditMode() ? View.VISIBLE : View.GONE);
         addCategoryFab.setOnClickListener(view -> addCategory());
 

@@ -35,7 +35,7 @@
             android:layout_marginBottom="24dp"
             android:layout_weight="0.13"
             android:scaleType="fitCenter"
-            android:src="@drawable/horse_logo_and_text_002"
+            android:src="@drawable/horse_logo_and_text"
             android:transitionName="logo"/>
 
         <!-- Email Label -->

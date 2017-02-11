@@ -61,7 +61,7 @@ public class RegisterActivity extends BaseActivity implements RegisterMvpView {
     void registerClicked() {
         ViewUtil.hideKeyboard(this);
         String name = inputName.getText().toString();
-        String email = inputEmail.getText().toString();
+        String email = inputEmail.getText().toString().toLowerCase();
         String password = inputPassword.getText().toString();
         if (name.isEmpty()) {
             inputName.setError("Must enter a UserName");

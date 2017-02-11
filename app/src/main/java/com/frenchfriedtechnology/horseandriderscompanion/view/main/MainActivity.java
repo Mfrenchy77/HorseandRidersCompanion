@@ -34,6 +34,7 @@ import com.frenchfriedtechnology.horseandriderscompanion.view.SettingsActivity;
 import com.frenchfriedtechnology.horseandriderscompanion.view.adapters.StringAdapter;
 import com.frenchfriedtechnology.horseandriderscompanion.view.dialogs.DialogHorseProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.view.horseSkillTree.HorseSkillTreeActivity;
+import com.frenchfriedtechnology.horseandriderscompanion.view.messages.MessagesActivity;
 import com.frenchfriedtechnology.horseandriderscompanion.view.riderSkillTree.RiderSkillTreeActivity;
 import com.squareup.otto.Subscribe;
 
@@ -79,7 +80,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
     private List<HorseProfile> horseProfiles = new ArrayList<>();
 
     @Inject
-    MainPresenter mPresenter;
+    MainPresenter presenter;
 
 
     @Override
@@ -92,8 +93,8 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
         super.onCreate(savedInstanceState);
         activityComponent().inject(this);
 
-        mPresenter.attachView(this);
-        mPresenter.getRiderProfile(getIntent().getStringExtra(EMAIL));
+        presenter.attachView(this);
+        presenter.getRiderProfile(getIntent().getStringExtra(EMAIL));
 
         horseList = (ListView) findViewById(R.id.horses_list);
         horseList.setOnItemClickListener((adapterView, view, i, l) -> onHorseSelected(i));
@@ -125,25 +126,25 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
     @Override
     public void onStart() {
         super.onStart();
-        mPresenter.addAuthListener();
+        presenter.addAuthListener();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mPresenter.removeAuthListener();
+        presenter.removeAuthListener();
     }
 
     @Override
     protected void onDestroy() {
-        mPresenter.detachView();
+        presenter.detachView();
         super.onDestroy();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mPresenter.removeAuthListener();
+        presenter.removeAuthListener();
     }
 
     @Override
@@ -178,7 +179,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
         this.userRiderProfile = riderProfile;
         toolbar.setTitle(riderProfile.getName());
         if (riderProfile.getOwnedHorses() != null) {
-            mPresenter.getHorseProfiles(horseIds);
+            presenter.getHorseProfiles(horseIds);
         }
         Timber.d("Profile gotten for: " + userRiderProfile.getName());
     }
@@ -261,21 +262,22 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
         //Dialog form to create a horse profile
         DialogHorseProfile.newInstance(NEW_HORSE, null).show(getFragmentManager(), null);
     }
-/*
 
-    @Subscribe
-    public void onCreateOrEditHorseProfile(HorseProfileCreateEvent event) {
-        mPresenter.createOrUpdateHorseProfile(event.getHorseProfile());
-        showToast("Horse: " + event.getHorseProfile().getName());
-    }
+    /*
+
+        @Subscribe
+        public void onCreateOrEditHorseProfile(HorseProfileCreateEvent event) {
+            presenter.createOrUpdateHorseProfile(event.getHorseProfile());
+            showToast("Horse: " + event.getHorseProfile().getName());
+        }
 
 
-    @Subscribe
-    public void onDeleteHorseEvent(HorseProfileDeleteEvent event) {
-        mPresenter.deleteHorseProfile(event.getId());
-        showToast("Delete Horse: " + event.getId());
-    }
-    */
+        @Subscribe
+        public void onDeleteHorseEvent(HorseProfileDeleteEvent event) {
+            presenter.deleteHorseProfile(event.getId());
+            showToast("Delete Horse: " + event.getId());
+        }
+        */
     @Subscribe
     public void onThemeChangedEvent(ThemeChangedEvent event) {
         Timber.d("Theme Changed");
@@ -385,7 +387,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
                 break;
             case R.id.action_menu_item_sign_out:
                 //clear auth and go to login screen
-                mPresenter.logoutUser();
+                presenter.logoutUser();
                 Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.action_menu_item_profile:
@@ -395,6 +397,11 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
             case R.id.action_menu_glossary:
                 //open dialog to glossary
                 Toast.makeText(this, "Open Glossary", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.action_menu_messages:
+                //open dialog to glossary
+                MessagesActivity.start(this);
+                Toast.makeText(this, "Open Message", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.action_menu_item_settings:
                 //open settings activity

@@ -9,7 +9,7 @@
         <bitmap
 
             android:gravity="center"
-            android:src="@drawable/horse_sheild_logo"/>
+            android:src="@drawable/horse_shield_logo"/>
     </item>
 
 </layer-list>

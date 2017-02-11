@@ -2,10 +2,14 @@ package com.frenchfriedtechnology.horseandriderscompanion.events;
 
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Message;
 
-/**
- * Created by matteo on 13/01/17 for HorseandRidersCompanion.
- */
 public class MessageShowActionsEvent {
+    private Message message;
+
     public MessageShowActionsEvent(Message message) {
+        this.message = message;
+    }
+
+    public Message getMessage() {
+        return message;
     }
 }

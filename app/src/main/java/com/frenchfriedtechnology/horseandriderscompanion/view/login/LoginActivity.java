@@ -79,7 +79,7 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
      */
     void loginClicked() {
         ViewUtil.hideKeyboard(this);
-        String email = inputEmail.getText().toString();
+        String email = inputEmail.getText().toString().toLowerCase();
         String password = inputPassword.getText().toString();
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             inputEmail.setError("Please enter a valid email");

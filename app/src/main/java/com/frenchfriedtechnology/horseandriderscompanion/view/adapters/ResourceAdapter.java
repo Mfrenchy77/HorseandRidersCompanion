@@ -1,7 +1,5 @@
 package com.frenchfriedtechnology.horseandriderscompanion.view.adapters;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -17,7 +15,6 @@ import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
 import com.frenchfriedtechnology.horseandriderscompanion.events.ResourceSelectedEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.ResourceUpdateEvent;
-import com.iarcuschin.simpleratingbar.SimpleRatingBar;
 
 import java.util.ArrayList;
 import java.util.List;

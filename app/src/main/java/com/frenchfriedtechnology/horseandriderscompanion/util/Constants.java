@@ -20,6 +20,7 @@ public class Constants {
 
     public final static String CATEGORIES = "Categories";
     public static final String RESOURCES = "Resources";
+    public static final String MESSAGES = "Messages";
     public final static String SKILLS = "Skills";
     public final static String LEVELS = "Levels";
 
@@ -35,4 +36,28 @@ public class Constants {
     public static final int LEARNING = 1;
     public static final int COMPLETE = 2;
     public static final int VERIFIED = 3;
+
+    /**
+     * Possible message state
+     */
+    @IntDef({UNREAD, READ, All})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface MessageState {
+    }
+
+    public static final int UNREAD = 1;
+    public static final int READ = 2;
+    public static final int All = 3;
+
+    /**
+     * Possible message types
+     */
+    @IntDef({STUDENT_REQUEST, INSTRUCTOR_REQUEST, EDIT_REQUEST})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface MessageType {
+    }
+
+    public static final int STUDENT_REQUEST = 1;
+    public static final int INSTRUCTOR_REQUEST = 2;
+    public static final int EDIT_REQUEST = 3;
 }

@@ -22,7 +22,7 @@
             android:layout_height="100dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="24dp"
-            android:src="@drawable/horse_logo_and_text_002"
+            android:src="@drawable/horse_logo_and_text"
             android:contentDescription="@string/horse_and_riders_companion_logo"/>
 
         <!-- Email Label -->

@@ -29,7 +29,7 @@ import timber.log.Timber;
  */
 
 public class RiderProfileApi {
-   @Inject
+    @Inject
     public RiderProfileApi() {
     }
 
@@ -42,9 +42,6 @@ public class RiderProfileApi {
     public static void createOrUpdateRiderProfile(RiderProfile riderProfile) {
         //create profile
         Timber.d("createOrUpdateRiderProfile() called");
-if (riderProfile.getSkillLevels()!=null){
-    ;
-}
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
         databaseReference.child(Constants.RIDER_PROFILE)
                 .child(new ViewUtil().convertEmailToPath(riderProfile.getEmail()))

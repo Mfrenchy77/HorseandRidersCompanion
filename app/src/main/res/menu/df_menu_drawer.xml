@@ -14,6 +14,10 @@
                 android:icon="@drawable/vector_glossary"
                 android:title="@string/action_glossary"/>
             <item
+                android:id="@+id/action_menu_messages"
+                android:icon="@drawable/vector_mail"
+                android:title="@string/action_messages"/>
+            <item
                 android:id="@+id/action_menu_item_settings"
                 android:icon="@drawable/vector_settings"
                 android:title="@string/action_settings" />

@@ -112,7 +112,7 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
         List<Skill> categorySkills = new ArrayList<>();
         List<Skill> skills = getAllSkills();
         for (int i = 0; i < skills.size(); i++) {
-            if (skills.get(i).getCategoryId()==category.getId()) {
+            if (skills.get(i).getCategoryId() == category.getId()) {
                 categorySkills.add(skills.get(i));
             }
         }
@@ -155,6 +155,15 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
     }
 
     @Override
+    public void finishUpdate(ViewGroup container) {
+        if (mCurTransaction != null) {
+            mCurTransaction.commitAllowingStateLoss();
+            mCurTransaction = null;
+            mFragmentManager.executePendingTransactions();
+        }
+    }
+
+    @Override
     public Fragment getItem(int position) {
         if (position == 0) {
             return ProfileFragment.newInstance(rider ?
@@ -167,14 +176,6 @@ public class SkillTreePagerAdapter extends FragmentStatePagerAdapter {
         }
     }
 
-    @Override
-    public void finishUpdate(ViewGroup container) {
-        if (mCurTransaction != null) {
-            mCurTransaction.commitAllowingStateLoss();
-            mCurTransaction = null;
-            mFragmentManager.executePendingTransactions();
-        }
-    }
 
     @Override
     public int getCount() {

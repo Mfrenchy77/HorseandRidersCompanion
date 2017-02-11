@@ -1,8 +1,61 @@
 package com.frenchfriedtechnology.horseandriderscompanion.view.messages;
 
-/**
- * Created by matteo on 12/01/17 for HorseandRidersCompanion.
- */
+import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.MessagesApi;
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Message;
+import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
+import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.realmServices.RealmProfileService;
+import com.frenchfriedtechnology.horseandriderscompanion.events.MessageNewEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.events.MessageShowActionsEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.events.MessageUpdateEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.util.ViewUtil;
+import com.frenchfriedtechnology.horseandriderscompanion.view.base.BasePresenter;
+import com.squareup.otto.Subscribe;
 
-public class MessagesPresenter {
+import java.util.List;
+
+import javax.inject.Inject;
+
+import timber.log.Timber;
+
+public class MessagesPresenter extends BasePresenter<MessagesMvpView> {
+
+    private RealmProfileService realmProfileService;
+
+    @Inject
+    public MessagesPresenter(RealmProfileService realmProfileService) {
+        this.realmProfileService = realmProfileService;
+    }
+
+    void getMessages() {
+        Timber.d("getMessages() called");
+        new MessagesApi().getMessages(new ViewUtil().convertEmailToPath(new UserPrefs().getUserEmail()), new MessagesApi.MessagesCallback() {
+            @Override
+            public void onSuccess(List<Message> messages) {
+                getMvpView().getMessages(messages);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                Timber.e("Error retrieving Messages: " + throwable);
+            }
+        });
+    }
+
+    @Subscribe
+    public void newMessageEvent(MessageNewEvent event) {
+        Timber.d("Send Message to: " + event.getMessage().getRecipient());
+        new MessagesApi().createOrUpdate(event.getMessage());
+    }
+
+    @Subscribe
+    public void updateMessageEvent(MessageUpdateEvent event) {
+        Timber.d("updateMessageEvent()");
+        new MessagesApi().createOrUpdate(event.getUpdatedMessage());
+    }
+
+    @Subscribe
+    public void showMessageActionEvent(MessageShowActionsEvent event) {
+        Timber.d("MessageActionEvent()");
+        getMvpView().showMessageActions(event.getMessage());
+    }
 }
