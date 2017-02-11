@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
@@ -58,6 +59,7 @@ public class DialogNewMessage extends DialogFragment implements AdapterView.OnIt
         spinnerAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.message_types, android.R.layout.simple_spinner_dropdown_item);
 
         messageTypeSpinner.setAdapter(spinnerAdapter);
+        messageTypeSpinner.setOnItemSelectedListener(this);
         messageTypeSpinner.setSelection(5);
 
         LinearLayout sendButton = (LinearLayout) view.findViewById(R.id.accept_button);
@@ -65,14 +67,21 @@ public class DialogNewMessage extends DialogFragment implements AdapterView.OnIt
             String recipientText = recipient.getText().toString().toLowerCase().trim();
             String messageText = message.getText().toString().trim();
             if (!TextUtils.isEmpty(recipientText) || !TextUtils.isEmpty(messageText)) {
-                Message message = new Message();
-                message.setId(System.currentTimeMillis());
-                message.setMessage(messageText);
-                message.setRecipient(recipientText);
-                message.setSender(new UserPrefs().getUserEmail());
-                message.setSubject(messageTypeSpinner.getSelectedItem().toString());
-                BusProvider.getBusProviderInstance().post(new MessageNewEvent(message));
-                dismiss();
+                if (messageTypeSpinner.getSelectedItemPosition() == 5) {
+
+                    Toast.makeText(getActivity(), "Please Select a Message Type", Toast.LENGTH_SHORT).show();
+                    messageTypeSpinner.requestFocus();
+                } else {
+                    Message message = new Message();
+                    message.setId(System.currentTimeMillis());
+                    message.setMessage(messageText);
+                    message.setRecipient(recipientText);
+                    message.setMessageType(messageTypeSpinner.getSelectedItemPosition());
+                    message.setSender(new UserPrefs().getUserEmail());
+                    message.setSubject(messageTypeSpinner.getSelectedItem().toString());
+                    BusProvider.getBusProviderInstance().post(new MessageNewEvent(message));
+                    dismiss();
+                }
             } else {
                 Toast.makeText(getActivity(), "Fields must not be left blank", Toast.LENGTH_SHORT).show();
             }
@@ -93,9 +102,27 @@ public class DialogNewMessage extends DialogFragment implements AdapterView.OnIt
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getActivity(), parent.getItemAtPosition(position) + " Selected", Toast.LENGTH_SHORT).show();
-        subject = (parent.getItemAtPosition(position).toString());
-        Timber.d("Subject: " + subject);
+        switch (position) {
+            case 0:
+                Toast.makeText(getActivity(), "Selected " + position, Toast.LENGTH_SHORT).show();
+                break;
+            case 1:
+                Toast.makeText(getActivity(), "Selected " + position, Toast.LENGTH_SHORT).show();
+
+                break;
+            case 2:
+                Toast.makeText(getActivity(), "Selected " + position, Toast.LENGTH_SHORT).show();
+
+                break;
+            case 3:
+                Toast.makeText(getActivity(), "Selected " + position, Toast.LENGTH_SHORT).show();
+
+                break;
+            case 4:
+                Toast.makeText(getActivity(), "Selected " + position, Toast.LENGTH_SHORT).show();
+
+                break;
+        }
     }
 
     @Override

@@ -26,6 +26,16 @@ public class Message {
     @Constants.MessageState
     int messageState = Constants.UNREAD;
 
+    String messageActionId;
+
+    public String getMessageActionId() {
+        return messageActionId;
+    }
+
+    public void setMessageActionId(String messageActionId) {
+        this.messageActionId = messageActionId;
+    }
+
     public long getId() {
         return id;
     }
@@ -50,11 +60,13 @@ public class Message {
     public void setMessageState(@Constants.MessageState int messageState) {
         this.messageState = messageState;
     }
-@Constants.MessageType
+
+    @Constants.MessageType
     public int getMessageType() {
         return messageType;
     }
-@Constants.MessageType
+
+    @Constants.MessageType
     public void setMessageType(int messageType) {
         this.messageType = messageType;
     }

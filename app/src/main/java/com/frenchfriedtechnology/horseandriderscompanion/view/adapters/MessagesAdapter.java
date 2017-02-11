@@ -7,6 +7,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.frenchfriedtechnology.horseandriderscompanion.BusProvider;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Message;
+import com.frenchfriedtechnology.horseandriderscompanion.events.MessageSelectedEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.MessageShowActionsEvent;
 
 import java.util.List;
@@ -34,6 +35,7 @@ public class MessagesAdapter extends BaseQuickAdapter<Message> {
             @Override
             public void onClick(View v) {
                 Timber.d("Message clicked");
+                BusProvider.getBusProviderInstance().post(new MessageSelectedEvent(message));
             }
         });
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {

@@ -3,18 +3,15 @@ package com.frenchfriedtechnology.horseandriderscompanion.view.messages;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.view.View;
-import android.widget.Toast;
 
 import com.frenchfriedtechnology.horseandriderscompanion.R;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Message;
-import com.frenchfriedtechnology.horseandriderscompanion.util.DialogFactory;
 import com.frenchfriedtechnology.horseandriderscompanion.view.adapters.MessagesPagerAdapter;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BaseActivity;
+import com.frenchfriedtechnology.horseandriderscompanion.view.dialogs.DialogMessage;
 import com.frenchfriedtechnology.horseandriderscompanion.view.dialogs.DialogMessageAction;
 import com.frenchfriedtechnology.horseandriderscompanion.view.dialogs.DialogNewMessage;
 
@@ -44,6 +41,21 @@ public class MessagesActivity extends BaseActivity implements MessagesMvpView {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if (!presenter.isViewAttached()) {
+            presenter.attachView(this);
+        }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.detachView();
+    }
+
+    @Override
     public void getMessages(List<Message> messages) {
         messagesPagerAdapter = new MessagesPagerAdapter(getSupportFragmentManager(), messages);
         ViewPager messagesViewPager = (ViewPager) findViewById(R.id.view_pager);
@@ -60,7 +72,6 @@ public class MessagesActivity extends BaseActivity implements MessagesMvpView {
     }
 
     private void newMessage() {
-        Toast.makeText(this, "Open New Message Dialog", Toast.LENGTH_LONG).show();
         //open new Message Dialog
         DialogNewMessage.newInstance().show(getFragmentManager(), null);
     }
@@ -68,5 +79,10 @@ public class MessagesActivity extends BaseActivity implements MessagesMvpView {
     @Override
     public void showMessageActions(Message message) {
         DialogMessageAction.newInstance(message).show(getFragmentManager(), null);
+    }
+
+    @Override
+    public void showMessage(Message message) {
+        DialogMessage.newInstance(message).show(getFragmentManager(), null);
     }
 }

@@ -401,12 +401,10 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
             case R.id.action_menu_messages:
                 //open dialog to glossary
                 MessagesActivity.start(this);
-                Toast.makeText(this, "Open Message", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.action_menu_item_settings:
                 //open settings activity
                 SettingsActivity.start(this);
-                Toast.makeText(this, "Settings", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.action_menu_item_support:
                 //send email

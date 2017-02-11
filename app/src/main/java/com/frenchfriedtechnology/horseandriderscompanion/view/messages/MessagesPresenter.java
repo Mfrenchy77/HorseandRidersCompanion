@@ -5,6 +5,7 @@ import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Message;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.realmServices.RealmProfileService;
 import com.frenchfriedtechnology.horseandriderscompanion.events.MessageNewEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.events.MessageSelectedEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.MessageShowActionsEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.MessageUpdateEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.util.ViewUtil;
@@ -44,18 +45,30 @@ public class MessagesPresenter extends BasePresenter<MessagesMvpView> {
     @Subscribe
     public void newMessageEvent(MessageNewEvent event) {
         Timber.d("Send Message to: " + event.getMessage().getRecipient());
-        new MessagesApi().createOrUpdate(event.getMessage());
+        if (isViewAttached()) {
+            new MessagesApi().createOrUpdate(event.getMessage());
+        }
     }
 
     @Subscribe
     public void updateMessageEvent(MessageUpdateEvent event) {
         Timber.d("updateMessageEvent()");
-        new MessagesApi().createOrUpdate(event.getUpdatedMessage());
+        if (isViewAttached()) {
+            new MessagesApi().createOrUpdate(event.getUpdatedMessage());
+        }
     }
 
     @Subscribe
     public void showMessageActionEvent(MessageShowActionsEvent event) {
-        Timber.d("MessageActionEvent()");
-        getMvpView().showMessageActions(event.getMessage());
+        if (isViewAttached()) {
+            getMvpView().showMessageActions(event.getMessage());
+        }
+    }
+
+    @Subscribe
+    public void messageSelectedEvent(MessageSelectedEvent event) {
+        if (isViewAttached()) {
+            getMvpView().showMessage(event.getMessage());
+        }
     }
 }

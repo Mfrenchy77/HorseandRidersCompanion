@@ -1,7 +1,15 @@
 package com.frenchfriedtechnology.horseandriderscompanion.events;
 
-/**
- * Created by matteo on 11/02/17 for HorseandRidersCompanion.
- */
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Message;
+
 public class MessageSelectedEvent {
+    private Message message;
+
+    public MessageSelectedEvent(Message message) {
+        this.message = message;
+    }
+
+    public Message getMessage() {
+        return message;
+    }
 }

@@ -6,7 +6,10 @@ import com.frenchfriedtechnology.horseandriderscompanion.view.base.MvpView;
 import java.util.List;
 
 
-public interface MessagesMvpView extends MvpView {
+interface MessagesMvpView extends MvpView {
     void getMessages(List<Message> messages);
+
     void showMessageActions(Message message);
+
+    void showMessage(Message message);
 }
