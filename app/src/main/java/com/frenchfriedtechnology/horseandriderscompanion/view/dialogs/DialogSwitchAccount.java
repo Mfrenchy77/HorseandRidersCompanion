@@ -1,6 +1,7 @@
 package com.frenchfriedtechnology.horseandriderscompanion.view.dialogs;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -15,6 +16,7 @@ import com.frenchfriedtechnology.horseandriderscompanion.BusProvider;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.AppPrefs;
 import com.frenchfriedtechnology.horseandriderscompanion.events.SwitchAccountEvent;
+import com.frenchfriedtechnology.horseandriderscompanion.util.DialogFactory;
 import com.frenchfriedtechnology.horseandriderscompanion.view.adapters.StringAdapter;
 
 
@@ -26,6 +28,8 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
+import butterknife.OnItemLongClick;
+import timber.log.Timber;
 
 /**
  * A dialog which allows the user to select from a list of accounts which have been added to the app.
@@ -47,6 +51,22 @@ public class DialogSwitchAccount extends DialogFragment {
         BusProvider.getBusProviderInstance().post(new SwitchAccountEvent());
         Toast.makeText(getActivity(), "Switch to " + user, Toast.LENGTH_SHORT).show();
         dismiss();
+    }
+
+    @OnItemLongClick(R.id.dialog_switch_account_listview)
+    boolean onAccountLongClick(int position) {
+        String user = adapter.getItem(position);
+        Timber.d("Account " + user + " Long Click");
+        new AlertDialog.Builder(getActivity()).setTitle("Delete User")
+                .setMessage("Remove " + user + " from device?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    AppPrefs.removeUserFromAccounts(user);
+                    adapter.notifyDataSetChanged();
+                    dialog.dismiss();
+                })
+                .show();
+
+        return true;
     }
 
     private StringAdapter adapter;

@@ -43,6 +43,7 @@ public class LoginPresenter extends BasePresenter<LoginMvpView> {
      * <p>
      * Create or update Realm for user's profile, on Success allow Login to Open Main Activity
      */
+    // TODO: 03/08/17 add email verification check
     @Override
     public void attachView(LoginMvpView view) {
         super.attachView(view);
@@ -51,40 +52,44 @@ public class LoginPresenter extends BasePresenter<LoginMvpView> {
             if (user != null) {
                 Timber.d("user signed in");
                 //user is authorized--create or update Realm
-
-                RiderProfile riderProfile = realmProfileService.getUsersRiderProfile(user.getEmail());
-                if (riderProfile == null) {
-                    //No Profile saved in Realm
-                    //create a default profile, if user has a firebase account it will download
-                    //in Main Activity
-                    riderProfile = new RiderProfile();
-                    riderProfile.setEmail(user.getEmail());
-                    riderProfile.setName(user.getDisplayName());
-                    riderProfile.setId(user.getUid());
-                    riderProfile.setLastEditBy(user.getDisplayName());
-                    realmProfileService.createOrUpdateRiderProfileToRealm(riderProfile, new RealmProfileService.RealmProfileCallback() {
-                        @Override
-                        public void onRealmSuccess() {
-                            //Realm profile created
-                            RiderProfile profile = realmProfileService.getUsersRiderProfile(user.getEmail());
-                            //setup App preferences for user
-                            AppPrefs.setActiveUser(profile.getName());
-                            new UserPrefs().setUserEmail(profile.getEmail());
-                            new UserPrefs().setUserId(profile.getId());
-                            //send to main activity
-                            BusProvider.getBusProviderInstance().post(new LoginEvent(true, "User signed in", user.getEmail()));
-                        }
-
-                        @Override
-                        public void onRealmError(Throwable e) {
-                            DialogFactory.createGenericErrorDialog(context, "Realm Error: " + e);
-                            Timber.e("Error creating Realm Profile: " + e);
-                        }
-                    });
+                if (!emailVerified(user)) {
+                    Timber.d("Email Not Verified");
+                    getMvpView().showEmailVerifyDialog(user);
                 } else {
-                    //user already has a saved profile, send to main activity
-                    new UserPrefs().setEditor(riderProfile.isEditor());
-                    BusProvider.getBusProviderInstance().post(new LoginEvent(true, "User signed in", user.getEmail()));
+                    RiderProfile riderProfile = realmProfileService.getUsersRiderProfile(user.getEmail());
+                    if (riderProfile == null) {
+                        //No Profile saved in Realm
+                        //create a default profile, if user has a firebase account it will download
+                        //in Main Activity
+                        riderProfile = new RiderProfile();
+                        riderProfile.setEmail(user.getEmail());
+                        riderProfile.setName(user.getDisplayName());
+                        riderProfile.setId(user.getUid());
+                        riderProfile.setLastEditBy(user.getDisplayName());
+                        realmProfileService.createOrUpdateRiderProfileToRealm(riderProfile, new RealmProfileService.RealmProfileCallback() {
+                            @Override
+                            public void onRealmSuccess() {
+                                //Realm profile created
+                                RiderProfile profile = realmProfileService.getUsersRiderProfile(user.getEmail());
+                                //setup App preferences for user
+                                AppPrefs.setActiveUser(profile.getName());
+                                new UserPrefs().setUserEmail(profile.getEmail());
+                                new UserPrefs().setUserId(profile.getId());
+                                //send to main activity
+                                BusProvider.getBusProviderInstance().post(new LoginEvent(true, "User signed in", user.getEmail()));
+                            }
+
+                            @Override
+                            public void onRealmError(Throwable e) {
+                                DialogFactory.createGenericErrorDialog(context, "Realm Error: " + e);
+                                Timber.e("Error creating Realm Profile: " + e);
+                            }
+                        });
+                    } else {
+                        //user already has a saved profile, send to main activity
+                        new UserPrefs().setEditor(riderProfile.isEditor());
+                        BusProvider.getBusProviderInstance().post(new LoginEvent(true, "User signed in", user.getEmail()));
+                    }
                 }
             } else {
                 Timber.d("user signed out");
@@ -105,6 +110,15 @@ public class LoginPresenter extends BasePresenter<LoginMvpView> {
                     }
                     getMvpView().hideProgress();
                 });
+    }
+
+    private boolean emailVerified(FirebaseUser user) {
+        Timber.d("email verification check");
+        return user.isEmailVerified();
+    }
+
+    void logoutUser() {
+        mAuth.signOut();
     }
 
     void removeAuthListener() {

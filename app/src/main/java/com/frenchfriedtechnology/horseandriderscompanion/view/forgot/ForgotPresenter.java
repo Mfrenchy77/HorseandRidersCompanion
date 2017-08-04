@@ -34,7 +34,6 @@ public class ForgotPresenter extends BasePresenter<ForgotMvpView> {
         super.detachView();
     }
 
-    // TODO: 22/12/16 Implement reset Password
     void resetPassword(Context context, String email) {
         checkViewAttached();
         getMvpView().showProgress();

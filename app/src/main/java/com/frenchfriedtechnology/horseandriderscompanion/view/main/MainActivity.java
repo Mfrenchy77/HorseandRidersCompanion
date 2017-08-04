@@ -77,7 +77,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
     private ImageView expandChevron;
     private NavigationView navigationView;
     private RiderProfile userRiderProfile = new RiderProfile();
-    private List<HorseProfile> horseProfiles = new ArrayList<>();
+    private List<BaseListItem> horseProfiles = new ArrayList<>();
 
     @Inject
     MainPresenter presenter;
@@ -96,16 +96,10 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
         presenter.attachView(this);
         presenter.getRiderProfile(getIntent().getStringExtra(EMAIL));
 
-        horseList = (ListView) findViewById(R.id.horses_list);
-        horseList.setOnItemClickListener((adapterView, view, i, l) -> onHorseSelected(i));
-        horseList.setOnItemLongClickListener((adapterView, view, i, l) -> onHorseLongClicked(i));
-        TextView emptyList = (TextView) findViewById(R.id.empty_horse_list);
-        emptyList.setOnClickListener(view -> emptyHorseListClicked());
         AppCompatButton skillTreeButton = (AppCompatButton) findViewById(R.id.button_skill_tree);
         skillTreeButton.setOnClickListener(view -> openSkillTree());
         AppCompatButton addHorseButton = (AppCompatButton) findViewById(R.id.add_horse_button);
         addHorseButton.setOnClickListener(view -> addHorseClicked());
-        viewFlipperHorse = (ViewFlipper) findViewById(R.id.owned_horses_view_flipper);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_hnr);
         setSupportActionBar(toolbar);
@@ -172,26 +166,46 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
     @SuppressWarnings("Convert2streamapi")
     @Override
     public void getUserProfile(RiderProfile riderProfile) {
+        horseList = (ListView) findViewById(R.id.horses_list);
+        viewFlipperHorse = (ViewFlipper) findViewById(R.id.owned_horses_view_flipper);
+
+        horseList.setOnItemClickListener((adapterView, view, i, l) -> onHorseSelected(i));
+        horseList.setOnItemLongClickListener((adapterView, view, i, l) -> onHorseLongClicked(i));
+        TextView emptyList = (TextView) findViewById(R.id.empty_horse_list);
+        emptyList.setOnClickListener(view -> emptyHorseListClicked());
         List<Long> horseIds = new ArrayList<>();
+        List<String> horseNames = new ArrayList<>();
         for (BaseListItem ownedHorse : riderProfile.getOwnedHorses()) {
+            horseNames.add(ownedHorse.getName());
             horseIds.add(ownedHorse.getId());
         }
         this.userRiderProfile = riderProfile;
         toolbar.setTitle(riderProfile.getName());
-        if (riderProfile.getOwnedHorses() != null) {
+       /* if (riderProfile.getOwnedHorses() != null) {
             presenter.getHorseProfiles(horseIds);
         }
-        Timber.d("Profile gotten for: " + userRiderProfile.getName());
-    }
+        Timber.d("Profile gotten for: " + userRiderProfile.getName());*/
 
+
+        adapter = new StringAdapter(this, horseNames);
+        horseList.setAdapter(adapter);
+        horseList.setDivider(null);
+        Collections.sort(horseNames);
+        adapter.notifyDataSetChanged();
+        viewFlipperHorse.setDisplayedChild(horseNames.isEmpty() ? VIEW_EMPTY : VIEW_CONTENT);
+    }
+/* if (riderProfile.getOwnedHorses() != null) {
+            presenter.getHorseProfiles(horseIds);
+        }
+        Timber.d("Profile gotten for: " + userRiderProfile.getName());*/
 
     // TODO: 30/12/16 move the adapter initilize out of here and uses getProfile for setup
     @SuppressWarnings("Convert2streamapi")
     @Override
-    public void getHorseProfiles(List<HorseProfile> horseProfiles) {
-        this.horseProfiles = horseProfiles;
+    public void getHorseProfiles(List<BaseListItem> horseProfiles) {
+       /* this.horseProfiles = horseProfiles;
         List<String> horseNames = new ArrayList<>();
-        for (HorseProfile horseProfile : horseProfiles) {
+        for (BaseListItem horseProfile : horseProfiles) {
             if (!horseNames.contains(horseProfile.getName())) {
                 horseNames.add(horseProfile.getName());
             }
@@ -204,7 +218,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
         viewFlipperHorse.setDisplayedChild(horseNames.isEmpty() ? VIEW_EMPTY : VIEW_CONTENT);
         if (horseProfiles.size() != 0) {
             Timber.d("Horse Profiles size: " + horseProfiles.size());
-        }
+        }*/
     }
 
     /**
@@ -223,9 +237,9 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
 
     private long getHorseIdFromName(String horse) {
         long horseId = 0;
-        for (int i = 0; i < horseProfiles.size(); i++) {
-            if (horseProfiles.get(i).getName().equals(horse)) {
-                horseId = horseProfiles.get(i).getId();
+        for (int i = 0; i < userRiderProfile.getOwnedHorses().size(); i++) {
+            if (userRiderProfile.getOwnedHorses().get(i).getName().equals(horse)) {
+                horseId = userRiderProfile.getOwnedHorses().get(i).getId();
                 break;
             }
         }
@@ -233,13 +247,13 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
     }
 
     public boolean onHorseLongClicked(int position) {
-        for (int i = 0; i < horseProfiles.size(); i++) {
+      /*  for (int i = 0; i < horseProfiles.size(); i++) {
             if (horseProfiles.get(i).getName().equals(adapter.getItem(position))) {
                 DialogHorseProfile.newInstance(EDIT_HORSE, horseProfiles.get(i)).show(getFragmentManager(), null);
             }
         }
         horseList.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-        showToast("Long Clicked: " + adapter.getItem(position));
+        showToast("Long Clicked: " + adapter.getItem(position));*/
         return true;
     }
 
@@ -319,13 +333,11 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
             @Override
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-                invalidateOptionsMenu();
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu();
             }
 
             @Override

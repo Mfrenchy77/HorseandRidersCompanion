@@ -155,6 +155,7 @@ public class BaseSkillTreeActivity extends BaseActivity implements BaseSkillTree
     public void getSkills(List<Skill> skills) {
         if (skillTreePagerAdapter != null) {
             skillTreePagerAdapter.setAllSkills(skills);
+            skillTreePagerAdapter.notifyDataSetChanged();
             this.skills = skills;
         }
     }

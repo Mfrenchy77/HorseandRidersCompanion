@@ -1,15 +1,22 @@
 package com.frenchfriedtechnology.horseandriderscompanion.view.login;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.frenchfriedtechnology.horseandriderscompanion.AccountManager;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
@@ -23,6 +30,9 @@ import com.frenchfriedtechnology.horseandriderscompanion.view.dialogs.DialogSwit
 import com.frenchfriedtechnology.horseandriderscompanion.view.forgot.ForgotActivity;
 import com.frenchfriedtechnology.horseandriderscompanion.view.main.MainActivity;
 import com.frenchfriedtechnology.horseandriderscompanion.view.register.RegisterActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
 import com.squareup.otto.Subscribe;
 
 import javax.inject.Inject;
@@ -40,7 +50,7 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
     private ProgressBar mProgressBar = null;
     private TextInputEditText inputEmail;
     private EditText inputPassword;
-
+    private ScrollView root;
 
     @Override
     protected int getResourceLayout() {
@@ -54,6 +64,7 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
 
         mPresenter.attachView(this);
 
+        root = (ScrollView) findViewById(R.id.login_root);
         inputEmail = (TextInputEditText) findViewById(R.id.login_email);
         inputPassword = (EditText) findViewById(R.id.login_password);
         Button loginButton = (Button) findViewById(R.id.button_login);
@@ -98,6 +109,7 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
      * Switched to Registration Activity
      */
     void gotoRegister() {
+        mPresenter.removeAuthListener();
         RegisterActivity.start(context);
     }
 
@@ -144,6 +156,31 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
     @Override
     public void hideProgress() {
         mProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showEmailVerifyDialog(FirebaseUser user) {
+        Timber.d("Show email verification dialog");
+        new AlertDialog.Builder(context)
+                .setTitle("Email Verification Needed")
+                .setMessage("Send Email To " + user.getEmail() + "?")
+                .setCancelable(true)
+                .setPositiveButton("OK", (dialog, which) -> {
+                    user.sendEmailVerification().addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {
+                            Snackbar.make(root,
+                                    "Email sent to " + user.getEmail(),
+                                    Snackbar.LENGTH_SHORT).show();
+                            Timber.d("Verification Email Sent");
+                        } else {
+                            Timber.e("Error Sending Verification Email");
+                        }
+                    });
+                    dialog.dismiss();
+                })
+                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                .show();
+        Snackbar.make(root, "Email not verified", Snackbar.LENGTH_SHORT).show();
     }
 
     @Subscribe

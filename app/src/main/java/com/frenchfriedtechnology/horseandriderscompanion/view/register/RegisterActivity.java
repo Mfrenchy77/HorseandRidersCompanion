@@ -3,10 +3,14 @@ package com.frenchfriedtechnology.horseandriderscompanion.view.register;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.frenchfriedtechnology.horseandriderscompanion.R;
@@ -15,9 +19,14 @@ import com.frenchfriedtechnology.horseandriderscompanion.util.DialogFactory;
 import com.frenchfriedtechnology.horseandriderscompanion.util.ViewUtil;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BaseActivity;
 import com.frenchfriedtechnology.horseandriderscompanion.view.login.LoginActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
 import com.squareup.otto.Subscribe;
 
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 /**
  * Activity for Registering a new User
@@ -29,7 +38,7 @@ public class RegisterActivity extends BaseActivity implements RegisterMvpView {
 
     private TextInputEditText inputPassword, inputName, inputEmail;
     private ProgressBar progressBar = null;
-
+    private ScrollView root;
 
     @Override
     protected int getResourceLayout() {
@@ -43,6 +52,7 @@ public class RegisterActivity extends BaseActivity implements RegisterMvpView {
 
         registerPresenter.attachView(this);
 
+        root = (ScrollView) findViewById(R.id.register_root);
         inputName = (TextInputEditText) findViewById(R.id.register_input_name);
         inputPassword = (TextInputEditText) findViewById(R.id.register_password);
         inputEmail = (TextInputEditText) findViewById(R.id.register_input_email);
@@ -130,6 +140,30 @@ public class RegisterActivity extends BaseActivity implements RegisterMvpView {
     @Override
     public void hideProgress() {
         progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showEmailVerificationDialog(FirebaseUser user) {
+        Timber.d("Show email verification dialog");
+        new AlertDialog.Builder(context)
+                .setTitle("Email Verification Needed")
+                .setMessage("Send Email To " + user.getEmail() + "?")
+                .setCancelable(true)
+                .setPositiveButton("OK", (dialog, which) -> {
+                    user.sendEmailVerification().addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {
+                            Snackbar.make(root,
+                                    "Email sent to " + user.getEmail(),
+                                    Snackbar.LENGTH_SHORT).show();
+                            Timber.d("Verification Email Sent");
+                        } else {
+                            Timber.e("Error Sending Verification Email");
+                        }
+                    });
+                    dialog.dismiss();
+                })
+                .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
+                .show();
     }
 
     public static void start(Context context) {

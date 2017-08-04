@@ -93,10 +93,10 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
 
     void getCategories() {
         realmCategories = realmSkillTreeService.getCategories(isRider());
-        Timber.d("Realm Category size: " + realmCategories.size());
+        getMvpView().getCategories(realmCategories);
+        Timber.d("Realm Category size: " + realmCategories.size());/*
         if (isViewAttached()) {
-            getMvpView().getCategories(realmCategories);
-        }
+        }*/
         new CategoriesApi().getCategories(skillTreePath(), new CategoriesApi.CategoryCallback() {
             @Override
             public void onSuccess(List<Category> firebaseCategories) {
@@ -181,6 +181,7 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
 
     void getSkills() {
         realmSkills = realmSkillTreeService.getSkills(isRider());
+        Timber.d("getSkills() size: " + realmSkills.size());
         getMvpView().getSkills(realmSkills);
         new SkillsApi().getSkills(skillTreePath(), new SkillsApi.SkillCallback() {
             @Override
@@ -258,6 +259,7 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
 
     void getLevels() {
         realmLevels = realmSkillTreeService.getLevels(isRider());
+        Timber.d("getLevels() size: " + realmLevels.size());
         getMvpView().getLevels(realmLevels);
         new LevelsApi().getLevels(skillTreePath(), new LevelsApi.LevelCallback() {
             @Override
@@ -336,6 +338,7 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
     //----Resources
     public void getResources() {
         realmResources = realmSkillTreeService.getResources();
+        Timber.d("getResources() size: " + realmResources.size());
         new ResourcesApi().getAllResources(new ResourcesApi.ResourcesCallback() {
             @Override
             public void onSuccess(List<Resource> resources) {

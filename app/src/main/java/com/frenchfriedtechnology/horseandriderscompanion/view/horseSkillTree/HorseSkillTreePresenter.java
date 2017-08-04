@@ -48,7 +48,9 @@ public class HorseSkillTreePresenter extends BasePresenter<HorseSkillTreeMvpView
                 if (isViewAttached()) {
                     getMvpView().getHorseProfile(firebaseHorseProfile);
                 }
+/*
                 getMvpView().updateAdapter();
+*/
                 horseProfile = firebaseHorseProfile;
             }
 

@@ -69,13 +69,26 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     //---- User's Profile
     void getRiderProfile(String email) {
         riderProfile = realmProfileService.getUsersRiderProfile(email);
+        Timber.d("\r\nUser's Rider Profile: " + riderProfile.getName()
+                + "\r\nEmail: " + riderProfile.getEmail()
+                + "\r\nId: " + riderProfile.getId()
+                + "\r\nLast Edit by: " + riderProfile.getLastEditBy()
+                + "\r\nLast Edit date: " + riderProfile.getLastEditDate()
+                + "\r\nEditor: " + riderProfile.isEditor()
+                + "\r\nSubscribed: " + riderProfile.isSubscribed()
+                + "\r\nSubscription date: " + riderProfile.getSubscriptionDate()
+                + "\r\nSubscription end date:" + riderProfile.getSubscriptionEndDate()
+                + "\r\nSkill Level size: " + riderProfile.getSkillLevels().size()
+                + "\r\nOwned Horses size: " + riderProfile.getOwnedHorses().size());
         getMvpView().getUserProfile(riderProfile);
         RiderProfileApi.getRiderProfile(email, new RiderProfileApi.RiderProfileCallback() {
             @Override
             public void onSuccess(RiderProfile firebaseProfile) {
                 remoteRiderProfile = firebaseProfile;
                 new UserPrefs().setEditor(firebaseProfile.isEditor());
-
+                if (!isViewAttached()) {
+                    attachView(getMvpView());
+                }
                 getMvpView().getUserProfile(profileSyncer.syncProfile(riderProfile, firebaseProfile));
             }
 
@@ -221,6 +234,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
      */
     void getHorseProfiles(List<Long> ids) {
         checkViewAttached();
+        getMvpView().getHorseProfiles(riderProfile.getOwnedHorses());
         List<HorseProfile> horseProfiles = new ArrayList<>();
         HorseProfileApi.getAllUsersHorses(ids, new HorseProfileApi.HorseProfileCallback() {
             @Override
@@ -228,7 +242,9 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
                 if (!horseProfiles.contains(firebaseHorseProfile)) {
                     horseProfiles.add(firebaseHorseProfile);
                 }
+/*
                 getMvpView().getHorseProfiles(horseProfiles);
+*/
             }
 
             @Override

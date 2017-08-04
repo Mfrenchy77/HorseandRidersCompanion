@@ -91,6 +91,7 @@ public class RegisterPresenter extends BasePresenter<RegisterMvpView> {
                     } else {
                         //registration Successful, change display name
                         FirebaseUser user = task.getResult().getUser();
+                        getMvpView().showEmailVerificationDialog(user);
                         UserProfileChangeRequest changeRequest = new UserProfileChangeRequest.Builder()
                                 .setDisplayName(riderName)
                                 .build();

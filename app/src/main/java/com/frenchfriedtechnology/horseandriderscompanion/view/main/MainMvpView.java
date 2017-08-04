@@ -1,5 +1,6 @@
 package com.frenchfriedtechnology.horseandriderscompanion.view.main;
 
+import com.frenchfriedtechnology.horseandriderscompanion.data.entity.BaseListItem;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.HorseProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.RiderProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.MvpView;
@@ -14,5 +15,5 @@ interface MainMvpView extends MvpView {
 
     void getUserProfile(RiderProfile riderProfile);
 
-    void getHorseProfiles(List<HorseProfile> horseProfiles);
+    void getHorseProfiles(List<BaseListItem> horseProfiles);
 }

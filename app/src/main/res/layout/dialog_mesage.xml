@@ -2,8 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary">
+            android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,13 +11,14 @@
 
 
         <TextView
-            android:textIsSelectable="true"
             android:id="@+id/dialog_message_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
             android:padding="@dimen/spacing_normal"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@android:color/primary_text_dark"
+            android:textIsSelectable="true"
             tools:text="Title of Message"
             />
 
@@ -26,6 +26,8 @@
             android:id="@+id/dialog_message_subject"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:paddingBottom="@dimen/spacing_micro"
             android:paddingStart="@dimen/spacing_double"
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             android:textColor="@android:color/primary_text_dark"
@@ -38,11 +40,11 @@
             android:layout_margin="@dimen/spacing_micro">
 
             <TextView
-                android:textIsSelectable="true"
                 android:id="@+id/dialog_message_body"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/spacing_micro"
+                android:textIsSelectable="true"
                 tools:text="    This is the Message body, this is where all the information in words format will exist\n\n  Also, there may be multiple lines of nonsense in here as well\n\n   Sincerely, \nThe Developer"/>
 
 
@@ -52,8 +54,6 @@
             android:id="@+id/dialog_message_action_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:textColor="@android:color/primary_text_dark"
             tools:text="Will you accept Johnny Mcfartface as a student?"/>
 
         <LinearLayout

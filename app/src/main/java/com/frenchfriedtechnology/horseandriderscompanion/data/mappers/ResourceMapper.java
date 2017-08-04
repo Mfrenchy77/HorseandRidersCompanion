@@ -35,8 +35,8 @@ public class ResourceMapper {
 
         List<BaseListItem> skillTreeIdList = new ArrayList<>();
         if (realmResource.getSkillTreeIds() != null) {
-            Timber.d("Category List: " + realmResource.getSkillTreeIds().size());
-            for (int i = 0; i < realmResource.getSkillTreeIds().size(); i++) {
+            /*Timber.d("Category List: " + realmResource.getSkillTreeIds().size());
+            */for (int i = 0; i < realmResource.getSkillTreeIds().size(); i++) {
                 BaseListItem item = new BaseListItem(realmResource.getSkillTreeIds().get(i).getId(),
                         realmResource.getSkillTreeIds().get(i).getName());
                 skillTreeIdList.add(item);
@@ -46,8 +46,8 @@ public class ResourceMapper {
 
         List<BaseListItem> usersWhoRated = new ArrayList<>();
         if (realmResource.getUsersWhoRated() != null) {
-            Timber.d("Category List: " + realmResource.getUsersWhoRated().size());
-            for (int i = 0; i < realmResource.getUsersWhoRated().size(); i++) {
+            /*Timber.d("Category List: " + realmResource.getUsersWhoRated().size());
+            */for (int i = 0; i < realmResource.getUsersWhoRated().size(); i++) {
                 BaseListItem item = new BaseListItem(realmResource.getUsersWhoRated().get(i).getId(),
                         realmResource.getUsersWhoRated().get(i).getName());
                 usersWhoRated.add(item);
