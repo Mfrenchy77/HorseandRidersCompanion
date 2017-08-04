@@ -5,8 +5,6 @@ import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.RiderPro
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.RiderProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.SkillLevel;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
-import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.realmServices.RealmProfileService;
-import com.frenchfriedtechnology.horseandriderscompanion.data.sync.ProfileSyncer;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LevelAdjustedEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BasePresenter;
 import com.squareup.otto.Subscribe;
@@ -24,15 +22,10 @@ import timber.log.Timber;
 
 public class RiderSkillTreePresenter extends BasePresenter<RiderSkillTreeMvpView> {
 
-    private ProfileSyncer profileSyncer;
-    private final RealmProfileService realmProfileService;
     private RiderProfile riderProfile = new RiderProfile();
-    private RiderProfile remoteRiderProfile = new RiderProfile();
 
     @Inject
-    public RiderSkillTreePresenter(RealmProfileService realmProfileService, ProfileSyncer profileSyncer) {
-        this.realmProfileService = realmProfileService;
-        this.profileSyncer = profileSyncer;
+    public RiderSkillTreePresenter() {
     }
 
     @Override
@@ -44,15 +37,13 @@ public class RiderSkillTreePresenter extends BasePresenter<RiderSkillTreeMvpView
 
     void getRiderProfile(String email) {
         checkViewAttached();
-        riderProfile = realmProfileService.getUsersRiderProfile(email);
         RiderProfileApi.getRiderProfile(email, new RiderProfileApi.RiderProfileCallback() {
             @Override
             public void onSuccess(RiderProfile firebaseProfile) {
-                remoteRiderProfile = firebaseProfile;
+                riderProfile = firebaseProfile;
                 new UserPrefs().setEditor(firebaseProfile.isEditor());
-                profileSyncer.syncProfile(riderProfile, firebaseProfile);
                 if (isViewAttached()) {
-                    getMvpView().getRiderProfile(profileSyncer.syncProfile(riderProfile, remoteRiderProfile));
+                    getMvpView().getRiderProfile(riderProfile);
                 }
             }
 
@@ -61,11 +52,6 @@ public class RiderSkillTreePresenter extends BasePresenter<RiderSkillTreeMvpView
                 Timber.e(throwable.toString());
             }
         });
-        if (remoteRiderProfile != null) {
-            getMvpView().getRiderProfile(profileSyncer.syncProfile(riderProfile, remoteRiderProfile));
-        } else if (riderProfile != null) {
-            getMvpView().getRiderProfile(riderProfile);
-        }
     }
 
     /**
@@ -104,20 +90,10 @@ public class RiderSkillTreePresenter extends BasePresenter<RiderSkillTreeMvpView
             riderProfile.setLastEditBy(riderProfile.getName());
             riderProfile.setLastEditDate(System.currentTimeMillis());
 
-            realmProfileService.createOrUpdateRiderProfileToRealm(riderProfile, new RealmProfileService.RealmProfileCallback() {
-                @Override
-                public void onRealmSuccess() {
+            RiderProfileApi.createOrUpdateRiderProfile(riderProfile);
 
-                    RiderProfileApi.createOrUpdateRiderProfile(riderProfile);
-                    Timber.d("Updated Realm Profile");
-                }
 
-                @Override
-                public void onRealmError(Throwable e) {
-                    Timber.d("Error Updating Realm Profile");
-
-                }
-            });
         }
     }
 }
+

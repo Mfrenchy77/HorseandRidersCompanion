@@ -7,7 +7,6 @@ import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Level;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Skill;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.TreeNode;
-import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.realmServices.RealmSkillTreeService;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BasePresenter;
 
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ import timber.log.Timber;
 
 public class CreateResourcePresenter extends BasePresenter<CreateResourceMvpView> {
 
-    private final RealmSkillTreeService realmSkillTreeService;
     private List<Category> riderCategories = new ArrayList<>();
     private List<Skill> riderSkills = new ArrayList<>();
     private List<Level> riderLevels = new ArrayList<>();
@@ -34,18 +32,11 @@ public class CreateResourcePresenter extends BasePresenter<CreateResourceMvpView
 
 
     @Inject
-    public CreateResourcePresenter(RealmSkillTreeService realmSkillTreeService) {
-        this.realmSkillTreeService = realmSkillTreeService;
+    public CreateResourcePresenter() {
     }
 
     void getSkillTreeItems() {
-        riderCategories = realmSkillTreeService.getCategories(true);
-        riderSkills = realmSkillTreeService.getSkills(true);
-        riderLevels = realmSkillTreeService.getLevels(true);
 
-        horseCategories = realmSkillTreeService.getCategories(false);
-        horseSkills = realmSkillTreeService.getSkills(false);
-        horseLevels = realmSkillTreeService.getLevels(false);
         if (riderCategories.isEmpty()) {
             Timber.d("riderCategories are Null");
         } else {
@@ -83,7 +74,7 @@ public class CreateResourcePresenter extends BasePresenter<CreateResourceMvpView
                     skillItem.setDepth(1);
                     baseListItems.add(position, skillItem);
                     for (int j = 0; j < riderLevels.size(); j++) {
-                        if (riderLevels.get(j).getSkillId()==riderSkills.get(i).getId()) {
+                        if (riderLevels.get(j).getSkillId() == riderSkills.get(i).getId()) {
                             position++;
                             BaseListItem levelItem = new BaseListItem(riderLevels.get(j).getId(), riderLevels.get(j).getLevelName());
                             levelItem.setParentId(riderLevels.get(j).getSkillId());
@@ -140,7 +131,7 @@ public class CreateResourcePresenter extends BasePresenter<CreateResourceMvpView
         List<BaseListItem> leveledList = getNextLevel(totalSkillTree, currentDepth);
 
         for (BaseListItem item : leveledList) {
-            boolean isChild = parent.isRoot() || parent.getData().getId()==item.getParentId();
+            boolean isChild = parent.isRoot() || parent.getData().getId() == item.getParentId();
 
             if (isChild) {
                 TreeNode child = new TreeNode();

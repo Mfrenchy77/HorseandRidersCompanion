@@ -12,8 +12,6 @@ import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Category;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Level;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Skill;
-import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.realmServices.RealmSkillTreeService;
-import com.frenchfriedtechnology.horseandriderscompanion.data.sync.SkillTreeSyncer;
 import com.frenchfriedtechnology.horseandriderscompanion.di.ConfigPersistent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.CategoryCreateEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.CategoryDeleteEvent;
@@ -43,24 +41,15 @@ import timber.log.Timber;
 @ConfigPersistent
 public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> {
 
-    private final RealmSkillTreeService realmSkillTreeService;
-    private SkillTreeSyncer skillTreeSyncer;
-
     @Inject
-    public BaseSkillTreePresenter(SkillTreeSyncer skillTreeSyncer, RealmSkillTreeService realmSkillTreeService) {
-        this.skillTreeSyncer = skillTreeSyncer;
-        this.realmSkillTreeService = realmSkillTreeService;
+    public BaseSkillTreePresenter() {
     }
 
     private boolean rider;
-    private List<Skill> realmSkills = null;
-    private List<Skill> remoteSkills = null;
-    private List<Level> realmLevels = null;
-    private List<Level> remoteLevels = null;
-    private List<Resource> realmResources = null;
-    private List<Resource> remoteResources = null;
-    private List<Category> realmCategories = null;
-    private List<Category> remoteCategories = null;
+    private List<Skill> skills = null;
+    private List<Level> levels = null;
+    private List<Resource> resources = null;
+    private List<Category> categories = null;
 
     @Override
     public void attachView(BaseSkillTreeMvpView view) {
@@ -92,20 +81,11 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
     //----Category Actions
 
     void getCategories() {
-        realmCategories = realmSkillTreeService.getCategories(isRider());
-        getMvpView().getCategories(realmCategories);
-        Timber.d("Realm Category size: " + realmCategories.size());/*
-        if (isViewAttached()) {
-        }*/
         new CategoriesApi().getCategories(skillTreePath(), new CategoriesApi.CategoryCallback() {
             @Override
             public void onSuccess(List<Category> firebaseCategories) {
                 Timber.d("Firebase Categories received size: " + firebaseCategories.size());
-                remoteCategories = firebaseCategories;
-                for (Category firebaseCategory : remoteCategories) {
-                    Category realmCategory = matchCategoryId(firebaseCategory.getId(), realmCategories);
-                    skillTreeSyncer.syncCategory(realmCategory, firebaseCategory, skillTreePath());
-                }
+                categories = firebaseCategories;
                 if (isViewAttached()) {
                     getMvpView().getCategories(firebaseCategories);
                 }
@@ -130,11 +110,6 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
         category.setRider(isRider());
         new CategoriesApi().createOrEditCategory(category, skillTreePath());
     }
-/*
-
-    public void createCategory(Category newCategory) {
-    }
-*/
 
     @Subscribe
     public void categoryUpdateEvent(CategoryEditEvent event) {
@@ -143,21 +118,11 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
         editCategory.setLastEditBy(AccountManager.currentUser());
         new CategoriesApi().createOrEditCategory(editCategory, skillTreePath());
     }
-/*
-
-    public void editCategory(Category editedCategory) {
-    }
-*/
 
     @Subscribe
     public void deleteCategoryEvent(CategoryDeleteEvent event) {
         new CategoriesApi().deleteCategory(event.getCategoryName(), skillTreePath());
     }
-/*
-
-    public void deleteCategory(String deletedCategoryName) {
-    }
-*/
 
     private Category matchCategoryId(long id, List<Category> categoriesToSearch) {
         Category matchedCategory = new Category();
@@ -180,17 +145,10 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
     //---- Skill Actions
 
     void getSkills() {
-        realmSkills = realmSkillTreeService.getSkills(isRider());
-        Timber.d("getSkills() size: " + realmSkills.size());
-        getMvpView().getSkills(realmSkills);
         new SkillsApi().getSkills(skillTreePath(), new SkillsApi.SkillCallback() {
             @Override
-            public void onSuccess(List<Skill> skills) {
-                remoteSkills = skills;
-                for (Skill firebaseSkill : remoteSkills) {
-                    Skill realmSkill = matchSkillIds(firebaseSkill.getId(), realmSkills);
-                    skillTreeSyncer.syncSkill(realmSkill, firebaseSkill, skillTreePath());
-                }
+            public void onSuccess(List<Skill> firebaseSkills) {
+                skills = firebaseSkills;
                 if (isViewAttached()) {
                     getMvpView().getSkills(skills);
                 }
@@ -215,9 +173,6 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
         skill.setRider(isRider());
         new SkillsApi().createOrUpdateSkill(skill, skillTreePath());
     }
-/*
-    public void createSkill(Skill skill) {
-    }*/
 
     @Subscribe
     public void updateSkillEvent(SkillUpdateEvent event) {
@@ -226,19 +181,11 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
         editedSkill.setLastEditDate(System.currentTimeMillis());
         new SkillsApi().createOrUpdateSkill(editedSkill, skillTreePath());
     }
-/*
-    public void editSkill(Skill editedSkill) {
-    }*/
 
     @Subscribe
     public void deleteSkillEvent(SkillDeleteEvent event) {
         new SkillsApi().deleteSkill(event.getSkillId(), skillTreePath());
     }
-/*
-
-    public void deleteSkill(String deleteSkillId) {
-    }
-*/
 
     private Skill matchSkillIds(long id, List<Skill> skillsToSearch) {
         Skill matchedSkill = new Skill();
@@ -258,17 +205,11 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
     //---- Level Actions
 
     void getLevels() {
-        realmLevels = realmSkillTreeService.getLevels(isRider());
-        Timber.d("getLevels() size: " + realmLevels.size());
-        getMvpView().getLevels(realmLevels);
+
         new LevelsApi().getLevels(skillTreePath(), new LevelsApi.LevelCallback() {
             @Override
-            public void onSuccess(List<Level> levels) {
-                remoteLevels = levels;
-                for (Level firebaseLevel : remoteLevels) {
-                    Level realmLevel = matchLevelIds(firebaseLevel.getId(), realmLevels);
-                    skillTreeSyncer.syncLevel(realmLevel, firebaseLevel, skillTreePath());
-                }
+            public void onSuccess(List<Level> firebaseLevels) {
+                levels = firebaseLevels;
                 if (isViewAttached()) {
                     getMvpView().getLevels(levels);
                 }
@@ -289,12 +230,6 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
         }
         new LevelsApi().createOrUpdateLevel(level, skillTreePath());
     }
-/*
-
-    public void createLevel(Level level) {
-    }
-
-*/
 
     @Subscribe
     public void updateLevelEvent(LevelEditEvent event) {
@@ -303,21 +238,11 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
         updatedLevel.setLastEditDate(System.currentTimeMillis());
         new LevelsApi().createOrUpdateLevel(updatedLevel, skillTreePath());
     }
-/*
-
-    public void editLevel(Level editedLevel) {
-    }
-*/
 
     @Subscribe
     public void deleteLevelEvent(LevelDeleteEvent event) {
         new LevelsApi().deleteLevel(event.getLevelId(), skillTreePath());
     }
-/*
-
-    public void deleteLevel(String deletedLevelId) {
-    }
-*/
 
     private Level matchLevelIds(long id, List<Level> levelsToSearch) {
         Level matchedLevel = new Level();
@@ -337,20 +262,10 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
 
     //----Resources
     public void getResources() {
-        realmResources = realmSkillTreeService.getResources();
-        Timber.d("getResources() size: " + realmResources.size());
         new ResourcesApi().getAllResources(new ResourcesApi.ResourcesCallback() {
             @Override
-            public void onSuccess(List<Resource> resources) {
-                remoteResources = resources;
-                if (remoteResources != null) {
-                    Timber.d("Firebase Resources size: " + remoteResources.size());
-                }
-                for (Resource firebaseResource : resources) {
-                    Resource realmResource = matchResourceIds(firebaseResource.getId(), realmResources);
-                    skillTreeSyncer.syncResource(realmResource, firebaseResource);
-                }
-                Timber.d("View attached: " + isViewAttached());
+            public void onSuccess(List<Resource> firebaseResources) {
+                resources = firebaseResources;
                 if (isViewAttached()) {
                     getMvpView().getResources(resources);
                 }
@@ -373,6 +288,7 @@ public class BaseSkillTreePresenter extends BasePresenter<BaseSkillTreeMvpView> 
     }
 
     public void updateResource(Resource updatedResource) {
+        new ResourcesApi().createOrUpdateResource(updatedResource);
     }
 
     public void deleteResource(Resource resource) {

@@ -3,7 +3,6 @@ package com.frenchfriedtechnology.horseandriderscompanion.view.messages;
 import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.MessagesApi;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Message;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
-import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.realmServices.RealmProfileService;
 import com.frenchfriedtechnology.horseandriderscompanion.events.MessageNewEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.MessageSelectedEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.MessageShowActionsEvent;
@@ -20,11 +19,9 @@ import timber.log.Timber;
 
 public class MessagesPresenter extends BasePresenter<MessagesMvpView> {
 
-    private RealmProfileService realmProfileService;
 
     @Inject
-    public MessagesPresenter(RealmProfileService realmProfileService) {
-        this.realmProfileService = realmProfileService;
+    public MessagesPresenter() {
     }
 
     void getMessages() {

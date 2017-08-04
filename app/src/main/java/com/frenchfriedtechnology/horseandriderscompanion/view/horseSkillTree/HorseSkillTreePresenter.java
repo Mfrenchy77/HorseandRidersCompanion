@@ -6,7 +6,6 @@ import com.frenchfriedtechnology.horseandriderscompanion.AccountManager;
 import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.HorseProfileApi;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.HorseProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.SkillLevel;
-import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.realmServices.RealmProfileService;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BasePresenter;
 
 
@@ -22,12 +21,10 @@ import timber.log.Timber;
 
 public class HorseSkillTreePresenter extends BasePresenter<HorseSkillTreeMvpView> {
 
-    private final RealmProfileService realmProfileService;
     private Context context;
 
     @Inject
-    HorseSkillTreePresenter(RealmProfileService realmProfileService) {
-        this.realmProfileService = realmProfileService;
+    HorseSkillTreePresenter() {
     }
 
     private HorseProfile horseProfile = new HorseProfile();
@@ -41,17 +38,13 @@ public class HorseSkillTreePresenter extends BasePresenter<HorseSkillTreeMvpView
      * Retrieve Horse Profile
      */
     void getHorseProfile(long id) {
-        checkViewAttached();
         HorseProfileApi.getHorseProfile(id, new HorseProfileApi.HorseProfileCallback() {
             @Override
             public void onSuccess(HorseProfile firebaseHorseProfile) {
-                if (isViewAttached()) {
-                    getMvpView().getHorseProfile(firebaseHorseProfile);
-                }
-/*
-                getMvpView().updateAdapter();
-*/
                 horseProfile = firebaseHorseProfile;
+                if (isViewAttached()) {
+                    getMvpView().getHorseProfile(horseProfile);
+                }
             }
 
             @Override

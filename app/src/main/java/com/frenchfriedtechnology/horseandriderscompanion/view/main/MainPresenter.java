@@ -7,8 +7,6 @@ import com.frenchfriedtechnology.horseandriderscompanion.data.entity.BaseListIte
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.HorseProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.RiderProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
-import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.realmServices.RealmProfileService;
-import com.frenchfriedtechnology.horseandriderscompanion.data.sync.ProfileSyncer;
 import com.frenchfriedtechnology.horseandriderscompanion.events.HorseProfileCreateEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.HorseProfileDeleteEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BasePresenter;
@@ -28,16 +26,10 @@ import timber.log.Timber;
 public class MainPresenter extends BasePresenter<MainMvpView> {
 
 
-    private ProfileSyncer profileSyncer;
-    private final RealmProfileService realmProfileService;
     private RiderProfile riderProfile = new RiderProfile();
-    private RiderProfile remoteRiderProfile = new RiderProfile();
 
     @Inject
-    public MainPresenter(RealmProfileService realmProfileService,
-                         ProfileSyncer profileSyncer) {
-        this.realmProfileService = realmProfileService;
-        this.profileSyncer = profileSyncer;
+    public MainPresenter() {
     }
 
     @Inject
@@ -45,7 +37,6 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
 
     private FirebaseAuth.AuthStateListener mAuthListener;
 
-    private boolean profileFetched = false;
 
     @Override
     public void attachView(MainMvpView view) {
@@ -68,127 +59,25 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
 
     //---- User's Profile
     void getRiderProfile(String email) {
-        riderProfile = realmProfileService.getUsersRiderProfile(email);
-        Timber.d("\r\nUser's Rider Profile: " + riderProfile.getName()
-                + "\r\nEmail: " + riderProfile.getEmail()
-                + "\r\nId: " + riderProfile.getId()
-                + "\r\nLast Edit by: " + riderProfile.getLastEditBy()
-                + "\r\nLast Edit date: " + riderProfile.getLastEditDate()
-                + "\r\nEditor: " + riderProfile.isEditor()
-                + "\r\nSubscribed: " + riderProfile.isSubscribed()
-                + "\r\nSubscription date: " + riderProfile.getSubscriptionDate()
-                + "\r\nSubscription end date:" + riderProfile.getSubscriptionEndDate()
-                + "\r\nSkill Level size: " + riderProfile.getSkillLevels().size()
-                + "\r\nOwned Horses size: " + riderProfile.getOwnedHorses().size());
-        getMvpView().getUserProfile(riderProfile);
         RiderProfileApi.getRiderProfile(email, new RiderProfileApi.RiderProfileCallback() {
             @Override
             public void onSuccess(RiderProfile firebaseProfile) {
-                remoteRiderProfile = firebaseProfile;
+                riderProfile = firebaseProfile;
+                getMvpView().getUserProfile(riderProfile);
                 new UserPrefs().setEditor(firebaseProfile.isEditor());
-                if (!isViewAttached()) {
-                    attachView(getMvpView());
-                }
-                getMvpView().getUserProfile(profileSyncer.syncProfile(riderProfile, firebaseProfile));
             }
 
             @Override
             public void onError(Throwable throwable) {
-
+                Timber.e("Error retrieving RiderProfile from Firebase", throwable);
             }
         });
-        if (remoteRiderProfile != null) {
-            getMvpView().getUserProfile(profileSyncer.syncProfile(riderProfile, remoteRiderProfile));
-        } else if (riderProfile != null) {
-            getMvpView().getUserProfile(riderProfile);
-        }
-
-
-      /*  checkViewAttached();
-        getProfileSubscription = riderProfileHandler.getRealmRiderProfile(email).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(realmRiderProfile -> getMvpView().getUserProfile(new RiderProfileMapper().realmToEntity(realmRiderProfile)));
-        if (!profileFetched) {
-            Timber.d("getRiderProfile() called: " + email);
-            RxUtil.unsubscribe(getProfileSubscription);
-       */   /*  getProfileSubscription = profileService.getRealmRiderProfile(email)
-                    .subscribe(realmRiderProfile ->
-                            getMvpView().getUserProfile(
-                                    new RiderProfileMapper().realmToEntity(realmRiderProfile)));
-*/
-//            createUpdateProfileSubscription = profileService.createUpdateRealmRiderProfile(new RiderProfileMapper().entityToRealm(userRiderProfile))
-//                    .subscribe(realmRiderProfile -> getMvpView().getUserProfile(new RiderProfileMapper().realmToEntity(realmRiderProfile)), Throwable::printStackTrace);
-
-
-            /*  subscription = dataManager.getRiderProfile(email)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<RiderProfile>() {
-                        @Override
-                        public void onCompleted() {
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-
-                            Timber.e("Error fetching RiderProfile", e);
-                        }
-
-                        @Override
-                        public void onNext(RiderProfile riderProfile) {
-                            if (riderProfile == null) {
-                                //show empty view
-                                Timber.d("Profile is Null");
-                            } else {
-                                userRiderProfile = riderProfile;
-                                Log.d("MainPresenter", "\r\nUser's Rider Profile: " + riderProfile.getLevelName()
-                                        + "\r\nEmail: " + riderProfile.getEmail()
-                                        + "\r\nId: " + riderProfile.getId()
-                                        + "\r\nLast Edit by: " + riderProfile.getLastEditBy()
-                                        + "\r\nLast Edit date: " + riderProfile.getLastEditDate()
-                                        + "\r\nEditor: " + riderProfile.isEditor()
-                                        + "\r\nSubscribed: " + riderProfile.isSubscribed()
-                                        + "\r\nSubscription date: " + riderProfile.getSubscriptionDate()
-                                        + "\r\nSubscription end date:" + riderProfile.getSubscriptionEndDate()
-                                        + "\r\nSkill Level size: " + riderProfile.getSkillLevels().size()
-                                        + "\r\nOwned Horses size: " + riderProfile.getOwnedHorses().size());
-                                getMvpView().getUserProfile(riderProfile);
-                                monitorFirebaseProfile(email);
-                            }
-                        }
-                    });*/
     }
 
 
     /**
      * Monitors Firebase RiderProfile for User and syncs to Realm if necessary
      */
-
-  /*  private void monitorFirebaseProfile(String email) {
-        RiderProfileApi.getRiderProfile(email, new RiderProfileApi.RiderProfileCallback() {
-            @Override
-            public void onSuccess(RiderProfile firebaseProfile) {
-                Log.d("MainPresenter", "\r\nUser's FireBase Profile: " + firebaseProfile.getLevelName()
-                        + "\r\nEmail: " + firebaseProfile.getEmail()
-                        + "\r\nId: " + firebaseProfile.getId()
-                        + "\r\nLast Edit by: " + firebaseProfile.getLastEditBy()
-                        + "\r\nLast Edit date: " + firebaseProfile.getLastEditDate()
-                        + "\r\nEditor: " + firebaseProfile.isEditor()
-                        + "\r\nSubscribed: " + firebaseProfile.isSubscribed()
-                        + "\r\nSubscription date: " + firebaseProfile.getSubscriptionDate()
-                        + "\r\nSubscription end date:" + firebaseProfile.getSubscriptionEndDate()
-                        + "\r\nSkill Levels size: " + firebaseProfile.getSkillLevels().size()
-                        + "\r\nOwned Horses size: " + firebaseProfile.getOwnedHorses().size());
-                new UserPrefs().setEditor(userRiderProfile.isEditor());
-
-                getMvpView().getUserProfile(new ProfileSyncer().syncProfile(userRiderProfile, firebaseProfile, realmProfileService));
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                Timber.e(throwable.toString());
-            }
-        });
-    }*/
 
     //-----Horse Profile Actions
     @Subscribe
@@ -214,19 +103,10 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         horseList.add(listItem);
 
         riderProfile.setOwnedHorses(horseList);
-        realmProfileService.createOrUpdateRiderProfileToRealm(riderProfile, new RealmProfileService.RealmProfileCallback() {
-            @Override
-            public void onRealmSuccess() {
-                RiderProfileApi.createOrUpdateRiderProfile(riderProfile);
+        RiderProfileApi.createOrUpdateRiderProfile(riderProfile);
 
-                HorseProfileApi.createOrUpdateHorseProfile(horseProfile);
-            }
+        HorseProfileApi.createOrUpdateHorseProfile(horseProfile);
 
-            @Override
-            public void onRealmError(Throwable e) {
-                Timber.e("Error Creating/Updating Horse Profile: " + e);
-            }
-        });
     }
 
     /**
@@ -278,18 +158,10 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
                     riderProfile.getOwnedHorses().remove(i);
                     riderProfile.setLastEditBy(AccountManager.currentUser());
                     riderProfile.setLastEditDate(System.currentTimeMillis());
-                    realmProfileService.createOrUpdateRiderProfileToRealm(riderProfile, new RealmProfileService.RealmProfileCallback() {
-                        @Override
-                        public void onRealmSuccess() {
-                            RiderProfileApi.createOrUpdateRiderProfile(riderProfile);
-                            HorseProfileApi.deleteHorseProfile(event.getId());
-                        }
 
-                        @Override
-                        public void onRealmError(Throwable e) {
+                    RiderProfileApi.createOrUpdateRiderProfile(riderProfile);
+                    HorseProfileApi.deleteHorseProfile(event.getId());
 
-                        }
-                    });
                     break;
                 }
             }
@@ -305,63 +177,15 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     }
 
     /**
-     * Remove User from Firebase and Realm
+     * Remove User from Firebase
      */
     void deleteUser() {
-        /*subscription = */
-        realmProfileService.deleteRiderProfileFromRealm(riderProfile.getEmail(), new RealmProfileService.RealmProfileCallback() {
-            @Override
-            public void onRealmSuccess() {
-                logoutUser();
-            }
-
-            @Override
-            public void onRealmError(Throwable e) {
-                Timber.e(e.toString());
-            }
-        });
-      /*  deleteProfileSubscription = riderProfileHandler.deleteRealmRiderProfile(new RiderProfileMapper().entityToRealm(userRiderProfile))
-                .subscribe(aVoid -> logoutUser());
-        profileService.deleteRealmRiderProfile(new RiderProfileMapper().entityToRealm(userRiderProfile))
-                .subscribe(aVoid -> logoutUser());
-        dataManager.deleteRiderProfile(userRiderProfile.getEmail())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e.toString());
-                    }
-
-                    @Override
-                    public void onNext(Object o) {
-                        logoutUser();
-                    }
-                })*/
-        ;
+        FirebaseUser user = mAuth.getCurrentUser();
+        RiderProfileApi.deleteRiderProfile(user.getEmail());
+        Timber.d("Deleted Profile");
+        new AccountManager().removeUser();
+        mAuth.getCurrentUser().delete();
         logoutUser();
-      /*   realmProfileService.deleteRiderProfileFromRealm(userRiderProfile.getEmail(), new RealmProfileService.RealmProfileCallback() {
-           @Override
-            public void onRealmSuccess() {
-                RiderProfileApi.deleteRiderProfile(userRiderProfile.getEmail());
-                Timber.d("Deleted Profile");
-                databaseReference
-                        .child(Constants.RIDER_PROFILE)
-                        .child(userRiderProfile.getEmail()).removeValue();
-                new AccountManager().removeUser();
-                logoutUser();
-            }
-
-            @Override
-            public void onRealmError(Throwable e) {
-                Timber.d("Error Deleting Profile; " + e);
-            }
-        });
-*/
     }
 
     /**

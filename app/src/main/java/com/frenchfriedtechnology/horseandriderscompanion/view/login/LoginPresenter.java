@@ -7,7 +7,6 @@ import com.frenchfriedtechnology.horseandriderscompanion.BusProvider;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.RiderProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.AppPrefs;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.UserPrefs;
-import com.frenchfriedtechnology.horseandriderscompanion.data.local.realm.realmServices.RealmProfileService;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LoginEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.util.DialogFactory;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BasePresenter;
@@ -25,13 +24,11 @@ import timber.log.Timber;
  */
 public class LoginPresenter extends BasePresenter<LoginMvpView> {
 
-    private final RealmProfileService realmProfileService;
     private FirebaseAuth.AuthStateListener authListener;
     private Context context;
 
     @Inject
-    LoginPresenter(RealmProfileService realmProfileService) {
-        this.realmProfileService = realmProfileService;
+    LoginPresenter() {
     }
 
     @Inject
@@ -56,40 +53,8 @@ public class LoginPresenter extends BasePresenter<LoginMvpView> {
                     Timber.d("Email Not Verified");
                     getMvpView().showEmailVerifyDialog(user);
                 } else {
-                    RiderProfile riderProfile = realmProfileService.getUsersRiderProfile(user.getEmail());
-                    if (riderProfile == null) {
-                        //No Profile saved in Realm
-                        //create a default profile, if user has a firebase account it will download
-                        //in Main Activity
-                        riderProfile = new RiderProfile();
-                        riderProfile.setEmail(user.getEmail());
-                        riderProfile.setName(user.getDisplayName());
-                        riderProfile.setId(user.getUid());
-                        riderProfile.setLastEditBy(user.getDisplayName());
-                        realmProfileService.createOrUpdateRiderProfileToRealm(riderProfile, new RealmProfileService.RealmProfileCallback() {
-                            @Override
-                            public void onRealmSuccess() {
-                                //Realm profile created
-                                RiderProfile profile = realmProfileService.getUsersRiderProfile(user.getEmail());
-                                //setup App preferences for user
-                                AppPrefs.setActiveUser(profile.getName());
-                                new UserPrefs().setUserEmail(profile.getEmail());
-                                new UserPrefs().setUserId(profile.getId());
-                                //send to main activity
-                                BusProvider.getBusProviderInstance().post(new LoginEvent(true, "User signed in", user.getEmail()));
-                            }
-
-                            @Override
-                            public void onRealmError(Throwable e) {
-                                DialogFactory.createGenericErrorDialog(context, "Realm Error: " + e);
-                                Timber.e("Error creating Realm Profile: " + e);
-                            }
-                        });
-                    } else {
-                        //user already has a saved profile, send to main activity
-                        new UserPrefs().setEditor(riderProfile.isEditor());
-                        BusProvider.getBusProviderInstance().post(new LoginEvent(true, "User signed in", user.getEmail()));
-                    }
+                    //user already has a saved profile, send to main activity
+                    BusProvider.getBusProviderInstance().post(new LoginEvent(true, "User signed in", user.getEmail()));
                 }
             } else {
                 Timber.d("user signed out");
