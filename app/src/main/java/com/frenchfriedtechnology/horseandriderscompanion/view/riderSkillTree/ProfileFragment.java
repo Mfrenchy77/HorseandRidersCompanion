@@ -105,7 +105,9 @@ public class ProfileFragment extends Fragment {
     }
 
     private void inflateHorseView(View rootView) {
+/*
         Timber.d("ProfileName: " + horseProfile.getName());
+*/
 
         TextView profileName = (TextView) rootView.findViewById(R.id.profile_horse_name);
         profileName.setText(horseProfile.getName());

@@ -70,6 +70,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
     private static final int VIEW_EMPTY = 0;
     private static final int VIEW_CONTENT = 1;
     private static final String KEY_MENU_STATE = "KEY_MENU_STATE";
+    private TextView navigationName;
 
     private ActionBarDrawerToggle drawerToggle;
     private DrawerLayout drawerLayout;
@@ -77,6 +78,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
     private ImageView expandChevron;
     private NavigationView navigationView;
     private RiderProfile userRiderProfile = new RiderProfile();
+    private HorseProfile horseProfile = new HorseProfile();
     private List<BaseListItem> horseProfiles = new ArrayList<>();
 
     @Inject
@@ -168,24 +170,25 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
     public void getUserProfile(RiderProfile riderProfile) {
         horseList = (ListView) findViewById(R.id.horses_list);
         viewFlipperHorse = (ViewFlipper) findViewById(R.id.owned_horses_view_flipper);
-
+        navigationName.setText(riderProfile.getName());
         horseList.setOnItemClickListener((adapterView, view, i, l) -> onHorseSelected(i));
         horseList.setOnItemLongClickListener((adapterView, view, i, l) -> onHorseLongClicked(i));
         TextView emptyList = (TextView) findViewById(R.id.empty_horse_list);
         emptyList.setOnClickListener(view -> emptyHorseListClicked());
         List<Long> horseIds = new ArrayList<>();
         List<String> horseNames = new ArrayList<>();
+
         for (BaseListItem ownedHorse : riderProfile.getOwnedHorses()) {
-            horseNames.add(ownedHorse.getName());
-            horseIds.add(ownedHorse.getId());
+            if (riderProfile.getOwnedHorses() != null) {
+                Timber.d("owned horse list size: " + riderProfile.getOwnedHorses().size());
+                horseNames.add(ownedHorse.getName());
+                horseIds.add(ownedHorse.getId());
+            } else {
+                Timber.e("Owned Horse list empty");
+            }
         }
         this.userRiderProfile = riderProfile;
         toolbar.setTitle(riderProfile.getName());
-       /* if (riderProfile.getOwnedHorses() != null) {
-            presenter.getHorseProfiles(horseIds);
-        }
-        Timber.d("Profile gotten for: " + userRiderProfile.getName());*/
-
 
         adapter = new StringAdapter(this, horseNames);
         horseList.setAdapter(adapter);
@@ -194,12 +197,9 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
         adapter.notifyDataSetChanged();
         viewFlipperHorse.setDisplayedChild(horseNames.isEmpty() ? VIEW_EMPTY : VIEW_CONTENT);
     }
-/* if (riderProfile.getOwnedHorses() != null) {
-            presenter.getHorseProfiles(horseIds);
-        }
-        Timber.d("Profile gotten for: " + userRiderProfile.getName());*/
 
-    // TODO: 30/12/16 move the adapter initilize out of here and uses getProfile for setup
+
+    // TODO: 30/12/16 move the adapter initialize out of here and uses getProfile for setup
     @SuppressWarnings("Convert2streamapi")
     @Override
     public void getHorseProfiles(List<BaseListItem> horseProfiles) {
@@ -219,6 +219,11 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
         if (horseProfiles.size() != 0) {
             Timber.d("Horse Profiles size: " + horseProfiles.size());
         }*/
+    }
+
+    @Override
+    public void editHorse(HorseProfile firebaseHorseProfile) {
+        DialogHorseProfile.newInstance(EDIT_HORSE, firebaseHorseProfile).show(getFragmentManager(), null);
     }
 
     /**
@@ -247,13 +252,20 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
     }
 
     public boolean onHorseLongClicked(int position) {
-      /*  for (int i = 0; i < horseProfiles.size(); i++) {
+        String horse = adapter.getItem(position);
+        long horseId = getHorseIdFromName(horse);
+        if (horseId != 0) {
+            presenter.getHorseProfile(horseId);
+
+        } else {
+            Timber.d("Horse Id is Null");
+        }
+        showToast("Edit " + horse);
+        for (int i = 0; i < horseProfiles.size(); i++) {
             if (horseProfiles.get(i).getName().equals(adapter.getItem(position))) {
-                DialogHorseProfile.newInstance(EDIT_HORSE, horseProfiles.get(i)).show(getFragmentManager(), null);
             }
         }
         horseList.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
-        showToast("Long Clicked: " + adapter.getItem(position));*/
         return true;
     }
 
@@ -322,8 +334,7 @@ public class MainActivity extends BaseActivity implements MainMvpView, Navigatio
         navigationView.setNavigationItemSelectedListener(this);
         expandChevron = (ImageView) view.findViewById(R.id.expand_menu_chevron);
 
-        TextView textUser = (TextView) view.findViewById(R.id.profile_username);
-        textUser.setText(userRiderProfile.getName());
+        navigationName = (TextView) view.findViewById(R.id.profile_username);
         LinearLayout accountNameLayout = (LinearLayout) view.findViewById(R.id.account_name_layout);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

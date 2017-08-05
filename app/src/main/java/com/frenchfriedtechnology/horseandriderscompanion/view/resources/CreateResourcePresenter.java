@@ -1,12 +1,16 @@
 package com.frenchfriedtechnology.horseandriderscompanion.view.resources;
 
+import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.CategoriesApi;
+import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.LevelsApi;
 import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.ResourcesApi;
+import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.SkillsApi;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.BaseListItem;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Category;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Level;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Resource;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.Skill;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.TreeNode;
+import com.frenchfriedtechnology.horseandriderscompanion.util.Constants;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BasePresenter;
 
 import java.util.ArrayList;
@@ -28,33 +32,99 @@ public class CreateResourcePresenter extends BasePresenter<CreateResourceMvpView
     private List<Category> horseCategories = new ArrayList<>();
     private List<Skill> horseSkills = new ArrayList<>();
     private List<Level> horseLevels = new ArrayList<>();
-    private TreeNode skillTree;
 
+    private TreeNode skillTree;
 
     @Inject
     public CreateResourcePresenter() {
     }
 
     void getSkillTreeItems() {
-
-        if (riderCategories.isEmpty()) {
-            Timber.d("riderCategories are Null");
-        } else {
-
-            Timber.d("RiderCategories size: " + riderCategories.size());
-        }
-        Runnable runnable = new Runnable() {
+        new CategoriesApi().getCategories(Constants.RIDER_SKILL_TREE, new CategoriesApi.CategoryCallback() {
             @Override
-            public void run() {
+            public void onSuccess(List<Category> categories) {
+                riderCategories = categories;
+                if (riderCategories.isEmpty()) {
+                    Timber.d("riderCategories are Null");
+                } else {
+                    getMvpView().getSkillTreeList(matchSkillTreeItem());
+
+                    Timber.d("RiderCategories size: " + riderCategories.size());
+                }
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+        });
+        new CategoriesApi().getCategories(Constants.HORSE_SKILL_TREE, new CategoriesApi.CategoryCallback() {
+            @Override
+            public void onSuccess(List<Category> categories) {
+                horseCategories = categories;
                 getMvpView().getSkillTreeList(matchSkillTreeItem());
             }
-        };
-        runnable.run();
 
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+        });
+
+        new SkillsApi().getSkills(Constants.RIDER_SKILL_TREE, new SkillsApi.SkillCallback() {
+            @Override
+            public void onSuccess(List<Skill> skills) {
+                riderSkills = skills;
+                getMvpView().getSkillTreeList(matchSkillTreeItem());
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+        });
+        new SkillsApi().getSkills(Constants.HORSE_SKILL_TREE, new SkillsApi.SkillCallback() {
+            @Override
+            public void onSuccess(List<Skill> skills) {
+                horseSkills = skills;
+                getMvpView().getSkillTreeList(matchSkillTreeItem());
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+        });
+
+        new LevelsApi().getLevels(Constants.RIDER_SKILL_TREE, new LevelsApi.LevelCallback() {
+            @Override
+            public void onSuccess(List<Level> levels) {
+                riderLevels = levels;
+                getMvpView().getSkillTreeList(matchSkillTreeItem());
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+        });
+        new LevelsApi().getLevels(Constants.HORSE_SKILL_TREE, new LevelsApi.LevelCallback() {
+            @Override
+            public void onSuccess(List<Level> levels) {
+                horseLevels = levels;
+                getMvpView().getSkillTreeList(matchSkillTreeItem());
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+
+            }
+        });
 
         List<BaseListItem> sortedList = matchSkillTreeItem();
         skillTree = generateSkillTree(sortedList);
         getMvpView().getTreeNode(skillTree);
+
     }
 
     private List<BaseListItem> matchSkillTreeItem() {

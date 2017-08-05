@@ -74,6 +74,9 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         });
     }
 
+    RiderProfile riderProfile() {
+        return riderProfile;
+    }
 
     /**
      * Monitors Firebase RiderProfile for User and syncs to Realm if necessary
@@ -134,11 +137,12 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         });
     }
 
+    // TODO: 04/08/17 This is wonky it is opening the edit dialog when a change is made...FIXX
     void getHorseProfile(long id) {
         HorseProfileApi.getHorseProfile(id, new HorseProfileApi.HorseProfileCallback() {
             @Override
             public void onSuccess(HorseProfile firebaseHorseProfile) {
-                Timber.d("got Horsey: " + firebaseHorseProfile.getName());
+                getMvpView().editHorse(firebaseHorseProfile);
             }
 
             @Override
@@ -151,7 +155,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
 
     @Subscribe
     public void onDeleteHorseEvent(HorseProfileDeleteEvent event) {
-
+        Timber.d("Delete horse " + event.getId());
         if (riderProfile.getOwnedHorses().contains(event.getId())) {
             for (int i = 0; i < riderProfile.getOwnedHorses().size(); i++) {
                 if (riderProfile.getOwnedHorses().get(i).getId() == event.getId()) {
@@ -165,6 +169,8 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
                     break;
                 }
             }
+        } else {
+            Timber.e("Horse Id not found");
         }
     }
 

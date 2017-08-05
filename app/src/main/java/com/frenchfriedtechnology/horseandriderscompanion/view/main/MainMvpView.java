@@ -16,4 +16,6 @@ interface MainMvpView extends MvpView {
     void getUserProfile(RiderProfile riderProfile);
 
     void getHorseProfiles(List<BaseListItem> horseProfiles);
+
+    void editHorse(HorseProfile firebaseHorseProfile);
 }

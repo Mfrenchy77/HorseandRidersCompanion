@@ -3,8 +3,10 @@ package com.frenchfriedtechnology.horseandriderscompanion.view.horseSkillTree;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.widget.Toast;
 
 import com.frenchfriedtechnology.horseandriderscompanion.AccountManager;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
@@ -64,7 +66,14 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
         initPagerAdapter();
         activityComponent().inject(this);
         presenter.attachView(this);
-        presenter.getHorseProfile(getIntent().getLongExtra(HORSE_ID, 0));
+        long horseID = getIntent().getLongExtra(HORSE_ID, 0);
+        if (horseID != 0) {
+            Timber.d("Horse ID: " + getIntent().getLongExtra(HORSE_ID, 0));
+            presenter.getHorseProfile(getIntent().getLongExtra(HORSE_ID, 0));
+        } else {
+            Timber.e("Error retrieving horse profile");
+            Toast.makeText(context, "Error retrieving horse profile", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

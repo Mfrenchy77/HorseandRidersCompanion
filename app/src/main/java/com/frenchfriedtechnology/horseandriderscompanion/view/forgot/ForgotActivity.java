@@ -78,7 +78,6 @@ public class ForgotActivity extends BaseActivity implements ForgotMvpView {
     /**
      * Send the email a notice to reset password
      */
-    // TODO: 16/12/16 Implement this!!!
     void resetPassword() {
         ViewUtil.hideKeyboard(this);
         String email = inputEmail
