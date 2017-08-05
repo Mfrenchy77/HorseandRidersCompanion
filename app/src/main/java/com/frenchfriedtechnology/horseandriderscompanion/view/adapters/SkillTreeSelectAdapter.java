@@ -53,7 +53,7 @@ public class SkillTreeSelectAdapter extends BaseQuickAdapter<BaseListItem> {
 
     @Override
     protected void convert(BaseViewHolder holder, BaseListItem baseListItem) {
-
+// TODO: 04/08/17 Checked Item Visibility system is not working well, please fix
         //----initialize check item
         holder.itemView.setVisibility(baseListItem.isCollapsed() ? View.GONE : View.VISIBLE);
         holder.setText(R.id.select_skill_tree_item, baseListItem.getName());
@@ -82,8 +82,8 @@ public class SkillTreeSelectAdapter extends BaseQuickAdapter<BaseListItem> {
         for (int i = 0; i < skillTree.size(); i++) {
             if (skillTree.get(i).getParentId() != 0 && skillTree.get(i).getParentId() == id) {
                 skillTree.get(i).toggle();
+                notifyDataSetChanged();
             }
         }
-        notifyDataSetChanged();
     }
 }

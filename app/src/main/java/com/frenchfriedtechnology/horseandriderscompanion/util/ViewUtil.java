@@ -174,7 +174,7 @@ public class ViewUtil {
                 handsText.setText(i1 + " Hands ");
             }
         });
-        inchesNumberPicker.setMaxValue(11);
+        inchesNumberPicker.setMaxValue(3);
         inchesNumberPicker.setMinValue(1);
         inchesNumberPicker.setWrapSelectorWheel(false);
         inchesNumberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
