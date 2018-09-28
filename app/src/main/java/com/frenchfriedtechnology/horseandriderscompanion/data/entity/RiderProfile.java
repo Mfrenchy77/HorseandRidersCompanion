@@ -24,11 +24,11 @@ public class RiderProfile {
 
     String name;
 
-    String picUrl; //maybe get rid of this
+    String picUrl; //todo maybe get rid of this
 
     long lastEditDate = 0;
 
-    String lastEditBy = null;
+    String lastEditBy;
 
     String email;
 

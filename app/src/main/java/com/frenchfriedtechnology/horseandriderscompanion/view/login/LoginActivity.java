@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AlertDialog;
@@ -64,16 +63,16 @@ public class LoginActivity extends BaseActivity implements LoginMvpView {
 
         mPresenter.attachView(this);
 
-        root = (ScrollView) findViewById(R.id.login_root);
-        inputEmail = (TextInputEditText) findViewById(R.id.login_email);
-        inputPassword = (EditText) findViewById(R.id.login_password);
-        Button loginButton = (Button) findViewById(R.id.button_login);
+        root = findViewById(R.id.login_root);
+        inputEmail = findViewById(R.id.login_email);
+        inputPassword = findViewById(R.id.login_password);
+        Button loginButton = findViewById(R.id.button_login);
         loginButton.setOnClickListener(view -> loginClicked());
-        TextView forgotPassword = (TextView) findViewById(R.id.forgot_password);
+        TextView forgotPassword = findViewById(R.id.forgot_password);
         forgotPassword.setOnClickListener(view -> gotoForgot());
-        TextView registerButton = (TextView) findViewById(R.id.login_link_register);
+        TextView registerButton = findViewById(R.id.login_link_register);
         registerButton.setOnClickListener(view -> gotoRegister());
-        ImageView loginAccounts = (ImageView) findViewById(R.id.login_account_button);
+        ImageView loginAccounts = findViewById(R.id.login_account_button);
         loginAccounts.setOnClickListener(view -> onClickAccountSwitch());
         ViewUtil.hideKeyboard(this);
     }

@@ -21,7 +21,6 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.google.android.gms.internal.zzs.TAG;
 
 
 public class ViewUtil {
@@ -170,7 +169,6 @@ public class ViewUtil {
         handsNumberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker handsNumberPicker, int i, int i1) {
-                Log.d(TAG, "onValueChange: " + i + " secondVale: " + i1);
                 handsText.setText(i1 + " Hands ");
             }
         });
@@ -180,14 +178,12 @@ public class ViewUtil {
         inchesNumberPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker inchesNumberPicker, int i, int i1) {
-                Log.d(TAG, "onValueChange: " + i + " secondVale: " + i1);
                 inchesText.setText(i1 + " Inches");
             }
         });
         builder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Log.d(TAG, "onClick: " + height);
                 height = String.format("%s,%s", String.valueOf(handsNumberPicker.getValue()),
                         String.valueOf(inchesNumberPicker.getValue()));
 

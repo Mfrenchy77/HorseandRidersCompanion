@@ -81,17 +81,17 @@ public class BaseSkillTreeActivity extends BaseActivity implements BaseSkillTree
 
         editMode = new UserPrefs().isEditMode();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_hnr);
+        Toolbar toolbar = findViewById(R.id.toolbar_hnr);
         setSupportActionBar(toolbar);
         setupToolbar(toolbar);
 
-        addCategoryFab = (FloatingActionButton) findViewById(R.id.add_fab);
+        addCategoryFab = findViewById(R.id.add_fab);
         addCategoryFab.setVisibility(new UserPrefs().isEditor() && new UserPrefs().isEditMode() ? View.VISIBLE : View.GONE);
         addCategoryFab.setOnClickListener(view -> addCategory());
 
-        Switch editSwitch = (Switch) findViewById(R.id.edit_switch);
+        Switch editSwitch = findViewById(R.id.edit_switch);
         editSwitch.setChecked(editMode);
-        editSwitch = (Switch) findViewById(R.id.edit_switch);
+        editSwitch = findViewById(R.id.edit_switch);
         editSwitch.setVisibility(new UserPrefs().isEditor() ? View.VISIBLE : View.GONE);
         editSwitch.setOnCheckedChangeListener((compoundButton, b) -> {
             editMode = b;
@@ -165,6 +165,7 @@ public class BaseSkillTreeActivity extends BaseActivity implements BaseSkillTree
         if (skillTreePagerAdapter != null) {
             BusProvider.getBusProviderInstance().post(new LevelsFetch(newLevels));
             skillTreePagerAdapter.setAllLevels(newLevels);
+            skillTreePagerAdapter.notifyDataSetChanged();
             levels = newLevels;
 
         }

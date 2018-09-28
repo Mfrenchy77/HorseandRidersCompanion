@@ -7,6 +7,8 @@
 # The -optimizations option disables some arithmetic simplifications that Dalvik 1.0 and 1.5 can't handle.
 -optimizations !code/simplification/arithmetic
 
+-keepattributes *Annotation*
+-keep @**annotation** class * {*;}
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application
 -keep public class * extends android.app.Service

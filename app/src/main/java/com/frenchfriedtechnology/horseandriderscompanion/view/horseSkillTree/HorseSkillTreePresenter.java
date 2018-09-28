@@ -1,12 +1,12 @@
 package com.frenchfriedtechnology.horseandriderscompanion.view.horseSkillTree;
 
-import android.content.Context;
-
 import com.frenchfriedtechnology.horseandriderscompanion.AccountManager;
 import com.frenchfriedtechnology.horseandriderscompanion.data.endpoints.HorseProfileApi;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.HorseProfile;
 import com.frenchfriedtechnology.horseandriderscompanion.data.entity.SkillLevel;
+import com.frenchfriedtechnology.horseandriderscompanion.events.LevelAdjustedEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.view.base.BasePresenter;
+import com.squareup.otto.Subscribe;
 
 
 import java.util.HashMap;
@@ -21,13 +21,11 @@ import timber.log.Timber;
 
 public class HorseSkillTreePresenter extends BasePresenter<HorseSkillTreeMvpView> {
 
-    private Context context;
+    private HorseProfile horseProfile = new HorseProfile();
 
     @Inject
     HorseSkillTreePresenter() {
     }
-
-    private HorseProfile horseProfile = new HorseProfile();
 
     @Override
     public void attachView(HorseSkillTreeMvpView view) {
@@ -57,6 +55,45 @@ public class HorseSkillTreePresenter extends BasePresenter<HorseSkillTreeMvpView
     /**
      * Update Horse's Skill Tree level
      */
+
+    @Subscribe
+    public void levelAdjustedEvent(LevelAdjustedEvent event) {
+        if (!event.isRider()) {
+            SkillLevel skillLevel = new SkillLevel();
+            skillLevel.setLevel(event.getProgress());
+            skillLevel.setLevelId(event.getLevelId());
+            skillLevel.setLastEditDate(System.currentTimeMillis());
+            skillLevel.setLastEditBy(AccountManager.currentUser());
+
+            HashMap<String, SkillLevel> levels = new HashMap<>();
+
+            //check for existing skillLevel and remove it
+            if (horseProfile.getSkillLevels() != null) {
+                Timber.d("UpdateHorseSkillLevel() horseSkillLevel size " + horseProfile.getSkillLevels().size());
+                levels = horseProfile.getSkillLevels();
+                if (levels.containsKey(skillLevel.getLevelId())) {
+                    //replace old with new
+                    levels.remove(skillLevel.getLevelId());
+                    levels.put(String.valueOf(skillLevel.getLevelId()), skillLevel);
+                    Timber.d("Replaced Skill Level");
+                } else {
+                    //create new
+                    Timber.d("Created new Skill Level");
+                    levels.put(String.valueOf(skillLevel.getLevelId()), skillLevel);
+                }
+            } else {
+                Timber.d("SkillLevel is Null");
+            }
+            horseProfile.setSkillLevels(levels);
+            horseProfile.setLastEditDate(System.currentTimeMillis());
+            horseProfile.setLastEditBy(AccountManager.currentUser());
+
+            HorseProfileApi.createOrUpdateHorseProfile(horseProfile);
+        }
+    }
+}
+
+    /*
     void updateHorseSkillTreeLevel(SkillLevel skillLevel) {
 
         HashMap<String, SkillLevel> levels = new HashMap<>();
@@ -84,4 +121,4 @@ public class HorseSkillTreePresenter extends BasePresenter<HorseSkillTreeMvpView
 
         HorseProfileApi.createOrUpdateHorseProfile(horseProfile);
     }
-}
+}*/

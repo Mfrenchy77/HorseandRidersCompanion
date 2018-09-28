@@ -125,6 +125,7 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
+
     }
 
     //----Category
@@ -274,7 +275,7 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
         public void deleteLevelEvent(LevelDeleteEvent event) {
             basePresenter.deleteLevel(event.getLevelId());
         }
-        */
+
     @Subscribe
     public void levelAdjustedEvent(LevelAdjustedEvent event) {
         if (!event.isRider()) {
@@ -286,7 +287,7 @@ public class HorseSkillTreeActivity extends BaseSkillTreeActivity implements Hor
 
             presenter.updateHorseSkillTreeLevel(skillLevel);
         }
-    }
+    }*/
 
     @Subscribe
     public void getLevelsEvent(LevelsFetch event) {

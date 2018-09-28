@@ -14,7 +14,6 @@ import com.frenchfriedtechnology.horseandriderscompanion.events.LevelEditEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.events.LevelSelectEvent;
 import com.frenchfriedtechnology.horseandriderscompanion.util.Constants;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,8 +29,8 @@ import static com.frenchfriedtechnology.horseandriderscompanion.events.LevelSele
 
 class LevelAdapter extends BaseQuickAdapter<Level> {
 
-    private List<Level> levels = new ArrayList<>();
-    private List<Resource> resources = new ArrayList<>();
+    private List<Level> levels;
+    private List<Resource> resources;
     private boolean rider;
 
     LevelAdapter(List<Level> levels, List<Resource> resources, boolean rider) {
@@ -89,6 +88,7 @@ class LevelAdapter extends BaseQuickAdapter<Level> {
         } else if (level.getLevel() == Constants.VERIFIED) {
             levelIndicator.setBackgroundResource(R.drawable.level_indicator_background_verified);
         }
+
         holder.itemView.setOnClickListener(
                 view -> BusProvider.getBusProviderInstance().post(
                         new LevelSelectEvent(

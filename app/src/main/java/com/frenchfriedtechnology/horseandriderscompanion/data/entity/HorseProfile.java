@@ -1,6 +1,5 @@
 package com.frenchfriedtechnology.horseandriderscompanion.data.entity;
 
-
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import org.parceler.Parcel;
@@ -46,7 +45,7 @@ public class HorseProfile {
 
     long lastEditDate = 0;
 
-    String lastEditBy = null;
+    String lastEditBy;
 
     List<BaseListItem>notes;
 

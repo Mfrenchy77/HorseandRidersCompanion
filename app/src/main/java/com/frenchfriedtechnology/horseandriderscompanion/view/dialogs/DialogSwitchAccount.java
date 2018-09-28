@@ -1,7 +1,6 @@
 package com.frenchfriedtechnology.horseandriderscompanion.view.dialogs;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -16,7 +15,6 @@ import com.frenchfriedtechnology.horseandriderscompanion.BusProvider;
 import com.frenchfriedtechnology.horseandriderscompanion.R;
 import com.frenchfriedtechnology.horseandriderscompanion.data.local.AppPrefs;
 import com.frenchfriedtechnology.horseandriderscompanion.events.SwitchAccountEvent;
-import com.frenchfriedtechnology.horseandriderscompanion.util.DialogFactory;
 import com.frenchfriedtechnology.horseandriderscompanion.view.adapters.StringAdapter;
 
 
